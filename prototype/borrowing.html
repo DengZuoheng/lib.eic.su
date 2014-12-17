@@ -61,29 +61,79 @@
         </header>
         <div class="lead"></div>
         <div class="container">
-            <h1>C专家编程</h1>
-            <div class="row ">
-                <div class="pic col-md-2 xs-left subject-warning">
-                    <a class="nbg" href="subject.html">
-                        <img src="image/temp/p1.jpg">
-                    </a>
-                </div>
-                <div class="info col-md-8">
-                    <div class="pub"><strong>作者 : </strong>[美] Peter Vander Linde </div>
-                    <div class="pub"><strong>出版社 : </strong>人民邮电出版社</div>
-                    <div class="pub"><strong>译者 : </strong>徐波</div>
-                    <div class="pub"><strong>出版年 : </strong>2002-12</div>
-                    <div class="pub"><strong>页数 : </strong>291</div>
-                    <div class="pub"><strong>定价 : </strong>40.00元</div>
-                    <div class="pub"><strong>ISBN : </strong>9787115106278</div>
-                    <div class="pub"><strong>总册数 : </strong>10 / <strong>在馆数: </strong>6</div>
-                    <div class="pub"><strong>已预约 : </strong>2</div>
-                    <div class="pub"><strong>剩余 : </strong>4</div>
-                    <div class="lead">
-                        <div id="btn-appoint" class="btn btn-warning btn-sm">预约</div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="br-input-uid" class="col-sm-2 control-label">* 借书人学号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-uid" placeholder="学号">
                     </div>
-                </div> 
-            </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-una" class="col-sm-2 control-label">* 借书人姓名:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-usp" placeholder="姓名">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-usp" class="col-sm-2 control-label">借书人短号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-usp" placeholder="短号">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-ulp" class="col-sm-2 control-label">借书人长号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-ulp" placeholder="长号">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="br-input-isbn" class="col-sm-2 control-label">* ISBN:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-isbn" placeholder="ISBN">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-br-bname" class="col-sm-2 control-label">书名:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="br-input-br-bname">
+                            <option>面向对象软件工程 使用UML 模式与Java(上册)</option>
+                            <option>面向对象软件工程 使用UML 模式与Java(下册)</option>
+                            
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-br-bnum" class="col-sm-2 control-label">册数:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" i ="br-input-br-bnum">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-br-bsubc" class="col-sm-2 control-label">图书状态:</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" rows="3" placeholder="填写当前书本的损毁情况, 以作为归还时的损毁判定"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-admin" class="col-sm-2 control-label">* 值班干事学号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-admin" placeholder="值班干事学号">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary btn-block">提  交</button>
+                    </div>
+                </div>
+            </form>
         </div>
 
          <!-- Footer

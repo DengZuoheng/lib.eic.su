@@ -39,10 +39,10 @@
                             <a href="../components/">归还</a>
                         </li>
                         
-                        <li class="dropdown">
+                        <li class="dropdown active">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">系统<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">管理值班干事</a></li>
+                                <li class="active"><a href="#">管理值班干事</a></li>
                                 <li><a href="../javascript/">新书入库</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">上传图片</a></li>
@@ -62,64 +62,72 @@
         <div class="lead"></div>
         <div class="container table-responsive">
             <table class="table table-hover">
+                <caption>值班干事列表</caption>
                 <thead>
                     <tr>
-                        <th>时间<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>姓名<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>书籍<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>学号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>手机长号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>手机短号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>是否归还<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>累计天数<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>学号</th>
+                        <th>干事姓名</th>
+                        <th>手机长号</th>
+                        <th>手机短号</th>
+                        <th>值班天数</th>
+                        <th>当前值班</th>
+                        <th>删除<th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="danger"><!--danger表示超过60天未还-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
+                    <tr class="info">
                         <td>2012052207</td>
+                        <td>邓作恒</td>
                         <td>13726247196</td>
                         <td>617196</td>
-                        <td>否 &nbsp;<span class="btn btn-info btn-xs">归还</span></td>
-                        <td>60天</td>
+                        <td>14</td>
+                        <td>否&nbsp;<span class="btn btn-warning btn-xs">设为值班</span></th>
+                        <td><span class="btn btn-danger btn-xs">删除</span></td>
                     </tr>
-                    <tr class="warning"><!--warning表示超过30天未还-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
+                    <tr class="info">
                         <td>2012052207</td>
+                        <td>邓作恒</td>
                         <td>13726247196</td>
                         <td>617196</td>
-                        <td>否 &nbsp;<span class="btn btn-info btn-xs">归还</span></td>
-                        <td>30天</td>
+                        <td>15</td>
+                        <td>否&nbsp;<span class="btn btn-warning btn-xs">设为值班</span></th>
+                        <td><span class="btn btn-danger btn-xs">删除</span></td>
                     </tr>
-                    <tr class="info"><!--未归还, 但时间未满30天-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
+                    <tr class="warning">
                         <td>2012052207</td>
+                        <td>邓作恒</td>
                         <td>13726247196</td>
                         <td>617196</td>
-                        <td>否 &nbsp;<span class="btn btn-info btn-xs">归还</span></td>
-                        <td>6天</td>
+                        <td>15</td>
+                        <td>是</th>
+                        <td><span class="btn btn-danger btn-xs">删除</span></td>
                     </tr>
-                    <tr><!--已归还-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
+                    <tr class="info">
                         <td>2012052207</td>
+                        <td>邓作恒</td>
                         <td>13726247196</td>
                         <td>617196</td>
-                        <td>是</td>
-                        <td>60天</td>
+                        <td>15</td>
+                        <td>否&nbsp;<span class="btn btn-warning btn-xs">设为值班</span></th>
+                        <td><span class="btn btn-danger btn-xs">删除</span></td>
                     </tr>
-                    
+                    <tr>
+                        <td><input type="text" class="form-control" placeholder="新值班干事学号"></td>
+                        <td><input type="text" class="form-control" placeholder="新值班干事姓名"></td>
+                        <td><input type="text" class="form-control" placeholder="新值班干事长号"></td>
+                        <td><input type="text" class="form-control" placeholder="新值班干事短号"></td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td><span class="btn btn-success btn-xs">添加</span></td>
+                    </tr>
                 </tbody>
             </table>
-
+           
         </div>
+        <div class="container">
+             <button type="submit" class="btn btn-primary btn-block">提  交</button>
+        </div>
+        <div class="lead"></div>
 
          <!-- Footer
 ================================================== -->
@@ -137,3 +145,4 @@
         <script src="bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>
+        

@@ -60,65 +60,64 @@
             </div>
         </header>
         <div class="lead"></div>
-        <div class="container table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>时间<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>姓名<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>书籍<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>学号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>手机长号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>手机短号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>是否归还<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>累计天数<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="danger"><!--danger表示超过60天未还-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>2012052207</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>否 &nbsp;<span class="btn btn-info btn-xs">归还</span></td>
-                        <td>60天</td>
-                    </tr>
-                    <tr class="warning"><!--warning表示超过30天未还-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>2012052207</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>否 &nbsp;<span class="btn btn-info btn-xs">归还</span></td>
-                        <td>30天</td>
-                    </tr>
-                    <tr class="info"><!--未归还, 但时间未满30天-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>2012052207</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>否 &nbsp;<span class="btn btn-info btn-xs">归还</span></td>
-                        <td>6天</td>
-                    </tr>
-                    <tr><!--已归还-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>2012052207</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>是</td>
-                        <td>60天</td>
-                    </tr>
-                    
-                </tbody>
-            </table>
-
+        <div class="container">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="br-input-uid" class="col-sm-2 control-label">* 预约人学号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-uid" placeholder="学号">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-una" class="col-sm-2 control-label">* 预约人姓名:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-usp" placeholder="姓名">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-usp" class="col-sm-2 control-label">预约人短号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-usp" placeholder="短号">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-ulp" class="col-sm-2 control-label">* 预约人长号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-ulp" placeholder="长号">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="br-input-isbn" class="col-sm-2 control-label">* ISBN:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">9787111267539</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-br-bname" class="col-sm-2 control-label">书名:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">面向对象软件工程 使用UML 模式与Java</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-br-bnum" class="col-sm-2 control-label">册数:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" i ="br-input-br-bnum">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary btn-block">提  交</button>
+                    </div>
+                </div>
+            </form>
         </div>
 
          <!-- Footer
@@ -137,3 +136,4 @@
         <script src="bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>
+        

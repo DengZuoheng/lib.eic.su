@@ -60,67 +60,45 @@
             </div>
         </header>
         <div class="lead"></div>
-        <div class="container table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>时间<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>姓名<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>书籍<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>学号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>手机长号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>手机短号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>是否归还<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                        <th>累计天数<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="danger"><!--danger表示超过60天未还-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>2012052207</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>否 &nbsp;<span class="btn btn-info btn-xs">归还</span></td>
-                        <td>60天</td>
-                    </tr>
-                    <tr class="warning"><!--warning表示超过30天未还-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>2012052207</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>否 &nbsp;<span class="btn btn-info btn-xs">归还</span></td>
-                        <td>30天</td>
-                    </tr>
-                    <tr class="info"><!--未归还, 但时间未满30天-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>2012052207</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>否 &nbsp;<span class="btn btn-info btn-xs">归还</span></td>
-                        <td>6天</td>
-                    </tr>
-                    <tr><!--已归还-->
-                        <td>14/12/15 21:38</td>
-                        <td>邓作恒</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>2012052207</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>是</td>
-                        <td>60天</td>
-                    </tr>
-                    
-                </tbody>
-            </table>
-
-        </div>
-
+        <div class="container">
+            <!--
+                这里的几个alert类的div用于指示操作成功, 需要分种类指示
+                不用于指示的加入.hidden类即可隐藏
+            -->
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">成功创建预约!</strong></p>
+                <p>请在24小时内联系值班干事<strong >&nbsp;邓作恒 / 13726247196 / 617196&nbsp;</strong>安排取书时间 </p>
+                <p><span class="text-danger">否则预约将被取消!<span></p>
+                <p></p>
+                <a href="#" class="btn btn-success btn-xs">返回</a>
+            </div>
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">归还成功!</strong></p>
+                <p>如有疑问, 请联系系统管理员或开发人员, 并在<a href="#" class="alert-link">github仓库</a>提出issue
+                <p></p>
+                <a href="#" class="btn btn-success btn-xs">返回</a>&emsp;<a href="#" class="btn btn-success btn-xs">查看邓作恒的借书列表</a>
+            </div>
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">借书成功!</strong></p>
+                <p>如果一次借阅多本, 会在产生多条借书记录</p>
+                <p>如有疑问, 请联系系统管理员或开发人员, 并在<a href="#" class="alert-link">github仓库</a>提出issue
+                <p></p>
+                <a href="#" class="btn btn-success btn-xs">返回</a>&emsp;<a href="#" class="btn btn-success btn-xs">查看邓作恒的借书列表</a>
+            </div>
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">修改成功!</strong></p>
+                <p>当前值班干事为<strong>邓作恒 / 13726247196 / 617196</strong></p>
+                <p>如有疑问, 请联系系统管理员或开发人员, 并在<a href="#" class="alert-link">github仓库</a>提出issue
+                <p></p>
+                <a href="#" class="btn btn-success btn-xs">返回</a>
+            </div>
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">入库成功!</strong></p>
+                <p>没有发现异常!</p>
+                <p>如有疑问, 请联系系统管理员或开发人员, 并在<a href="#" class="alert-link">github仓库</a>提出issue
+                <p></p>
+                <a href="#" class="btn btn-success btn-xs">返回</a>
+            </div>
          <!-- Footer
 ================================================== -->
         <footer class="bs-docs-footer" role="contentinfo">
@@ -137,3 +115,4 @@
         <script src="bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>
+        
