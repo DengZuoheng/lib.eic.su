@@ -78,12 +78,12 @@
         </div>
         <div class="main lead">
             
-            <from role="from" class="form-inline center">
-                <p class="lead center">Just Search!</p>
-                <div class="form-group center">
+            <from id="search-from" role="from" class="form-inline center">
+                <p class="lead center text-center">Just Search!</p>
+                <div class="form-group center has-feedback">
                     <div class="input-group">
-                        <input type="search" class="form-control" id="search-key-word" placeholder="书名、作者、ISBN">
-                        <div class="btn btn-large input-group-addon btn-primary  "><span class="glyphicon glyphicon-search"></span></div>
+                        <input type="search" class="form-control" id="search-key-word" name="search-key-word" placeholder="书名、作者、ISBN">
+                        <div id="submit" class="btn btn-large input-group-addon btn-primary  "><span class="glyphicon glyphicon-search"></span></div>
                     </div>
                 </div>
                 
@@ -103,6 +103,8 @@
         <!-- Placed at the end of the document so the pages load faster -->
         <script src="jquery/jquery-1.11.1.min.js"></script>
         <script src="bootstrap/js/bootstrap.min.js"></script>
+        <script src="js/default.js"></script>
+        <script src="js/index.js"></script>
   </body>
 </html>
         
