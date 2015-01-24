@@ -180,7 +180,7 @@ var afx_result;
        //响应提交
         $("#submit").click(function(){
             try{
-                if(isDebug()==true)
+                if(afx_debug==true)
                 {
                     throw "debug";
                 }
