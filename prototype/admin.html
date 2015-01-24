@@ -75,57 +75,13 @@
                     </tr>
                 </thead>
                 <tbody id="tbody">
-                    <tr class="info">
-                        <td>2012052207</td>
-                        <td>邓作恒</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>14</td>
-                        <td>否&nbsp;<span class="btn btn-warning btn-xs">设为值班</span></th>
-                        <td><span class="btn btn-danger btn-xs">删除</span></td>
-                    </tr>
-                    <tr class="info">
-                        <td>2012052207</td>
-                        <td>邓作恒</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>15</td>
-                        <td>否&nbsp;<span class="btn btn-warning btn-xs">设为值班</span></th>
-                        <td><span class="btn btn-danger btn-xs">删除</span></td>
-                    </tr>
-                    <tr class="warning">
-                        <td>2012052207</td>
-                        <td>邓作恒</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>15</td>
-                        <td>是</th>
-                        <td><span class="btn btn-danger btn-xs">删除</span></td>
-                    </tr>
-                    <tr class="info">
-                        <td>2012052207</td>
-                        <td>邓作恒</td>
-                        <td>13726247196</td>
-                        <td>617196</td>
-                        <td>15</td>
-                        <td>否&nbsp;<span class="btn btn-warning btn-xs">设为值班</span></th>
-                        <td><span class="btn btn-danger btn-xs">删除</span></td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" class="form-control" placeholder="新值班干事学号"></td>
-                        <td><input type="text" class="form-control" placeholder="新值班干事姓名"></td>
-                        <td><input type="text" class="form-control" placeholder="新值班干事长号"></td>
-                        <td><input type="text" class="form-control" placeholder="新值班干事短号"></td>
-                        <td> - </td>
-                        <td> - </td>
-                        <td><span class="btn btn-success btn-xs">添加</span></td>
-                    </tr>
+                    <!--这里什么都不写, 让js去填吧-->
                 </tbody>
             </table>
            
         </div>
         <div class="container">
-             <button type="submit" class="btn btn-primary btn-block">提  交</button>
+             <button type="submit" id="submit" class="btn btn-primary btn-block">提  交</button>
         </div>
         <div class="lead"></div>
 
@@ -141,6 +97,10 @@
         <!-- Bootstrap core JavaScript
 ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/javascript">
+            var APP="__APP__";
+            var URL = "__URL__";
+        </script>
         <script src="jquery/jquery-1.11.1.min.js"></script>
         <script src="bootstrap/js/bootstrap.min.js"></script>
         <script src="js/default.js"></script>
