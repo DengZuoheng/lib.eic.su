@@ -71,7 +71,7 @@
                 <div class="form-group">
                     <label for="br-input-una" class="col-sm-2 control-label">* 预约人姓名:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="姓名">
+                        <input type="text" class="form-control" id="br-input-una" placeholder="姓名">
                     </div>
                 </div>
                 <div class="form-group">
@@ -102,7 +102,7 @@
                 <div class="form-group">
                     <label for="br-input-br-bnum" class="col-sm-2 control-label">册数:</label>
                     <div class="col-sm-10">
-                        <select class="form-control" i ="br-input-br-bnum">
+                        <select class="form-control" id ="br-input-br-bnum">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -114,7 +114,7 @@
                 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary btn-block">提  交</button>
+                        <button type="submit" id="submit" class="btn btn-primary btn-block">提  交</button>
                     </div>
                 </div>
             </form>
@@ -132,8 +132,14 @@
         <!-- Bootstrap core JavaScript
 ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/javascript">
+            var APP="__APP__";
+            var URL="__URL__";
+        </script>
         <script src="jquery/jquery-1.11.1.min.js"></script>
         <script src="bootstrap/js/bootstrap.min.js"></script>
+        <script src="js/default.js"></script>
+        <script src="js/booking.js"></script>
   </body>
 </html>
         
