@@ -4,6 +4,7 @@ var afx_flag_name_filled=false;
 var afx_flag_spnumber_filled=false;
 var afx_flag_lpnumber_filled=false;
 var afx_ajaxed=false;
+//TODO:允许修改学号时重新ajax
 
 (function(){
     var example={"flag":"true","account":"2012052207","name":"邓作恒",
@@ -19,9 +20,9 @@ var afx_ajaxed=false;
         //学号输入了前9位就应该ajax请求了
         if($("#br-input-uid").val().length==9){
             account=$("#br-input-uid").val();
-            if(afx_debug==false&&afx_ajaxed==false){
+            if(afx_debug==false&&afx_ajaxed==false&&isAccount(account)){
                 $.ajax({
-                    url:URL+"/RequestAjaxBooking",
+                    url:URL+"/RequestAjaxPerInfo",
                     data:{"account":account},
                     async:true,
                     dataType:"json",
@@ -55,7 +56,7 @@ var afx_ajaxed=false;
             $("#br-input-uid,#br-input-una,#br-input-usp,#br-input-ulp")
                 .attr("placeholder","数据库中没有找到缓存信息,请自行填写")
                 .parent().addClass("has-warning");
-            return true;
+            return false;
         }
         //如果找到了这个人
         if(afx_flag_name_filled==false){
@@ -67,6 +68,15 @@ var afx_ajaxed=false;
         if(afx_flag_spnumber_filled==false){
             $("#br-input-usp").val(obj["spnumber"]);
         }
+        //限制借书和预约数量
+        $("#br-input-bnum").html("");
+        for(var i=0;i<afx_max_booknum - afx_result["booknum"];++i){
+            $("<option></option>")
+                .attr("value",i+1).html(i+1)
+                .appendTo($("#br-input-bnum"));
+        }
+        $("#br-input-bnum").val(1);
+        return true;
         
     }
     
@@ -103,6 +113,7 @@ var afx_ajaxed=false;
                 .parent().addClass("has-error");
             return false;
         }
+        
         return true;
     });
                   

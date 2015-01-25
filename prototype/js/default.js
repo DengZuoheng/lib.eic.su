@@ -1,5 +1,6 @@
 //全局变量
 var afx_debug=true;//设定JS是否处于debug状态
+var afx_max_booknum=12;//最大借书和预约数量
 
 //检查SQL注入特征, 含有SQL语句这返回真
 function isSqlInjection(str){
@@ -73,7 +74,33 @@ function isSpnumber(str){
     }
 }
 
+//检查是否合法isbn, 合法返回真
+function isIsbn(str){
+    try{
+        var pattern13=/\d{13}/;
+        var pattern9=/\d{9}/;
+        if(partten13.test(str)||parttern9.test(str)){
+            return true;
+        }else{
+            return false;
+        }
+    }catch(e){
+        console.log(e);
+        return false;
+    }
+}
+
 //检查是否debug状态
 function isDebug(){
     return true;
+}
+
+function min(i1,i2){
+    if(i1<=i2){return i1;}
+    else{return i2;}
+}
+
+function max(i1,i2){
+    if(i1<=i2){return i2;}
+    else{return i1;}
 }
