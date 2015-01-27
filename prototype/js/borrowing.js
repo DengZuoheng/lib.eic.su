@@ -34,13 +34,9 @@ var afx_book_ajaxed=false;
         if($("#br-input-uid").val().length==9){
             console.log("F");
             //加载loading动画
-            $("#br-input-uid")
-                .parent().append(
-                    $("<span></span>").attr({
-                        "class":"glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback",
-                        "id":"feedback-uid"})
-                    );
-                        
+            $("#feedback-uid").attr(
+                "class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
+                    
             account=$("#br-input-uid").val();
             if(afx_debug==false&&isAccount(account)){
                 $.ajax({
@@ -66,8 +62,8 @@ var afx_book_ajaxed=false;
     function fill_table(obj){
         //如果已经是黑名单了, 就把所有东西红掉
         if(obj["badcredit"]=="true"){
-            console.log(9);
-            $("#feedback-uid").attr("class","glyphicon glyphicon-remove form-control-feedback");
+            
+            $("#feedback-uid").attr("class","c");
             //禁止所有输入
             $("input,textarea,select,#submit")
                 .attr("placeholder","该借书人已经多次遗失书籍或预期归还, 按照规定, 已经不能预约或借书了")
@@ -84,25 +80,117 @@ var afx_book_ajaxed=false;
             return true;
         }
         //如果找到了这个人
+        //TODO: 正确反馈
+        $("#feedback-uid").attr("class","glyphicon glyphicon-success form-control-feedback");
+        $("#br-input-uid").parent().addClass("has-success");
         if(afx_flag_name_filled==false){
             $("#br-input-una").val(obj["name"]);
+            $("#br-input-una").parent().addClass("has-success");
         }
         if(afx_flag_lpnumber_filled==false){
             $("#br-input-ulp").val(obj["lpnumber"]);
+            $("#br-input-ulp").parent().addClass("has-success");
         }
         if(afx_flag_spnumber_filled==false){
             $("#br-input-usp").val(obj["spnumber"]);
+            $("#br-input-usp").parent().addClass("has-success");
         }
         
     }
     
-    $("#br-input-una").change(function(){afx_flag_name_filled=true;});
-    $("#br-input-ulp").change(function(){afx_flag_lpnumber_filled=true;});
-    $("#br-input-usp").change(function(){afx_flag_spnumber_filled=true;});
+    $("#br-input-una").change(function(){
+        afx_flag_name_filled=true;
+        $(this).parent()
+            .removeClass("has-error")
+            .removeClass("has-warning")
+            .removeClass("has-success");
+        $("#feedback-una").attr("class","glyphicon form-control-feedback");
+        
+        if(isSqlInjection($(this).val())){
+           
+            $(this).val("").attr("placeholder","姓名非法").parent().addClass("has-error");
+            $("#feedback-una").addClass("glyphicon-remove");
+            //禁止提交
+            $("#submit").attr("disabled",true);
+            return false;
+        }
+        if($(this).val().length==0){
+           
+            $(this).attr("placeholder","姓名不能为空").parent().addClass("has-warning");
+            $("#feedback-una").addClass("glyphicon-warning");
+            $("#submit").attr("disable",true);
+            return false;
+        }
+        //合法
+        $(this).parent().addClass("has-success");
+        $("feedback-una").addClass("glyphicon-success");
+        $("#submit").attr("disable",false);
+        return true;
+            
+    });
+    
+    $("#br-input-ulp").change(function(){
+        afx_flag_lpnumber_filled=true;
+        $(this).parent()
+            .removeClass("has-error")
+            .removeClass("has-warning")
+            .removeClass("has-success");
+        $("#feedback-ulp").attr("class","glyphicon form-control-feedback");
+        
+        if(isSqlInjection($(this).val())&&isLpnumber($(this).val())){
+           
+            $(this).val("").attr("placeholder","长号非法").parent().addClass("has-error");
+            $("#feedback-ulp").addClass("glyphicon-remove");
+            //禁止提交
+            $("#submit").attr("disabled",true);
+            return false;
+        }
+        if($(this).val().length==0){
+           
+            $(this).attr("placeholder","长号不能为空").parent().addClass("has-warning");
+            $("#feedback-ulp").addClass("glyphicon-warning");
+            $("#submit").attr("disable",true);
+            return false;
+        }
+        //合法
+        $(this).parent().addClass("has-success");
+        $("feedback-ulp").addClass("glyphicon-success");
+        $("#submit").attr("disable",false);
+        return true;   
+    });
+    
+    $("#br-input-usp").change(function(){
+        afx_flag_spnumber_filled=true;
+        $(this).parent()
+            .removeClass("has-error")
+            .removeClass("has-warning")
+            .removeClass("has-success");
+        $("#feedback-usp").attr("class","glyphicon form-control-feedback");
+        
+        if(isSqlInjection($(this).val())&&isSpnumber($(this).val())){
+           
+            $(this).val("").attr("placeholder","短号非法").parent().addClass("has-error");
+            $("#feedback-usp").addClass("glyphicon-remove");
+            //禁止提交
+            $("#submit").attr("disabled",true);
+            return false;
+        }
+        if($(this).val().length!=0){
+            //合法
+            $(this).parent().addClass("has-success");
+            $("feedback-ulp").addClass("glyphicon-success");
+        }
+        $("#submit").attr("disable",false);
+        return true;   
+    
+    });
     
     function on_isbn_change(){
         //isbn输入了前12位就应该ajax请求了
         if($("#br-input-isbn").val().length==12){
+            //加载loading动画
+            $("#feedback-isbn").attr("class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
+           
             isbn=$("#br-input-isbn").val();
             if(afx_debug==false&&afx_ajaxed==false&&isIsbn(isbn)){
                 $.ajax({
@@ -128,6 +216,7 @@ var afx_book_ajaxed=false;
     function fill_book_info(obj){
         //如果书没找到
         if(obj["flag"]=="false"){
+            $("#feedback-isbn").attr("class","glyphicon glyphicon-remove form-control-feedback");
             $("#br-input-isbn")
                 .attr("placeholder","ISBN不存在")
                 .parent().addClass("has-error");
@@ -136,6 +225,8 @@ var afx_book_ajaxed=false;
         }
         
         //如果找到书了
+        $("#feedback-isbn").attr("class","glyphicon glyphicon-success form-control-feedback");
+        $("#br-input-isbn").parent().addClass("has-success");
         $("#br-input-bname").html("");
         for(var i=0;i<obj["books"].length;++i){
             $("<option></option>")
@@ -165,18 +256,33 @@ var afx_book_ajaxed=false;
     //生成可选数量
     function fill_book_num(bindex,selectedval){
         $("#br-input-bnum").html("");
-        for(var i=0;
-            i<min(afx_book_result["books"][bindex]["binventory"], 
-            afx_max_booknum-afx_person_result["bookednum"]);
-            ++i){
+        var selectable_num=min(afx_book_result["books"][bindex]["binventory"], 
+                afx_max_booknum-afx_person_result["bookednum"]);
+                
+        for(var i=0;i<selectable_num; ++i){
                 $("<option></option>")
                     .attr("value",i+1)
                     .html(i+1)
                     .appendTo("#br-input-bnum");
         }//for
-        $("#br-input-bnum").val(max(selectedval,min(afx_book_result["books"][bindex]["binventory"], 
-            afx_max_booknum-afx_person_result["bookednum"])));
+        $("#br-input-bnum").val(min(selectedval,selectable_num));
     }
+    
+    $("#br-input-bsubc").change(function(){
+        bsubc=$(this).val();
+        $(this).parent().removeClass("has-error").removeClass("has-success");
+        if(bsubc.length!=0&&isSqlInjection(bsubc)){
+            $(this).parent().addClass("has-error");
+            $(this).attr("placeholder","图书状态含有非法字符");
+            $("#submit").attr("disable",true);
+            return false;
+        }
+        else if(bsubc.length!=0){
+            $(this).parent().addClass("has-success");
+            $("#submit").attr("disable",false);
+            return true;
+        }
+    });
         
 })();
                 

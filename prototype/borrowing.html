@@ -65,7 +65,8 @@
                 <div class="form-group">
                     <label for="br-input-uid" class="col-sm-2 control-label">* 借书人学号:</label>
                     <div class="col-sm-10 has-feedback">
-                        <input type="text" class="form-control" id="br-input-uid" placeholder="学号">                      
+                        <input type="text" class="form-control" id="br-input-uid" placeholder="学号">
+                        <span id="feedback-uid" class="form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -78,12 +79,14 @@
                     <label for="br-input-usp" class="col-sm-2 control-label">借书人短号:</label>
                     <div class="col-sm-10 has-feedback">
                         <input type="text" class="form-control" id="br-input-usp" placeholder="短号">
+                        <span id="feedback-usp" class="form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="br-input-ulp" class="col-sm-2 control-label">借书人长号:</label>
                     <div class="col-sm-10 has-feedback">
                         <input type="text" class="form-control" id="br-input-ulp" placeholder="长号">
+                        <span id="feedback-ulp" class="form-control-feedback"></span>
                     </div>
                 </div>
                 
@@ -91,6 +94,7 @@
                     <label for="br-input-isbn" class="col-sm-2 control-label">* ISBN:</label>
                     <div class="col-sm-10 has-feedback">
                         <input type="text" class="form-control" id="br-input-isbn" placeholder="ISBN">
+                        <span id="feedback-isbn" class="form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -103,13 +107,13 @@
                 <div class="form-group">
                     <label for="br-input-bnum" class="col-sm-2 control-label">册数:</label>
                     <div class="col-sm-10">
-                        <select class="form-control" i ="br-input-bnum">
+                        <select class="form-control" id="br-input-bnum">
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="br-input-bsubc" class="col-sm-2 control-label">图书状态:</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10 has-feedback">
                         <textarea class="form-control" rows="3" id="br-input-bsubc" placeholder="填写当前书本的损毁情况, 以作为归还时的损毁判定"></textarea>
                     </div>
                 </div>
