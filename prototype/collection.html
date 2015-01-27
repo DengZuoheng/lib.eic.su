@@ -61,7 +61,7 @@
         </header>
         <div class="lead"></div>
         <div class="container table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover" id="collection-table">
                 <thead>
                     <tr>
                         <th>ISBN<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
@@ -78,47 +78,48 @@
                 <tbody>
                     <tr class="danger"><!--在馆册数少于5-->
                         <td>9787302243243</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>Dernd Bruegge,Allen H.Dutoit</td>
-                        <td>清华大学出版社</td>
-                        <td>79.00元</td>
-                        <td>2</td>
+                        <td>面向对象软件工程 使用UML 模式与Java1</td>
+                        <td>Dernd Bruegge,Allen H.Dutoit1</td>
+                        <td>清华大学出版社1</td>
+                        <td>179.00元</td>
+                        <td>1</td>
                         <td>1</td>
                         <td>1</td>
                         <td><a class="btn btn-success btn-xs">预约</a></th>
                     </tr>
                     <tr class="warning"><!--在馆册数少于10-->
-                       <td>9787302243243</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>Dernd Bruegge,Allen H.Dutoit</td>
-                        <td>清华大学出版社</td>
-                        <td>79.00元</td>
-                        <td>7</td>
-                        <td>7</td>
+                        <td>9787302243244</td>
+                        <td>面向对象软件工程 使用UML 模式与Java2</td>
+                        <td>Dernd Bruegge,Allen H.Dutoit2</td>
+                        <td>清华大学出版社2</td>
+                        <td>80.00元</td>
+                        <td>5</td>
+                        <td>5</td>
                         <td>1</td>
                         <td><a class="btn btn-success btn-xs">预约</a></th>
                     </tr>
                     <tr class="info"><!--在馆册数充足-->
-                        <td>9787302243243</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>Dernd Bruegge,Allen H.Dutoit</td>
-                        <td>清华大学出版社</td>
-                        <td>79.00元</td>
-                        <td>20</td>
-                        <td>7</td>
+                        <td>9787302243245</td>
+                        <td>面向对象软件工程 使用UML 模式与Java3</td>
+                        <td>Dernd Bruegge,Allen H.Dutoit3</td>
+                        <td>清华大学出版社3</td>
+                        <td>81.00元</td>
+                        <td>10</td>
+                        <td>10</td>
                         <td>7</td>
                         <td><a class="btn btn-success btn-xs">预约</a></th>
                     </tr>
                     <tr><!--在馆册数0-->
-                        <td>9787302243243</td>
-                        <td>面向对象软件工程 使用UML 模式与Java</td>
-                        <td>Dernd Bruegge,Allen H.Dutoit</td>
-                        <td>清华大学出版社</td>
-                        <td>79.00元</td>
-                        <td>20</td>
+                        <td>9787302243246</td>
+                        <td>面向对象软件工程 使用UML 模式与Java4</td>
+                        <td>Dernd Bruegge,Allen H.Dutoit4</td>
+                        <td>清华大学出版社4</td>
+                        <td>82.00元</td>
+                        <td>15</td>
                         <td>0</td>
-                        <td>7</td>
-                        <td><a class="btn btn-success btn-xs">预约</a></th>
+                        <td>0</td>
+                        <td><a class="btn btn-success btn-xs" disabled="disabled">预约</a></th>
+                        <!--在馆册数为0时, 不允许预约-->
                     </tr>
                     
                 </tbody>
@@ -140,5 +141,7 @@
         <!-- Placed at the end of the document so the pages load faster -->
         <script src="jquery/jquery-1.11.1.min.js"></script>
         <script src="bootstrap/js/bootstrap.min.js"></script>
+        <script src="js/default.js"></script>
+        <script src="js/collection.js"></script>
   </body>
 </html>
