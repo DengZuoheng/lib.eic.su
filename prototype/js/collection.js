@@ -17,7 +17,7 @@ var afx_attr_desc=new Array(afx_isbn_desc,afx_bname_desc,afx_author_desc,afx_pub
     afx_all_result=new Array();
     //console.log($("tbody tr").html());
     //首先提取所有信息
-    $("#collection-table tbody tr").each(function(obj){
+    $("#collection-table tbody tr").each(function(i){
         var obj=$(this);
          
         afx_all_result.push({
@@ -38,8 +38,12 @@ var afx_attr_desc=new Array(afx_isbn_desc,afx_bname_desc,afx_author_desc,afx_pub
             var idx=$("#collection-table thead tr th").index($(this).parent());
             afx_attr_desc[idx]=!afx_attr_desc[idx];
             if(afx_attr_desc[idx]==true){
+                $(this).removeClass("glyphicon-sort-by-attributes-alt")
+                    .addClass("glyphicon-sort-by-attributes");
                 order_by(afx_attr[idx],"desc");
             }else{
+                $(this).removeClass("glyphicon-sort-by-attributes")
+                    .addClass("glyphicon-sort-by-attributes-alt");
                 order_by(afx_attr[idx],"asc");
             }
         });
