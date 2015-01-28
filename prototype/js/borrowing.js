@@ -81,19 +81,22 @@ var afx_book_ajaxed=false;
         }
         //如果找到了这个人
         //TODO: 正确反馈
-        $("#feedback-uid").attr("class","glyphicon glyphicon-success form-control-feedback");
+        $("#feedback-uid").attr("class","glyphicon glyphicon-ok form-control-feedback");
         $("#br-input-uid").parent().addClass("has-success");
         if(afx_flag_name_filled==false){
             $("#br-input-una").val(obj["name"]);
             $("#br-input-una").parent().addClass("has-success");
+            $("#br-input-una").change();
         }
         if(afx_flag_lpnumber_filled==false){
             $("#br-input-ulp").val(obj["lpnumber"]);
             $("#br-input-ulp").parent().addClass("has-success");
+            $("#br-input-ulp").change();
         }
         if(afx_flag_spnumber_filled==false){
             $("#br-input-usp").val(obj["spnumber"]);
             $("#br-input-usp").parent().addClass("has-success");
+            $("#br-input-usp").change();
         }
         
     }
@@ -123,7 +126,7 @@ var afx_book_ajaxed=false;
         }
         //合法
         $(this).parent().addClass("has-success");
-        $("feedback-una").addClass("glyphicon-success");
+        $("#feedback-una").addClass("glyphicon-ok");
         $("#submit").attr("disable",false);
         return true;
             
@@ -137,7 +140,7 @@ var afx_book_ajaxed=false;
             .removeClass("has-success");
         $("#feedback-ulp").attr("class","glyphicon form-control-feedback");
         
-        if(isSqlInjection($(this).val())&&isLpnumber($(this).val())){
+        if(isSqlInjection($(this).val())||!isLpnumber($(this).val())){
            
             $(this).val("").attr("placeholder","长号非法").parent().addClass("has-error");
             $("#feedback-ulp").addClass("glyphicon-remove");
@@ -154,12 +157,13 @@ var afx_book_ajaxed=false;
         }
         //合法
         $(this).parent().addClass("has-success");
-        $("feedback-ulp").addClass("glyphicon-success");
+        $("#feedback-ulp").addClass("glyphicon-ok");
         $("#submit").attr("disable",false);
         return true;   
     });
     
     $("#br-input-usp").change(function(){
+        console.log("GGGGG");
         afx_flag_spnumber_filled=true;
         $(this).parent()
             .removeClass("has-error")
@@ -167,7 +171,7 @@ var afx_book_ajaxed=false;
             .removeClass("has-success");
         $("#feedback-usp").attr("class","glyphicon form-control-feedback");
         
-        if(isSqlInjection($(this).val())&&isSpnumber($(this).val())){
+        if(isSqlInjection($(this).val())||!isSpnumber($(this).val())){
            
             $(this).val("").attr("placeholder","短号非法").parent().addClass("has-error");
             $("#feedback-usp").addClass("glyphicon-remove");
@@ -178,7 +182,7 @@ var afx_book_ajaxed=false;
         if($(this).val().length!=0){
             //合法
             $(this).parent().addClass("has-success");
-            $("feedback-ulp").addClass("glyphicon-success");
+            $("#feedback-usp").addClass("glyphicon-ok");
         }
         $("#submit").attr("disable",false);
         return true;   
@@ -225,7 +229,7 @@ var afx_book_ajaxed=false;
         }
         
         //如果找到书了
-        $("#feedback-isbn").attr("class","glyphicon glyphicon-success form-control-feedback");
+        $("#feedback-isbn").attr("class","glyphicon glyphicon-ok form-control-feedback");
         $("#br-input-isbn").parent().addClass("has-success");
         $("#br-input-bname").html("");
         for(var i=0;i<obj["books"].length;++i){
@@ -270,7 +274,7 @@ var afx_book_ajaxed=false;
     
     $("#br-input-bsubc").change(function(){
         bsubc=$(this).val();
-        $(this).parent().removeClass("has-error").removeClass("has-success");
+        $(this).parent().removeClass("has-error").removeClass("has-ok");
         if(bsubc.length!=0&&isSqlInjection(bsubc)){
             $(this).parent().addClass("has-error");
             $(this).attr("placeholder","图书状态含有非法字符");
