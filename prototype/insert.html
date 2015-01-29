@@ -62,78 +62,88 @@
         <div class="lead"></div>
         <div class="container">
             <form class="form-horizontal" role="form">
-                <div class="form-group has-feedback has-error">
-                    <label for="br-input-uid" class="col-sm-2 control-label">* ISBN:</label>
+                <div class="form-group has-feedback">
+                    <label for="br-input-isbn" class="col-sm-2 control-label">* ISBN:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-uid" placeholder="13位ISBN 如: 9787111267539">
-                    </div>
-                </div>
-                <div class="form-group has-feedback has-success">
-                    <label for="br-input-una" class="col-sm-2 control-label">* 封面:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="封面URL 如果没有自动填充, 请在upload页上传">
+                        <input type="text" class="form-control" id="br-input-isbn" placeholder="13位ISBN 如: 9787111267539">
+                        <span id="feedback-isbn" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group has-feedback">
-                    <label for="br-input-una" class="col-sm-2 control-label">* 书名:</label>
+                    <label for="br-input-bcover" class="col-sm-2 control-label">* 封面:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="书名 如: 软件项目管理案例教程(第2版)">
+                        <input type="text" class="form-control" id="br-input-bcover" placeholder="封面URL 如果没有自动填充, 请在upload页上传">
+                        <span id="feedback-bcover" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group has-feedback">
-                    <label for="br-input-una" class="col-sm-2 control-label">* 作者:</label>
+                    <label for="br-input-bname" class="col-sm-2 control-label">* 书名:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="作者 如: [英]J.K 罗琳, [日]庵野秀明">
+                        <input type="text" class="form-control" id="br-input-bname" placeholder="书名 如: 软件项目管理案例教程(第2版)">
+                        <span id="feedback-bname" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group has-feedback">
-                    <label for="br-input-una" class="col-sm-2 control-label">* 译者:</label>
+                    <label for="br-input-author" class="col-sm-2 control-label">* 作者:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="译者(可选) 如: 张三, 李四">
+                        <input type="text" class="form-control" id="br-input-author" placeholder="作者 如: [英]J.K 罗琳, [日]庵野秀明">
+                        <span id="feedback-author" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <label for="br-input-translator" class="col-sm-2 control-label">译者:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-translator" placeholder="译者(可选) 如: 张三, 李四">
+                        <span id="feedback-translator" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 
                 <div class="form-group has-feedback">
-                    <label for="br-input-br-bname" class="col-sm-2 control-label">* 出版社:</label>
+                    <label for="br-input-publisher" class="col-sm-2 control-label">* 出版社:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="出版社 如: 高等教育出版社">
+                        <input type="text" class="form-control" id="br-input-publisher" placeholder="出版社 如: 高等教育出版社">
+                        <span id="feedback-publisher" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group has-feedback">
-                    <label for="br-input-br-bname" class="col-sm-2 control-label">* 出版年:</label>
+                    <label for="br-input-byear" class="col-sm-2 control-label">* 出版年:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="出版年 如: 2009.4">
+                        <input type="text" class="form-control" id="br-input-byear" placeholder="出版年 如: 2009.4">
+                        <span id="feedback-byear" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group has-feedback">
-                    <label for="br-input-br-bname" class="col-sm-2 control-label">页数:</label>
+                    <label for="br-input-pagination" class="col-sm-2 control-label">页数:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="页数(可选) 如: 318">
+                        <input type="text" class="form-control" id="br-input-pagination" placeholder="页数(可选) 如: 318">
+                        <span id="feedback-pagination" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group has-feedback">
-                    <label for="br-input-br-bname" class="col-sm-2 control-label">* 定价:</label>
+                    <label for="br-input-price" class="col-sm-2 control-label">* 定价:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="定价 如: 36.00">
+                        <input type="text" class="form-control" id="br-input-price" placeholder="定价 如: 36.00">
+                        <span id="feedback-price" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group has-feedback">
-                    <label for="br-input-br-bname" class="col-sm-2 control-label">现有册数:</label>
+                    <label for="br-input-totalnum" class="col-sm-2 control-label">现有册数:</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">24</p>
+                        <p class="form-control-static" id="glyphicon br-input-totalnum-static">24</p>
                     </div>
                 </div>
                  <div class="form-group has-feedback">
-                    <label for="br-input-br-bname" class="col-sm-2 control-label">* 新增册数:</label>
+                    <label for="br-input-insertednum" class="col-sm-2 control-label">* 新增册数:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="br-input-usp" placeholder="新增册数 如: 7">
+                        <input type="text" class="form-control" id="br-input-insertednum" placeholder="新增册数 如: 7">
+                        <span id="feedback-insertednum" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 
                 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary btn-block">提  交</button>
+                        <button type="submit" id="submit" name="submit" class="btn btn-primary btn-block">提  交</button>
                     </div>
                 </div>
             </form>
@@ -153,6 +163,8 @@
         <!-- Placed at the end of the document so the pages load faster -->
         <script src="jquery/jquery-1.11.1.min.js"></script>
         <script src="bootstrap/js/bootstrap.min.js"></script>
+        <script src="js/default.js"></script>
+        <script src="js/insert.js"></script>
   </body>
 </html>
         
