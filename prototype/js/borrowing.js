@@ -51,10 +51,12 @@ var afx_book_ajaxed=false;
                         afx_ajaxed=true;//如果已经ajax过了就不要重复ajax了
                     }
                 });
-            }else{
+            }else if(afx_debug==true){
                 afx_person_result=person_example;
                 fill_table(afx_person_result);
                 
+            }else{
+                return false;
             }
         }
     }
@@ -199,7 +201,7 @@ var afx_book_ajaxed=false;
             if(afx_debug==false&&afx_ajaxed==false&&isIsbn(isbn)){
                 $.ajax({
                     url:URL+"RequestAjaxBookInfo/",
-                    data:{"isbn":account},
+                    data:{"isbn":isbn},
                     async:true,
                     dataType:"json",
                     type:"POST",
@@ -209,10 +211,12 @@ var afx_book_ajaxed=false;
                         afx_book_ajaxed=true;
                     }
                 });
-            }else{
+            }else if(afx_debug==true){
                 afx_book_result=book_example;
                 fill_book_info(afx_book_result);
                 afx_book_ajaxed=true;
+            }else{
+                return false;
             }
         }
     }
