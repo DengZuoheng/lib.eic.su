@@ -1,0 +1,33 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container table-responsive">
+            <table class="table table-hover">
+                <caption>值班干事列表</caption>
+                <thead>
+                    <tr>
+                        <th>学号</th>
+                        <th>干事姓名</th>
+                        <th>手机长号</th>
+                        <th>手机短号</th>
+                        <th>值班天数</th>
+                        <th>当前值班</th>
+                        <th>删除<th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <!--这里什么都不写, 让js去填吧-->
+                </tbody>
+            </table>
+           
+        </div>
+        <div class="container">
+             <button type="submit" id="submit" class="btn btn-primary btn-block">提  交</button>
+        </div>
+        <div class="lead"></div>
+
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="{% static "js/admin.js" %}></script>
+  </body>
+</html>
+        

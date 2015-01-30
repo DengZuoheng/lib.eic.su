@@ -1,0 +1,70 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container">
+            <!--
+                这里的几个alert类的div用于指示操作成功, 需要分种类指示
+                不用于指示的加入.hidden类即可隐藏
+            -->
+            {% if failed.booking %}{# booking有错扔到这里来 #}
+            <div class="alert alert-danger" role="alert">
+                <p><span class="glyphicon glyphicon-warning-sign">&nbsp;</span><strong class="text-lg">预约失败</strong></p>
+                <p>你手慢, 已经没有书了╮(╯▽╰)╭<p>
+                <p id="booking-uncautht-error">{{ failed.exception }}</p>
+                {% if failed.exception %}
+                <p>请截取本页面为图片并联系管理员</p>
+                {% endif %}
+                <p></p>
+                <a href="failed.back_href" class="btn btn-danger btn-xs">返回</a>
+            </div>
+            {% endif %}
+            {% if failed.return %}{# return有错扔到这里来 #}
+            <div class="alert alert-danger" role="alert">
+                <p><span class="glyphicon glyphicon-warning-sign">&nbsp;</span><strong class="text-lg">归还失败</strong></p>
+                <p id="booking-uncautht-error">{{ failed.exception }}</p>
+                {% if failed.exception %}
+                <p>请截取本页面为图片并联系管理员</p>
+                {% endif %}
+                <p></p>
+                <a href="failed.back_href" class="btn btn-danger btn-xs">返回</a>
+            </div>
+            {% endif %}
+            {% if failed.borrowing %}{# borrowing有错扔到这里来 #}
+            <div class="alert alert-danger" role="alert">
+                <p><span class="glyphicon glyphicon-warning-sign">&nbsp;</span><strong class="text-lg">借书失败</strong></p>
+                <p id="booking-uncautht-error">{{ failed.exception }}</p>
+                {% if failed.exception %}
+                <p>请截取本页面为图片并联系管理员</p>
+                {% endif %}
+                <p></p>
+                <a href="failed.back_href" class="btn btn-danger btn-xs">返回</a>
+            </div>
+            {% endif %}
+            {% if dailed.admin %}{# admin有错扔到这里来 #}
+            <div class="alert alert-danger" role="alert">
+                <p><span class="glyphicon glyphicon-warning-sign">&nbsp;</span><strong class="text-lg">修改失败</strong></p>
+                <p id="booking-uncautht-error">{{ failed.exception }}</p>
+                {% if failed.exception %}
+                <p>请截取本页面为图片并联系管理员</p>
+                {% endif %}
+                <p></p>
+                <a href="failed.back_href" class="btn btn-danger btn-xs">返回</a>
+            </div>
+            {% endif %}
+            {% if dailed.insert %}{# insert有错扔到这里来 #}
+            <div class="alert alert-danger" role="alert">
+                <p><span class="glyphicon glyphicon-warning-sign">&nbsp;</span><strong class="text-lg">入库失败</strong></p>
+                <p id="booking-uncautht-error">{{ failed.exception }}</p>
+                {% if failed.exception %}
+                <p>请截取本页面为图片并联系管理员</p>
+                {% endif %}
+                <p></p>
+                <a href="failed.back_href" class="btn btn-danger btn-xs">返回</a>
+            </div>
+            {% endif %}
+
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+  </body>
+</html>
+
+        

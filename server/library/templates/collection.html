@@ -1,0 +1,41 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container table-responsive">
+            <table class="table table-hover" id="collection-table">
+                <thead>
+                    <tr>
+                        <th>ISBN<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>书籍<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>作者<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>出版社<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>定价<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>总册数<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>在馆册数<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>可预约<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>预约</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in book_list %}
+                    <tr {% if item.danger %}class="danger"{% else %}{% if item.warning %}class="warning"{% else %}{%if item.info %}class="info"{% endif %}{% endif %}{% endif %}>
+                        <td>{{item.isbn}}</td>
+                        <td>{{item.bname}}</td>
+                        <td>{{item.author}}</td>
+                        <td>{{item.publisher}}</td>
+                        <td>{{item.price}}元</td>
+                        <td>{{item.totalnum}}</td>
+                        <td>{{item.available}}</td>
+                        <td>{{item.bookable}}</td>
+                        <td><a class="btn btn-success btn-xs" href="{{item.href}}" {% ifequal item.available 0 %}disabled="disabled"{% endifequal %}>预约</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="{% static "js/collection.js" %}"></script>
+  </body>
+</html>

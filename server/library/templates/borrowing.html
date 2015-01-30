@@ -1,0 +1,80 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container">
+            <form class="form-horizontal" role="form" method="post" action="/BorrowAction/">
+                <div class="form-group">
+                    <label for="br-input-uid" class="col-sm-2 control-label">* 借书人学号:</label>
+                    <div class="col-sm-10 has-feedback">
+                        <input type="text" class="form-control" id="br-input-uid" name="br-input-uid"{% if borrower %} value="{{ borrower.account }}"{% endif %} placeholder="学号">
+                        <span id="feedback-uid" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-una" class="col-sm-2 control-label">* 借书人姓名:</label>
+                    <div class="col-sm-10 has-feedback">
+                        <input type="text" class="form-control" id="br-input-una" name="br-input-una"{% if borrower %} value="{{ borrower.name }}"{% endif %} placeholder="姓名">
+                        <span id="feedback-una" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-usp" class="col-sm-2 control-label">借书人短号:</label>
+                    <div class="col-sm-10 has-feedback">
+                        <input type="text" class="form-control" id="br-input-usp" name="br-input-usp"{% if borrower %} value="{{ borrower.spnumber }}"{% endif %} placeholder="短号">
+                        <span id="feedback-usp" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-ulp" class="col-sm-2 control-label">借书人长号:</label>
+                    <div class="col-sm-10 has-feedback">
+                        <input type="text" class="form-control" id="br-input-ulp" name="br-input-ulp"{% if borrower %} value="{{ borrower.lpnumber }}"{% endif %} placeholder="长号">
+                        <span id="feedback-ulp" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="br-input-isbn" class="col-sm-2 control-label">* ISBN:</label>
+                    <div class="col-sm-10 has-feedback">
+                        <input type="text" class="form-control" id="br-input-isbn" name="br-input-isbn"{% if booklist %} value="{{ booklist.0.isbn }}"{% endif %} placeholder="ISBN">
+                        <span id="feedback-isbn" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-bname" class="col-sm-2 control-label">书名:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="br-input-bname" name="br-input-bname">
+                            {% for item in booklist %}
+                            {% if forloop.first %}}<option value="{{ item.id }}" selected="selected">{{ item.bname }}</option>{% endif %}
+                            <option value="{{ item.id }}">{{ item.bname }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-bnum" class="col-sm-2 control-label">册数:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="br-input-bnum" name="br-input-bnum">
+                            {% for item in booklist.0.selectable_range %}
+                            {% if forloop.first %}}<option value="{{ forloop.counter }}" selected="selected">{{ forloop.counter }}</option>{% endif %}
+                            <option value="{{ item.id }}">{{ forloop.counter }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-bsubc" class="col-sm-2 control-label">图书状态:</label>
+                    <div class="col-sm-10 has-feedback">
+                        <textarea class="form-control" rows="3" id="br-input-bsubc" name="br-input-bsubc" placeholder="填写当前书本的损毁情况, 以作为归还时的损毁判定"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" id="submit" class="btn btn-primary btn-block">提  交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="{% static "js/borrowing.js" %}"></script>
+  </body>
+</html>
