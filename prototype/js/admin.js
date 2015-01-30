@@ -8,7 +8,7 @@ var afx_result;
         "watch_list":
             [
                 {"account":"0000000000","name":"干事姓名","lpnumber":"13700000000",
-                "spnumber":"600000","sum":"14","iswatching":"no"},    
+                "spnumber":"600000","watchsum":"14","iswatching":"no"},    
             ]
     }
     if(afx_debug==true){
@@ -56,7 +56,7 @@ var afx_result;
                 .append($("<td></td>").html(item["name"]))
                 .append($("<td></td>").html(item["lpnumber"]))
                 .append($("<td></td>").html(item["spnumber"]))
-                .append($("<td></td>").html(item["sum"]))
+                .append($("<td></td>").html(item["watchsum"]))
                 .append($("<td></td>").html(adding_htm))
                 .append($("<td></td>").append(
                     $("<span class='btn btn-danger btn-xs' title='删除是不可逆的'>删除</span>")
