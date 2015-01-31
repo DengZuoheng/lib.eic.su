@@ -1,0 +1,41 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>时间<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>姓名<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>书籍<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>学号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>手机长号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>手机短号<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>册数<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>是否受理<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                        <th>外借<span class="glyphicon glyphicon-sort-by-attributes"></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_list %}
+                    <tr {% if item.danger %}class="danger"{% else %}{% if item.info %}class="info"{% else %}{% if item.success %}class="success"{% endif %}{% endif %}{% endif %}>
+                        <td>{{ item.btime_str }}</td>
+                        <td>{{ item.borrower.name }}</td>
+                        <td>{{ item.book.bname }}</td>
+                        <td>{{ item.borrower.account }}</td>
+                        <td>{{ item.borrower.lpnumber }}</td>
+                        <td>{{ item.borrower.spnumber }}</td>
+                        <td>{{ item.bnum }}</td>
+                        <td><a class="btn btn-primary btn-xs" {% if item.hasaccepted %}disabled="disabled" {% endif %}href="{{ item.accept_href }}">受理</a>&nbsp;<a class="btn btn-danger btn-xs" {% if item.hasborrowed %}disabled="disabled" {% endif %}href="{{ item.cancel_href }}">取消</a></td>
+                        <td><a class="btn btn-info btn-xs" {% if not item.hasaccepted or item.hasborrowed %}disabled="disabled" {% endif %}href="{{ item.borrow_href }}">外借</a></td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+
+        </div>
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="{% static "js/order.js" %}"></script>
+  </body>
+</html>

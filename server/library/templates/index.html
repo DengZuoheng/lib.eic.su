@@ -1,0 +1,37 @@
+{% include 'includes/header.html' %}
+        <div  id="inform">
+            <div class="container bs-docs-container ">   
+                <div class="bs-callout bs-callout-danger hidden-xs">
+                    <h4>预约须知</h4>
+                    <p>预约后需24小时内联系值班干事安排借书事宜, 否则取消预约</p>
+                </div>
+                <div class="bs-callout bs-callout-warning hidden-xs" id="index-warning">
+                    <h4>开学期间院内图书馆开放安排</h4>
+                    <p>院图书馆开放时间为两个星期：周一到周五（9．15-9．19和9.29-10.3）晚上9：00-10：30；周末（9.20-9.21和10.4-10.5）早上9：00-12：00；下午2：00-5：00。其中9.15-9.21主要为大二大三的同学提供相应服务；9.29-10.5主要服务对象为大一新生。</p>
+                </div>
+                <div class="bs-callout bs-callout-info hidden-xs">
+                    <h4>图书借用须知</h4>
+                    <p>每人每次借书，教科书不得超过6本，其他类图书不得超过6本，总数不得超过10本。</p>
+                </div>
+                
+            </div>   
+        </div>
+        <div class="main lead">
+            
+            <from id="search-from" role="from" class="form-inline center">
+                <p class="lead center text-center">Just Search!</p>
+                <div class="form-group center has-feedback">
+                    <div class="input-group">
+                        <input type="search" class="form-control" id="search-key-word" name="search-key-word" placeholder="书名、作者、ISBN">
+                        <div id="submit" class="btn btn-large input-group-addon btn-primary  "><span class="glyphicon glyphicon-search"></span></div>
+                    </div>
+                </div>
+                
+            </from>
+        </div>
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="{% static "js/index.js" %}"></script>
+  </body>
+</html>
+        

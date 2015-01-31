@@ -1,0 +1,67 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container">
+            <div class="container">
+                <h1>LIB.EISC</h1>
+            </div>
+            <form role="form" class="form-inline" method="post" action="/SearchAction/">
+                <div class="form-group">
+                    <div class="input-group center">
+                        <input type="search" class="form-control" id="search-key-word" placeholder="书名、作者、ISBN">
+                        <div id="submit" class="btn btn-large input-group-addon btn-primary  "><span class="glyphicon glyphicon-search"></span></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="container" id="artcle">
+            <div class="container text-right">搜索结果{{ result.begin_idx }}-{{ result.end_idx }}&nbsp;共{{ result.total }}</div>
+        </div>
+        <div class="container" id="subject-list">
+            <ul class="list-unstyled">
+                {% for item in result.book_list %}
+                <li>
+                    <div class="row ">
+                        <div class="pic col-md-2 xs-left subject-warning">
+                            <a class="nbg" href="subject.html">
+                                <img src="{{ item.bcover_src }}" width="90">
+                            </a>
+                        </div>
+                        <div class="info col-md-8">
+                            <h2>
+                                <a href="{{ item.subject }}">
+                                    {{ item.bname }}
+                                </a>
+                            </h2>
+                            <div class="pub">{{ item.author }} / {{ item.translator }} / {{ item.publish }} / {{ item.byear }} / {{ item.price }}元</div>
+                            <div class="pub">ISBN:{ item.isbn }</div>
+                            <div class="pub">总册数:{{ item.totalnum }} / 在馆数:{{ item.available }} / 已预约:{{ item.booked }} / 剩余:{{ item.bookable }}</div>
+                            <div class="lead">
+                                <a class="btn btn-warning btn-xs" href="{{ item.href }}" {% if not item.bookable %}disabled="disbaled"{% endif %}>预约</div>
+                            </div>
+                        </div> 
+                    </div>
+                </li>
+                {% empty %}
+                <h2> 什么也找不到 -_-|||</h2>
+                {% endfor %}   
+            </ul>
+        </div>
+        {% if result.pagination %}
+        {# result.pagination是一个判断有没分页的布尔值, 当结果大于32个才分页 #}
+        <div class="container">
+            <nav>
+                <ul class="pagination">
+                    <li><a href="{{ result.prev_page }}" {% if result.is_first_page %}disabled="disabled"{% endif  %}>&laquo;</a></li>
+                    {% for page in result.page_href_list %}
+                    <li><a href="{{ page.href }}" {% ifequal forloop.counter result.current_page %}class="active"{ %endifequal% }>{{ forloop.counter }}</a></li>
+                    {% endfor %}
+                    <li><a href="{{ result.next_page }}" {% if result.is_last_page %}disabled="disabled"{% endif  %}>&raquo;</a></li>
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="{% static "js/index.js" %}"></script>
+  </body>
+</html>

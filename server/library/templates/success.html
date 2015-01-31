@@ -1,0 +1,50 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container">
+            <!--
+                这里的几个alert类的div用于指示操作成功, 需要分种类指示
+                不用于指示的加入.hidden类即可隐藏
+            -->
+            {% if success.booking %}
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">成功创建预约!</strong></p>
+                <p>请在24小时内联系值班干事<strong >&nbsp;{{ success.watcher.name }} / {{ success.watcher.lpnumber }} / {{ success.watcher.spnumber }}&nbsp;</strong>安排取书时间 </p>
+                <p><span class="text-danger">否则预约将被取消!<span></p>
+                <p></p>
+                <a href="{{ success.back_href }}" class="btn btn-success btn-xs">返回</a>
+            </div>
+            {% endif %}
+            {% if success.return %}
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">归还成功!</strong></p>
+                <p>如有疑问, 请联系系统管理员或开发人员, 并在<a href="{{ success.github }}" class="alert-link">github仓库</a>提出issue
+                <p></p>
+                <a href="{{ success.back_href }}" class="btn btn-success btn-xs">返回</a>&emsp;<a href="{{ success.histroy }}" class="btn btn-success btn-xs">查看{{ success.borrower }}的借书列表</a>
+            </div>
+            {% endif %}
+            {% if success.borrow %}
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">借书成功!</strong></p>
+                <p>如果一次借阅多本, 会在产生多条借书记录</p>
+                <p>如有疑问, 请联系系统管理员或开发人员, 并在<a href="{{ success.github }}" class="alert-link">github仓库</a>提出issue
+                <p></p>
+                <a href="{{ success.back_href }}" class="btn btn-success btn-xs">返回</a>&emsp;<a href="{{ success.histroy }}" class="btn btn-success btn-xs">查看{{ success.borrower }}的借书列表</a>
+            </div>
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">修改成功!</strong></p>
+                <p>当前值班干事为<strong>/ {{ success.watcher.lpnumber }} / {{ success.watcher.spnumber }}</strong></p>
+                <p>如有疑问, 请联系系统管理员或开发人员, 并在<a href="#" class="alert-link">github仓库</a>提出issue
+                <p></p>
+                <a href="{{ success.back_href }}" class="btn btn-success btn-xs">返回</a>
+            </div>
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">入库成功!</strong></p>
+                <p>没有发现异常!</p>
+                <p>如有疑问, 请联系系统管理员或开发人员, 并在<a href="{{ success.github }}" class="alert-link">github仓库</a>提出issue
+                <p></p>
+                <a href="{{ success.back_href }}" class="btn btn-success btn-xs">返回</a>
+            </div>
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+  </body>
+</html>

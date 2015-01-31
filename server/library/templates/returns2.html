@@ -1,0 +1,60 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container">
+            <form class="form-horizontal" role="form" method="post" action="Return2Action/{{ record.id }}">
+                <div class="form-group">
+                    <label for="rt-input-uid" class="col-sm-2 control-label">还书人学号:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{{ record.borrower.account }}</p>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label for="rt-input-uid" class="col-sm-2 control-label">还书人姓名:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{{ record.borrower.name }}</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="rt-input-isbn" class="col-sm-2 control-label">ISBN:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{{ record.book.isbn }}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="rt-input-isbn" class="col-sm-2 control-label">天数:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{{ record.duration }}天</p>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label for="rt-input-isbn" class="col-sm-2 control-label">书名:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{{ record.book.bname }}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-br-bname" class="col-sm-2 control-label">状态:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="br-input-status" name="br-input-status">
+                            <option value="normal" seleted="selected">正常</option>
+                            <option value="overdue">逾期</option>
+                            <option value="damaged">损坏</option>
+                            <option value="lost">遗失</option>  
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary btn-block">完 成</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        {# 这里确实没有额外的js #}
+  </body>
+</html>
+        
