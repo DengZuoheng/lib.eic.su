@@ -25,6 +25,20 @@ class Book(models.Model):
     publisher = models.CharField(max_length=30,blank=True)
     totalnum = models.IntegerField()#总册数
     available = models.IntegerField()#在馆数
+    def __unicode__(self):
+        return {
+            "id":self.id,
+            "isbn":self.bname,
+            "author":self.author,
+            "translator":self.translator,
+            "byear":self.byear,
+            "pagination":self.pagination,
+            "price":self.price,
+            "bcover":self.bcover,
+            "publisher":self.publisher,
+            "totalnum":self.totalnum,
+            "available":self.available,
+        }
     #如果在馆数少于5记为危险
     def danger(self):
         if(0<int(self.available)<5):
@@ -47,12 +61,18 @@ class Book(models.Model):
     #已经预约的数量
     def booked(self):
         #TODO:这里性能好像很不科学
-        return len(BookingRecord.objects.all().filter(
-                hasborrowed=False,bid=self.id))
+        try:
+            #TODO : 这里貌似有bug
+            return len(BookingRecord.objects.all().filter(
+                hasborrowed=False, book_id=self.id))
+        except Exception as err:
+
+            return 0
 
     #可预约等于在馆数减去预约但未外借的数量
     def bookable(self):
         return self.available - self.booked()
+
 
     #预约地址
     def href(self):
@@ -86,6 +106,15 @@ class AbstractUser(models.Model):
 """
 class Borrower(AbstractUser):
     credit=models.IntegerField()
+    def __unicode__(self):
+        return {
+            "id":self.id,
+            "account":self.account,
+            "name":self.name,
+            "lpnumber":self.lpnumber,
+            "spnumber":self.spnumber,
+            "credit":self.credit,
+        }
 
 """
 值班人员表
@@ -94,6 +123,18 @@ class Watcher(models.Model):
     password = models.CharField(max_length=128)
     iswatching = models.BooleanField(default=False)
     watchsum = models.IntegerField()
+    #TODO:这里的watchsum不知道什么自增
+    def __unicode__(self):
+        return {
+            "id":self.id,
+            "account":self.account,
+            "name":self.name,
+            "lpnumber":self.lpnumber,
+            "spnumber":self.spnumber,
+            "password":self.password,
+            "iswatching":self.iswatching,
+            "watchsum":self.watchsum,
+        }
 
 """
 外借记录表
@@ -102,13 +143,26 @@ class BorrowRecord(models.Model):
     book = models.ForeignKey(Book)
     borrower = models.ForeignKey(Borrower,related_name='+')
     btime = models.DateTimeField() #借书时间
-    rtime = models.DateTimeField() #还书时间
-    bsubc = models.TextField() #借书时书的状态, 用text描述
+    rtime = models.DateTimeField(blank=True) #还书时间
+    bsubc = models.TextField(blank=True) #借书时书的状态, 用text描述
     #还书时的状态{正常:normal,预期:overdue,损坏:damaged,遗失:lost}
-    rsubc = models.CharField(max_length=12) 
+    rsubc = models.CharField(max_length=12,blank=True) 
     hasreturn = models.BooleanField(default=False)
-    boperator = models.ForeignKey(Watcher,related_name='+')
-    roperator = models.ForeignKey(Watcher,related_name='+')
+    boperator = models.ForeignKey(Watcher,related_name='+',on_delete=models.DO_NOTHING)
+    roperator = models.ForeignKey(Watcher,related_name='+',on_delete=models.DO_NOTHING,blank=True)
+
+    def __unicode__(self):
+        return {
+            "id":self.id,
+            "book_id":self.book_id,
+            "borrower_id":self.borrower_id,
+            "btime":self.bitme,
+            "rtime":self.rtime,
+            "bsubc":self.bsubc,
+            "rsubc":self.rsubc,
+            "boperator_id":self.boperator_id,
+            "roperator":self.roperator_id,
+        }
     #借用时长
     def duration(self):
         today = datetime.date.today()
@@ -138,12 +192,23 @@ class BorrowRecord(models.Model):
 预约记录表
 """
 class BookingRecord(models.Model):
-    book = models.ForeignKey(Book)
-    borrower = models.ForeignKey(Borrower)
+    book = models.ForeignKey(Book,on_delete=models.CASCADE)
+    borrower = models.ForeignKey(Borrower,on_delete=models.DO_NOTHING)
     bnum = models.IntegerField()#预约的数量
     btime = models.DateTimeField()#产生预约的时间
     hasaccepted = models.BooleanField(default=False)
     hasborrowed = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return {
+            "id":self.id,
+            "book_id":self.book_id,
+            "borrower_id":self.borrower_id,
+            "bnum":self.bnum,
+            "btime":self.btime,
+            "hasaccepted":self.hasaccepted,
+            "hasborrowed":self.hasborrowed,
+        }
     def btime_str(self):
         return self.btime.strftime("%y/%m/%d %H:%M")
     def accept_href(self):
@@ -152,6 +217,7 @@ class BookingRecord(models.Model):
         return "/cancel/"+str(self.id)
     def borrow_herf(self):
         return "/borrowing/"+str(self.id)
+
 
 
 

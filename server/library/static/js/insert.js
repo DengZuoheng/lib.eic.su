@@ -20,25 +20,44 @@ var afx_attr=new Array("bcover","bname","author","translator",
         "bname":"面向对象软件工程","author":"[美]佚名","translator":"张三","flag":"true",
     "publisher":"高等教育出版社","byear":"2012.9","pagination":"1024","price":"36.00",
     "totalnum":"24"}
-    $("#br-input-isbn").keypress(on_isbn_change);
+    $("#br-input-isbn")[0].oninput=on_isbn_change;
     
     function on_isbn_change(){
         //isbn有12位的时候就ajax
-        if($("#br-input-isbn").val().length==12){
+        if($("#br-input-isbn").val().length==13){
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
             console.log("G");
             $("#feedback-isbn").attr(
                 "class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
             isbn=$("#br-input-isbn").val();
-            if(afx_debug==false&&isIsbn(isbn)){
+            console.log(isbn);
+            if(afx_debug==false/*&&isIsbn(isbn)*/){
+                console.log("FFF");
                 $.ajax({
-                    url:URL+"/RequestAjaxInsertBookInfo/",
+                    url:"http://127.0.0.1:8000/RequestAjaxInsertBookInfo/",
                     data:{"isbn":isbn},
-                    async:true,
                     dataType:"json",
                     type:"POST",
                     success:function(result){
+                        console.log(result);
                         afx_result=result;
                         fill_table(afx_result);
+                    },
+                    failure: function(result){
+                        alert("faild");
                     }
                 });
             }else if(afx_debug==true){

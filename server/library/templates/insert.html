@@ -1,7 +1,8 @@
 {% include 'includes/header.html' %}
         <div class="lead"></div>
         <div class="container">
-            <form class="form-horizontal" role="form">
+            <form class="form-horizontal" role="form" method="post" action="/InsertAction/">
+                {% csrf_token %}
                 <div class="form-group has-feedback">
                     <label for="br-input-isbn" class="col-sm-2 control-label">* ISBN:</label>
                     <div class="col-sm-10">
@@ -69,8 +70,7 @@
                 <div class="form-group has-feedback">
                     <label for="br-input-totalnum" class="col-sm-2 control-label">现有册数:</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static" id="br-input-totalnum-static">24</p>
-                        <input type="hidden" name="br-input-totalnum" />
+                        <p class="form-control-static" id="br-input-totalnum-static">0</p>
                     </div>
                 </div>
                  <div class="form-group has-feedback">
@@ -92,6 +92,10 @@
 {% include 'includes/footer.html' %}
 {% load staticfiles %}
         <script src="{% static "js/insert.js" %}"></script>
+        <script type="text/javascript">
+            var APP = "__APP__";
+            var URL = "__URL__";
+        </script>      
   </body>
 </html>
         

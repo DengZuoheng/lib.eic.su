@@ -30,6 +30,8 @@
                 <p></p>
                 <a href="{{ success.back_href }}" class="btn btn-success btn-xs">返回</a>&emsp;<a href="{{ success.histroy }}" class="btn btn-success btn-xs">查看{{ success.borrower }}的借书列表</a>
             </div>
+            {% endif %}
+            {% if success.admin %}
             <div class="alert alert-success" role="alert">
                 <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">修改成功!</strong></p>
                 <p>当前值班干事为<strong>/ {{ success.watcher.lpnumber }} / {{ success.watcher.spnumber }}</strong></p>
@@ -37,6 +39,8 @@
                 <p></p>
                 <a href="{{ success.back_href }}" class="btn btn-success btn-xs">返回</a>
             </div>
+            {% endif %}
+            {% if success.insert %}
             <div class="alert alert-success" role="alert">
                 <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">入库成功!</strong></p>
                 <p>没有发现异常!</p>
@@ -44,6 +48,7 @@
                 <p></p>
                 <a href="{{ success.back_href }}" class="btn btn-success btn-xs">返回</a>
             </div>
+            {% endif %}
 {% include 'includes/footer.html' %}
 {% load staticfiles %}
   </body>
