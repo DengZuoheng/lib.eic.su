@@ -12,17 +12,34 @@ var afx_ajaxed=false;
     "bookednum":9, "badcredit":"false"};
     //bookednum表示这个人已经预约的书数,总数大于8就不允许了
     //badcredit表示这个人信用度已经没有了, true表示不能借书也不能预约
-    $("#br-input-uid").change(on_account_change);
-    $("#br-input-uid").keypress(on_account_change);
+    $("#br-input-uid")[0].oninput=on_account_change;
+
     function on_account_change()
     {
+        console.log("FFFFF");
         //先发生keypress事件, 然后才输入, 也就是说
-        //学号输入了前9位就应该ajax请求了
-        if($("#br-input-uid").val().length==9){
+
+        if($("#br-input-uid").val().length==10){
+            //django需要带上csrftoken
+
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
             account=$("#br-input-uid").val();
             if(afx_debug==false&&afx_ajaxed==false&&isAccount(account)){
                 $.ajax({
-                    url:URL+"/RequestAjaxPerInfo",
+                    url:"http://127.0.0.1:8000/RequestAjaxPerInfo/",
                     data:{"account":account},
                     async:true,
                     dataType:"json",
@@ -31,6 +48,7 @@ var afx_ajaxed=false;
                         afx_result=result;
                         fill_table(afx_result);
                         afx_ajaxed=true;//如果已经ajax过了就不要重复ajax了
+
                     }
                 });
             }else{
@@ -42,6 +60,16 @@ var afx_ajaxed=false;
     }
     
     function fill_table(obj){
+
+        console.log(obj);
+        //如果没有找到这个人
+        if(obj["flag"]=="false"){
+            $("#br-input-uid,#br-input-una,#br-input-usp,#br-input-ulp")
+                .attr("placeholder","数据库中没有找到缓存信息,请自行填写")
+                .parent().addClass("has-warning");
+            return false;
+        }
+
         //如果已经是黑名单了, 就把所有东西红掉
         if(obj["badcredit"]=="true"){
             $("#br-input-uid,#br-input-una,#br-input-usp,#br-input-ulp,#br-input-br-bnum")
@@ -51,13 +79,7 @@ var afx_ajaxed=false;
             $("#submit").addClass("btn-danger disabled");
             return false;
         }
-        //如果没有找到这个人
-        if(obj["flag"]=="false"){
-            $("#br-input-uid,#br-input-una,#br-input-usp,#br-input-ulp")
-                .attr("placeholder","数据库中没有找到缓存信息,请自行填写")
-                .parent().addClass("has-warning");
-            return false;
-        }
+        
         //如果找到了这个人
         if(afx_flag_name_filled==false){
             $("#br-input-una").val(obj["name"]);
@@ -69,8 +91,13 @@ var afx_ajaxed=false;
             $("#br-input-usp").val(obj["spnumber"]);
         }
         //限制借书和预约数量
+        book_bookable=$("#br-input-bnum option:last").html();
         $("#br-input-bnum").html("");
-        for(var i=0;i<afx_max_booknum - afx_result["booknum"];++i){
+       
+        console.log(book_bookable);
+        user_bookable=afx_max_booknum - afx_result["bookednum"];
+        fin_bookable=min(book_bookable,user_bookable);
+        for(var i=0;i<fin_bookable;++i){
             $("<option></option>")
                 .attr("value",i+1).html(i+1)
                 .appendTo($("#br-input-bnum"));
@@ -113,7 +140,7 @@ var afx_ajaxed=false;
                 .parent().addClass("has-error");
             return false;
         }
-        
+        console.log("FFFFF");
         return true;
     });
                   

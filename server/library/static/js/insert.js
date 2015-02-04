@@ -25,6 +25,7 @@ var afx_attr=new Array("bcover","bname","author","translator",
     function on_isbn_change(){
         //isbn有12位的时候就ajax
         if($("#br-input-isbn").val().length==13){
+            //django需要带上csrftoken
             var csrftoken = $.cookie('csrftoken');
             function csrfSafeMethod(method) {
                 // these HTTP methods do not require CSRF protection
@@ -39,7 +40,6 @@ var afx_attr=new Array("bcover","bname","author","translator",
                 }
             });
 
-            console.log("G");
             $("#feedback-isbn").attr(
                 "class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
             isbn=$("#br-input-isbn").val();

@@ -22,10 +22,11 @@ urlpatterns = patterns('',
     url(r'^history/',views.history),
     url(r'^index/',views.index),
     url(r'^insert/',views.insert),
+    url(r'^booking/bid/(\d+)/uid/(\d+)/err/(\d+)$',views.booking),
 
     #表单响应
     url(r'^SearchAction/',actions.search_action),
-    url(r'^BookingAction/',actions.booking_action),
+    url(r'^BookingAction/(\d+)$',actions.booking_action),
     url(r'^BorrowAction/',actions.borrow_action),
     url(r'^InsertAction/',actions.insert_action),
     url(r'^ReturnAction/',actions.return_action),

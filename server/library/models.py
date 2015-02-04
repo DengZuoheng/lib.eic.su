@@ -7,6 +7,7 @@ dengzuoheng@gmail.com
 """
 from django.db import models
 import datetime
+import json
 
 # Create your models here.
 #blank=True表示该属性可以为NULL
@@ -63,8 +64,8 @@ class Book(models.Model):
         #TODO:这里性能好像很不科学
         try:
             #TODO : 这里貌似有bug
-            return len(BookingRecord.objects.all().filter(
-                hasborrowed=False, book_id=self.id))
+            return BookingRecord.objects.all().filter(
+                hasborrowed=False, book_id=self.id).count()
         except Exception as err:
 
             return 0
@@ -108,13 +109,17 @@ class Borrower(AbstractUser):
     credit=models.IntegerField()
     def __unicode__(self):
         return {
-            "id":self.id,
             "account":self.account,
             "name":self.name,
             "lpnumber":self.lpnumber,
             "spnumber":self.spnumber,
             "credit":self.credit,
         }
+    def badcredit(self):
+        if(self.credit<=0):
+            return True
+        else:
+            return False
 
 """
 值班人员表
@@ -126,7 +131,6 @@ class Watcher(models.Model):
     #TODO:这里的watchsum不知道什么自增
     def __unicode__(self):
         return {
-            "id":self.id,
             "account":self.account,
             "name":self.name,
             "lpnumber":self.lpnumber,
@@ -192,10 +196,10 @@ class BorrowRecord(models.Model):
 预约记录表
 """
 class BookingRecord(models.Model):
-    book = models.ForeignKey(Book,on_delete=models.CASCADE)
-    borrower = models.ForeignKey(Borrower,on_delete=models.DO_NOTHING)
+    book = models.ForeignKey(Book,on_delete=models.CASCADE,default=None)
+    borrower = models.ForeignKey(Borrower,on_delete=models.DO_NOTHING,default=None)
     bnum = models.IntegerField()#预约的数量
-    btime = models.DateTimeField()#产生预约的时间
+    btime = models.DateTimeField(blank=True,default=None)#产生预约的时间
     hasaccepted = models.BooleanField(default=False)
     hasborrowed = models.BooleanField(default=False)
 
@@ -218,7 +222,18 @@ class BookingRecord(models.Model):
     def borrow_herf(self):
         return "/borrowing/"+str(self.id)
 
+"""
+错误记录表
+"""
+class Error(models.Model):
+    what=model.TextField(blank=True)
 
+    def json(self):
+        try:
+            ret=json.load(self.what)
+            return ret
+        except:
+            return {'what':self.what}
 
 
 

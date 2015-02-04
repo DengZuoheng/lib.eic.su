@@ -9,12 +9,40 @@ from django.http import HttpResponse
 import json
 import service
 from models import Book
+from models import Borrower
+from models import BookingRecord
 
 def on_admin_request(request):
     pass
 
 def on_perinfo_request(request):
-    pass
+    req_account = request.POST['account']
+    try:
+        
+        borrower=Borrower.objects.get(account=req_account)
+        var = {
+            'flag':'true',
+            'account':borrower.account,
+            'name':borrower.name,
+            'lpnumber':borrower.lpnumber,
+            'spnumber':borrower.spnumber,
+        }
+
+        __bookednum = BookingRecord.objects.filter(
+            borrower_id=borrower.account,
+            hasaccepted=True,
+            hasborrowed=False).count()
+        var['bookednum']=__bookednum
+
+        if(borrower.badcredit()):
+            var['badcredit']='true'
+        else:
+            var['badcredit']='false'
+
+        return HttpResponse(json.dumps(var))  
+
+    except Borrower.DoesNotExist as e:
+        return HttpResponse(json.dumps({'flag':'false'}))  
 
 def on_bookinfo_request(request):
     pass
@@ -38,7 +66,7 @@ def on_insert_bookinfo_request(request):
             'totalnum':book.totalnum,
             'flag':'true'
         }
-    except Book.DoesNotExist, e:
+    except Book.DoesNotExist as e:
 
         var = service.download_book_info(isbn=req_isbn)
         if(var['flag']!='flase'):
