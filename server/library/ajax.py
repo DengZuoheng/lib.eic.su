@@ -45,7 +45,24 @@ def on_perinfo_request(request):
         return HttpResponse(json.dumps({'flag':'false'}))  
 
 def on_bookinfo_request(request):
-    pass
+    req_isbn=request.POST['isbn']
+    var={}
+    
+    try:
+        book_list=list(Book.objects.filter(isbn=req_isbn))
+
+        var['books']=[]
+        for item in book_list:
+            var['books'].append({
+                'bid':item.id,
+                'bname':item.bname,
+                'binventory':item.available,
+                })
+
+        var['flag']='true'
+        return HttpResponse(json.dumps(var))
+    except Exception as e:
+        return HttpResponse(json.dumps({'flag':'false'}))  
 
 def on_insert_bookinfo_request(request):
     req_isbn=request.POST['isbn']

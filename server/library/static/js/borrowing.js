@@ -24,23 +24,38 @@ var afx_book_ajaxed=false;
     //bname是书名, binventory是库存量
     
     //$("#br-input-uid").change(on_account_change);
-    $("#br-input-uid").keypress(on_account_change);
+    $("#br-input-uid")[0].oninput=on_account_change;
     //$("#br-input-isbn").change(on_isbn_change);
-    $("#br-input-isbn").keypress(on_isbn_change);
+    $("#br-input-isbn")[0].oninput=on_isbn_change;
     function on_account_change(){
         //先发生keypress事件, 然后才输入, 也就是说
         //学号输入了前9位就应该ajax请求了
         
-        if($("#br-input-uid").val().length==9){
+        if($("#br-input-uid").val().length==10){
             console.log("F");
             //加载loading动画
             $("#feedback-uid").attr(
                 "class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
-                    
+             
+             //django需要带上csrftoken
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+       
             account=$("#br-input-uid").val();
             if(afx_debug==false&&isAccount(account)){
                 $.ajax({
-                    url:URL+"/RequestAjaxPerInfo/",
+                    url:"http://127.0.0.1:8000/RequestAjaxPerInfo/",
                     data:{"account":account},
                     async:true,
                     dataType:"json",
@@ -193,14 +208,29 @@ var afx_book_ajaxed=false;
     
     function on_isbn_change(){
         //isbn输入了前12位就应该ajax请求了
-        if($("#br-input-isbn").val().length==12){
+        if($("#br-input-isbn").val().length==13){
             //加载loading动画
             $("#feedback-isbn").attr("class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
-           
+            //django需要带上csrftoken
+
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
             isbn=$("#br-input-isbn").val();
-            if(afx_debug==false&&afx_ajaxed==false&&isIsbn(isbn)){
+            if(afx_debug==false&&isIsbn(isbn)){
                 $.ajax({
-                    url:URL+"RequestAjaxBookInfo/",
+                    url:"http://127.0.0.1:8000/RequestAjaxBookInfo/",
                     data:{"isbn":isbn},
                     async:true,
                     dataType:"json",
