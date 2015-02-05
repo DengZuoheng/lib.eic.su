@@ -5,11 +5,9 @@
                 {% csrf_token %}
                 {% if error_item %}
                 <div class="form-group">
-                    <label class="text-danger col-sm-2 control-label">* 提交失败</label>
+                    <label class="text-danger col-sm-2 control-label">* 异常</label>
                     <div class="col-sm-10 form-control-static" role="alert">
-                        <p class="text-danger">
-                            <strong>{{ error_item.what }}</strong>
-                        </p>
+                        <strong class="text-danger">{{ error_item.what }}</strong>
                     </div>
                 </div>
                 

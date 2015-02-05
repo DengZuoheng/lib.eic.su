@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django import template
 from django.shortcuts import render_to_response
 from library.models import Book
+from library.models import Borrower
+from library.models import Error
 from django.http import HttpResponse
 from django.template import RequestContext
 
@@ -23,19 +25,24 @@ def booking(request,book_id,user_account,error_id):
     booking_item=None
     user_item=None
     error_item=None
-    if('0'!=user_account):
+    
+    #user_account和error_id都可以是0, 但是book_id必须有效
+
+    if(u'0'!=user_account):
         try:
-            user_item=Borrower.objects.get(account=user_account)
-        except:
+            user_item=Borrower.objects.get(account=user_account)     
+        except Exception as err:
             user_item=None
+
     if(0!=int(error_id)):
-        try:
-            error_item=Error.object.get(id=error)
-        except:
+        try: 
+            error_item=Error.objects.get(id=error_id)
+        except Exception as err:
             errot_item=None
     try:
         booking_item=Book.objects.get(id=book_id)
     except:
+        error_item={'what':'书籍不存在'}
         booking_item=None
 
     context={

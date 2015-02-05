@@ -226,7 +226,7 @@ class BookingRecord(models.Model):
 错误记录表
 """
 class Error(models.Model):
-    what=model.TextField(blank=True)
+    what=models.TextField(blank=True)
 
     def json(self):
         try:

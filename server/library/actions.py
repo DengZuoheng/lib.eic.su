@@ -23,6 +23,7 @@ def booking_action(request,book_id):
     inputed_lpnumber=request.POST['br-input-ulp']
     inputed_bnum=int(request.POST['br-input-bnum'])
 
+
     try:
         borrower=Borrower.objects.get(account=inputed_account)
     except Borrower.DoesNotExist:
@@ -83,8 +84,8 @@ def booking_action(request,book_id):
             
     #有错就返回表单页面
     except Exception as e:
-        
-        error=Error(str(e))
+       
+        error=Error(what=str(e))
         error.save()
         return HttpResponseRedirect(reverse('library.views.booking', args=[book_id,inputed_account,error.id]))
         
