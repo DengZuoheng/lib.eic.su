@@ -215,12 +215,31 @@ class BookingRecord(models.Model):
         }
     def btime_str(self):
         return self.btime.strftime("%y/%m/%d %H:%M")
+
     def accept_href(self):
-        return "/accept/"+str(self.id)
+        return "/accept/bid/"+str(self.book_id)+"/uid/"+str(self.borrower_id)+"/brid/"+str(self.id)
+
     def cancel_href(self):
-        return "/cancel/"+str(self.id)
+        return "/cancel/bid/"+str(self.book_id)+"/uid/"+str(self.borrower_id)+"/brid/"+str(self.id)
+
     def borrow_herf(self):
         return "/borrowing/"+str(self.id)
+
+    def danger(self):
+        if(self.hasaccepted==False and self.hasborrowed==False):
+            return True
+        else :
+            return False
+    def info(self):
+        if(self.hasaccepted==True and self.hasborrowed==False):
+            return True
+        else:
+            return False
+    def success(self):
+        if(self.hasaccepted==True and self.hasborrowed==True):
+            return True
+        else:
+            return False
 
 """
 错误记录表
