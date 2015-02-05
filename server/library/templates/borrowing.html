@@ -2,31 +2,44 @@
         <div class="lead"></div>
         <div class="container">
             <form class="form-horizontal" role="form" method="post" action="/BorrowAction/">
+                {% csrf_token %}
+                {% if booking_record %}
+                <input type="hidden" name="booking-record-token" value="{{ booking_record.id }}" />
+                {% endif %}
+                {% if error_item %}
+                <div class="form-group">
+                    <label class="text-danger col-sm-2 control-label">* 异常</label>
+                    <div class="col-sm-10 form-control-static" role="alert">
+                        <strong class="text-danger">{{ error_item.what }}</strong>
+                    </div>
+                </div>
+                
+                {% endif %}
                 <div class="form-group">
                     <label for="br-input-uid" class="col-sm-2 control-label">* 借书人学号:</label>
                     <div class="col-sm-10 has-feedback">
-                        <input type="text" class="form-control" id="br-input-uid" name="br-input-uid"{% if borrower %} value="{{ borrower.account }}"{% endif %} placeholder="学号">
+                        <input type="text" class="form-control" id="br-input-uid" name="br-input-uid" placeholder="学号" {% if user_item %}value="{{ user_item.account }}"{% endif %}>
                         <span id="feedback-uid" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="br-input-una" class="col-sm-2 control-label">* 借书人姓名:</label>
                     <div class="col-sm-10 has-feedback">
-                        <input type="text" class="form-control" id="br-input-una" name="br-input-una"{% if borrower %} value="{{ borrower.name }}"{% endif %} placeholder="姓名">
+                        <input type="text" class="form-control" id="br-input-una" name="br-input-una" placeholder="姓名" {% if user_item %}value="{{ user_item.name }}"{% endif %}>
                         <span id="feedback-una" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="br-input-usp" class="col-sm-2 control-label">借书人短号:</label>
                     <div class="col-sm-10 has-feedback">
-                        <input type="text" class="form-control" id="br-input-usp" name="br-input-usp"{% if borrower %} value="{{ borrower.spnumber }}"{% endif %} placeholder="短号">
+                        <input type="text" class="form-control" id="br-input-usp" name="br-input-usp" placeholder="短号" {% if user_item %}value="{{ user_item.spnumber }}"{% endif %}>
                         <span id="feedback-usp" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="br-input-ulp" class="col-sm-2 control-label">借书人长号:</label>
                     <div class="col-sm-10 has-feedback">
-                        <input type="text" class="form-control" id="br-input-ulp" name="br-input-ulp"{% if borrower %} value="{{ borrower.lpnumber }}"{% endif %} placeholder="长号">
+                        <input type="text" class="form-control" id="br-input-ulp" name="br-input-ulp" placeholder="长号" {% if user_item %}value="{{ user_item.lpnumber }}"{% endif %}>
                         <span id="feedback-ulp" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>
@@ -43,8 +56,8 @@
                     <div class="col-sm-10">
                         <select class="form-control" id="br-input-bname" name="br-input-bname">
                             {% for item in booklist %}
-                            {% if forloop.first %}}<option value="{{ item.id }}" selected="selected">{{ item.bname }}</option>{% endif %}
-                            <option value="{{ item.id }}">{{ item.bname }}</option>
+                            <option value="{{ item.id }}"{% if forloop.first %} selected="selected"{% endif %}>{{ item.bname }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -52,16 +65,22 @@
                     <label for="br-input-bnum" class="col-sm-2 control-label">册数:</label>
                     <div class="col-sm-10">
                         <select class="form-control" id="br-input-bnum" name="br-input-bnum">
+                            {% if booking_record %}
+                            {% for item in booking_record.selectable_range %}
+                            <option value="{{ forloop.counter }}"{% if forloop.first %} selected="selected"{% endif %}>{{ forloop.counter }}</option>
+                            {% endfor %}
+                            {% else %}
                             {% for item in booklist.0.selectable_range %}
-                            {% if forloop.first %}}<option value="{{ forloop.counter }}" selected="selected">{{ forloop.counter }}</option>{% endif %}
-                            <option value="{{ item.id }}">{{ forloop.counter }}</option>
+                            <option value="{{ forloop.counter }}"{% if forloop.last %} selected="selected"{% endif %}>{{ forloop.counter }}</option>
+                            {% endfor %}
+                            {% endif %}
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="br-input-bsubc" class="col-sm-2 control-label">图书状态:</label>
                     <div class="col-sm-10 has-feedback">
-                        <textarea class="form-control" rows="3" id="br-input-bsubc" name="br-input-bsubc" placeholder="填写当前书本的损毁情况, 以作为归还时的损毁判定"></textarea>
+                        <textarea class="form-control" rows="3" id="br-input-bsubc" name="br-input-bsubc" placeholder="填写当前书本的损毁情况, 以作为归还时的损毁判定">{% if inputed_bsubc %}{{ inputed_bsubc }}{% endif %}</textarea>
                     </div>
                 </div>
                 

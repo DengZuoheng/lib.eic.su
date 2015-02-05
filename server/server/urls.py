@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     #通常响应
     url(r'^collection/',views.collection),
     url(r'^order/bid/(\d+)/uid/(\d+)/err/(\d+)$',views.order),
-    url(r'^borrowing/',views.borrowing),
+    url(r'^borrowing/bid/(\d+)/uid/(\d+)/brid/(\d+)/err/(\d+)$',views.borrowing),
     url(r'^subject/',views.subject),
     url(r'^history/',views.history),
     url(r'^index/',views.index),

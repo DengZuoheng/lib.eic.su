@@ -67,8 +67,7 @@ def on_insert_bookinfo_request(request):
             'flag':'true'
         }
     except Book.DoesNotExist as e:
-
-        var = service.download_book_info(isbn=req_isbn)
+        var = service.download_book_info(isbn=req_isbn)        
         if(var['flag']!='flase'):
             var['totalnum']=0
 

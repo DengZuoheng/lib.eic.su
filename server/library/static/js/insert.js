@@ -45,7 +45,6 @@ var afx_attr=new Array("bcover","bname","author","translator",
             isbn=$("#br-input-isbn").val();
             console.log(isbn);
             if(afx_debug==false/*&&isIsbn(isbn)*/){
-                console.log("FFF");
                 $.ajax({
                     url:"http://127.0.0.1:8000/RequestAjaxInsertBookInfo/",
                     data:{"isbn":isbn},
@@ -71,17 +70,16 @@ var afx_attr=new Array("bcover","bname","author","translator",
     //自动填写书籍信息
     function fill_table(obj){
         $("#feedback-isbn").attr("class","glyphicon form-control-feedback");
-        
         //如果书没找到
-        if(obj["falg"]=="false"){
+        if(obj["flag"]=="false"){
             $("#feedback-isbn").addClass("glyphicon-warning");
             $("#br-input-isbn")
                 .attr("placeholder","ISBN找不到, 注意是否正确")
                 .parent().addClass("has-warning");
             $("#br-input-totalnum-static").html("0");
+
             return false;
         }
-        
         //如果找到书了
         $("#feedback-isbn").addClass("glyphicon-ok");
         $("#br-input-isbn").parent().addClass("has-success");

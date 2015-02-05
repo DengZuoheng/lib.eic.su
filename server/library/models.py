@@ -67,7 +67,6 @@ class Book(models.Model):
             return BookingRecord.objects.all().filter(
                 hasborrowed=False, book_id=self.id).count()
         except Exception as err:
-
             return 0
 
     #可预约等于在馆数减去预约但未外借的数量
@@ -77,7 +76,7 @@ class Book(models.Model):
 
     #预约地址
     def href(self):
-        return "/booking/"+str(self.id)
+        return "/booking/bid/"+str(self.id)+"/uid/0/err/0"
 
     #详情地址
     def subject(self):
@@ -152,7 +151,7 @@ class BorrowRecord(models.Model):
     #还书时的状态{正常:normal,预期:overdue,损坏:damaged,遗失:lost}
     rsubc = models.CharField(max_length=12,blank=True) 
     hasreturn = models.BooleanField(default=False)
-    boperator = models.ForeignKey(Watcher,related_name='+',on_delete=models.DO_NOTHING)
+    boperator = models.ForeignKey(Watcher,related_name='+',on_delete=models.DO_NOTHING,blank=True)
     roperator = models.ForeignKey(Watcher,related_name='+',on_delete=models.DO_NOTHING,blank=True)
 
     def __unicode__(self):
@@ -192,6 +191,7 @@ class BorrowRecord(models.Model):
     def return_href(self):
         return "/return2/"+str(self.id)
 
+
 """
 预约记录表
 """
@@ -222,8 +222,8 @@ class BookingRecord(models.Model):
     def cancel_href(self):
         return "/cancel/bid/"+str(self.book_id)+"/uid/"+str(self.borrower_id)+"/brid/"+str(self.id)
 
-    def borrow_herf(self):
-        return "/borrowing/"+str(self.id)
+    def borrow_href(self):
+        return "/borrowing/bid/"+str(self.book_id)+"/uid/"+str(self.borrower_id)+"/brid/"+str(self.id)+"/err/0"
 
     def danger(self):
         if(self.hasaccepted==False and self.hasborrowed==False):
@@ -240,6 +240,8 @@ class BookingRecord(models.Model):
             return True
         else:
             return False
+    def selectable_range(self):
+        return range(self.bnum)
 
 """
 错误记录表
@@ -249,10 +251,16 @@ class Error(models.Model):
 
     def json(self):
         try:
-            ret=json.load(self.what)
+            ret=json.loads(self.what)
             return ret
-        except:
+        except Exception as e:
+            print("]]]]]]]]]]]]]]]]]]]]]]]]]]]"+str(e))
             return {'what':self.what}
+    def __unicode__(self):
+        return {
+            'id':self.id,
+            'what':self.what,
+        }
 
 
 

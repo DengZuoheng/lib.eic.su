@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+import json
 
 # Create your views here.
 def collection(request):
@@ -38,14 +39,66 @@ def order(reuqest,book_id,user_account,error_id):
     
     return render_to_response('order.html',{'order_list':order_list,'error_item':error_item})
 
-def borrowing(reuqesst):
-    pass
+def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_id='0'):
+    booklist=[]
+    user_item=None
+    inputed_bsubc=None
+    error_item=None
+    booking_record=None
+    #如果有书籍id,就填充书籍信息
+    if(0!=int(book_id)):
+        try:
+            booklist=[Book.objects.get(id=book_id)]
+        except:
+            pass
+    #如果有用户id,就填充用户信息
+    if(u'0'!=user_account):
+        try:
+            user_item=Borrower.objects.get(account=user_account)
+        except:
+            pass
+    #如果有预约id, 就据此填充书籍和用户信息
+    if(0!=int(booking_record_id)):
+        try:
+
+            booking_record=BookingRecord.objects.get(id=booking_record_id)
+            booklist=[booking_record.book]
+            user_item=booking_record.borrower
+        except Exception as e:
+            print(str(e))
+    #如果有error, 就附带错误信息
+    
+    if(0!=int(error_id)):
+        try:
+            error=Error.objects.get(id=error_id)
+            data=error.json()
+
+            inputed_bsubc=data['inputed_bsubc']
+
+            error_item={
+                'what':data['what'],
+            }
+        except Exception as e:
+            pass
+
+    context={
+        'booklist':booklist,
+        'user_item':user_item,
+        'inputed_bsubc':inputed_bsubc,
+        'error_item':error_item,
+        'booking_record':booking_record,
+        }
+
+    return render_to_response(
+            'borrowing.html',
+            context,
+            context_instance=RequestContext(request))
 
 def booking(request,book_id,user_account,error_id):
     booking_item=None
     user_item=None
     error_item=None
-    
+    inputed_bsubc=None
     #user_account和error_id都可以是0, 但是book_id必须有效
 
     if(u'0'!=user_account):
@@ -57,6 +110,7 @@ def booking(request,book_id,user_account,error_id):
     if(0!=int(error_id)):
         try: 
             error_item=Error.objects.get(id=error_id)
+
         except Exception as err:
             errot_item=None
     try:
@@ -70,7 +124,6 @@ def booking(request,book_id,user_account,error_id):
         'user_item':user_item,
         'error_item':error_item,
     }
-
     return render_to_response(
         'booking.html',
         context,

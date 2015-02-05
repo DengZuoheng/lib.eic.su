@@ -39,15 +39,18 @@ def douban_book_api(isbn):
             return ret_dict
 
     except urllib2.HTTPError as e:
-        if e.code==404:
-            return {'flag':'false','error_code':e.code}
+        return {'flag':'false','error_code':e.code}
+    except Exception as e:
+        return {'flag':'false','error':str(e),}
 
+def library_thing_api(isbn):
+    pass
 
 #单元测试
 class ServiceTestCase(unittest.TestCase):
 
     def test_douban_book_api(self):
-        d=douban_book_api("9787115230270")
+        d=douban_book_api("9787115230270")#9787302150428
         if(d['flag']):
             print(d['isbn'])
         else :
