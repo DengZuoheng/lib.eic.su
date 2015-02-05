@@ -23,7 +23,6 @@ def booking_action(request,book_id):
     inputed_lpnumber=request.POST['br-input-ulp']
     inputed_bnum=int(request.POST['br-input-bnum'])
 
-
     try:
         borrower=Borrower.objects.get(account=inputed_account)
     except Borrower.DoesNotExist:
@@ -75,8 +74,9 @@ def booking_action(request,book_id):
             book.available=book.available-inputed_bnum
             #TODO: 测试这里能不能工作
             raise Exception(u'错误猜测')
-            book.save()
+            
             booking_record.save()
+            book.save()
             
             return HttpResponseRedirect("/success/booking")
         else:
