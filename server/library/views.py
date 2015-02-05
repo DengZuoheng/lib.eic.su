@@ -190,3 +190,6 @@ def cancel_booking(request,book_id='0',user_account='0',brid='0'):
         error=Error(what=str(e))
         error.save()
         return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id]))
+
+def admin(request):
+    return render_to_response('admin.html',context_instance=RequestContext(request))

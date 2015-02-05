@@ -139,6 +139,16 @@ class Watcher(models.Model):
             "watchsum":self.watchsum,
         }
 
+    def iswatching_str(self):
+        if(self.iswatching):
+            return 'yes'
+        else :
+            return 'no'
+
+    def watchsum(self):
+        #TODO:这里的计算方法还不明确
+        return 0
+
 """
 外借记录表
 """

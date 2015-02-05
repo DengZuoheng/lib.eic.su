@@ -11,9 +11,28 @@ import service
 from models import Book
 from models import Borrower
 from models import BookingRecord
+from models import Watcher
 
 def on_admin_request(request):
-    pass
+    #TODO: 要添加用户认证
+    var={'watch_list':[]}
+
+    try:
+        watcher_list=Watcher.objects.all()
+        for item in watcher_list:
+            var['watch_list'].append({
+                'account':item.account,
+                'name':item.name,
+                'lpnumber':item.lpnumber,
+                'spnumber':item.spnumber,
+                'watchsum':item.watchsum(),
+                'iswatching':item.iswatching_str(),
+                })
+        var['flag']='true'
+        return HttpResponse(json.dumps(var))  
+
+    except Exception as e:
+        return HttpResponse(json.dumps({'flag':'false'}))  
 
 def on_perinfo_request(request):
     req_account = request.POST['account']
@@ -92,5 +111,42 @@ def on_insert_bookinfo_request(request):
     
 
 def on_admin_push(request):
-    pass
+    #前端传过来的是序列化后的json字符串, 需要loads一下
+    try:
+        push_json_str=request.POST['data']
+        push_json=json.loads(push_json_str)
+        for item in push_json['watch_list']:
+            try:
+                watcher=Watcher.objects.get(account=item['account'])
+                watcher.name=item['name']
+                watcher.lpnumber=item['lpnumber']
+                watcher.spnumber=item['spnumber']
+                watcher.watchsum=int(item['watchsum'])
+                
+            except Exception as e:
+                #不存在就新建一个
+                wather=Watcher(
+                    account=item['account'],
+                    name=item['name'],
+                    lpnumber=item['lpnumber'],
+                    spnumber=item['spnumber'],
+                    #TODO:这里的密码还需要改
+                    password=item['account'],
+                    watchsum=0,
+                    iswatching=False)
+
+            if('yes'==item['iswatching']):
+                watcher.iswatching=True
+
+            elif('no'==item['iswatching']):
+                watcher.iswatching=False
+            else:
+                pass
+            
+            watcher.save()
+
+        return HttpResponse(json.dumps({'flag_succeed':'true',}))
+
+    except Exception as e:
+        return HttpResponse(json.dumps({'flag_succeed':'false',}))
 

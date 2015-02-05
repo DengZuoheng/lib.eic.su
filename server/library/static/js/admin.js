@@ -3,7 +3,7 @@ var afx_result;
 
 
 (function(){
-    var account="2012052207";
+
     var example={
         "watch_list":
             [
@@ -14,10 +14,27 @@ var afx_result;
     if(afx_debug==true){
         afx_result=example;
         fill_table(afx_result);
-    }else{         
+    }else{
+
+        //django需要带上csrftoken
+
+        var csrftoken = $.cookie('csrftoken');
+        console.log(csrftoken)
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });   
+
         $.ajax({
-            url:URL+"/RequestAjaxAdmin",
-            data:{"account":account},
+            url:"http://127.0.0.1:8000/RequestAjaxAdmin/",
             async:true,
             dataType:"json",
             type:"POST",
@@ -177,31 +194,62 @@ var afx_result;
             
             return false;
         });
-       //响应提交
-        $("#submit").click(function(){
-            try{
-                if(afx_debug==true)
-                {
-                    throw "debug";
-                }
-                $.ajax({
-                    url:URL+"/PushAjaxAdmin",
-                    data:afx_result,
-                    async:true,
-                    dataType:"json",
-                    type:"POST",
-                    success:function(result){
-                        if(result.flag_succeed==true){
-                            alert("提交成功");
-                        }else{
-                            alert("提交失败, 请重试或联系管理员");
-                        }
-                    }
-                });
-            }catch(e){
-                console.log(e);
-                alert("提交失败, 请重试或联系管理员");
+       
+    }  
+    //响应提交
+    $("#submit").click(function(){
+        if(has_no_watching())
+        try{
+            if(afx_debug==true)
+            {
+                throw "debug";
             }
-        });
-    }        
+            //django需要带上csrftoken
+
+            var csrftoken = $.cookie('csrftoken');
+            console.log(csrftoken)
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });  
+            $.ajax({
+                url:"http://127.0.0.1:8000/PushAjaxAdmin/",
+                data:{'data':JSON.stringify(afx_result),},
+                async:true,
+                dataType:"json",
+                type:"POST",
+                success:function(result){
+                    if(result['flag_succeed']=='true'){
+                        alert("提交成功");
+                    }else{
+                        alert("提交失败, 请重试或联系管理员");
+                    }
+                }
+            });
+        }catch(e){
+            console.log(e);
+            alert("提交失败, 请重试或联系管理员");
+        }
+    });
+    function has_no_watching(){
+        flag=0;
+        for(var i=0;i<afx_result['watch_list'];i++){
+            if(afx_result['watch_list'][i]['iswatching']=="yes"){
+                flag++;
+            }
+        }
+        if(flag==1){
+            return false;
+        }else{
+            return true;
+        }
+    }     
 })();

@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^index/',views.index),
     url(r'^insert/',views.insert),
     url(r'^booking/bid/(\d+)/uid/(\d+)/err/(\d+)$',views.booking),
+    url(r'^admin/',views.admin),
 
     #按钮响应
     url(r'^accept/bid/(\d+)/uid/(\d+)/brid/(\d+)$',views.accept_booking),
