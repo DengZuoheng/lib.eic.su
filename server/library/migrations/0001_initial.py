@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -35,10 +36,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('bnum', models.IntegerField()),
-                ('bdate', models.DateField()),
+                ('btime', models.DateTimeField(default=None, blank=True)),
                 ('hasaccepted', models.BooleanField(default=False)),
                 ('hasborrowed', models.BooleanField(default=False)),
-                ('bid', models.ForeignKey(to='library.Book')),
+                ('book', models.ForeignKey(default=None, to='library.Book')),
             ],
             options={
             },
@@ -62,10 +63,10 @@ class Migration(migrations.Migration):
             name='BorrowRecord',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('btime', models.DateField()),
-                ('rtime', models.DateField()),
-                ('rsubc', models.TextField()),
-                ('bsubc', models.IntegerField()),
+                ('btime', models.DateTimeField()),
+                ('rtime', models.DateTimeField(blank=True)),
+                ('bsubc', models.TextField(blank=True)),
+                ('rsubc', models.CharField(max_length=12, blank=True)),
                 ('hasreturn', models.BooleanField(default=False)),
                 ('book', models.ForeignKey(to='library.Book')),
             ],
@@ -74,21 +75,35 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Watcher',
+            name='Error',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('password', models.CharField(max_length=128)),
-                ('iswatching', models.BooleanField(default=False)),
-                ('watchsum', models.IntegerField()),
+                ('what', models.TextField(blank=True)),
             ],
             options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Watcher',
+            fields=[
+                ('account', models.CharField(max_length=10, unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=12)),
+                ('lpnumber', models.CharField(max_length=12)),
+                ('spnumber', models.CharField(max_length=6, blank=True)),
+                ('password', models.CharField(max_length=128)),
+                ('watchsum', models.IntegerField(default=0)),
+                ('iswatching', models.BooleanField(default=False)),
+            ],
+            options={
+                'abstract': False,
             },
             bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='borrowrecord',
             name='boperator',
-            field=models.ForeignKey(related_name='+', to='library.Watcher'),
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, blank=True, to='library.Watcher'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -100,13 +115,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='borrowrecord',
             name='roperator',
-            field=models.ForeignKey(related_name='+', to='library.Watcher'),
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, blank=True, to='library.Watcher'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='bookingrecord',
-            name='uid',
-            field=models.ForeignKey(to='library.Borrower'),
+            name='borrower',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, default=None, to='library.Borrower'),
             preserve_default=True,
         ),
     ]

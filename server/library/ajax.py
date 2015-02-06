@@ -25,7 +25,7 @@ def on_admin_request(request):
                 'name':item.name,
                 'lpnumber':item.lpnumber,
                 'spnumber':item.spnumber,
-                'watchsum':item.watchsum(),
+                'watchsum':item.watchsum,
                 'iswatching':item.iswatching_str(),
                 })
         var['flag']='true'
@@ -112,28 +112,23 @@ def on_insert_bookinfo_request(request):
 
 def on_admin_push(request):
     #前端传过来的是序列化后的json字符串, 需要loads一下
+    watcher=None
     try:
         push_json_str=request.POST['data']
         push_json=json.loads(push_json_str)
+        #其实, 每次都必须删掉所有Watcher记录,然后重建
+        Watcher.objects.all().delete()
         for item in push_json['watch_list']:
-            try:
-                watcher=Watcher.objects.get(account=item['account'])
-                watcher.name=item['name']
-                watcher.lpnumber=item['lpnumber']
-                watcher.spnumber=item['spnumber']
-                watcher.watchsum=int(item['watchsum'])
-                
-            except Exception as e:
-                #不存在就新建一个
-                wather=Watcher(
-                    account=item['account'],
-                    name=item['name'],
-                    lpnumber=item['lpnumber'],
-                    spnumber=item['spnumber'],
-                    #TODO:这里的密码还需要改
-                    password=item['account'],
-                    watchsum=0,
-                    iswatching=False)
+            
+            watcher=Watcher(
+                account=item['account'],
+                name=item['name'],
+                lpnumber=item['lpnumber'],
+                spnumber=item['spnumber'],
+                #TODO:这里的密码还需要改
+                password=item['account'],
+                watchsum=0,
+                iswatching=False)   
 
             if('yes'==item['iswatching']):
                 watcher.iswatching=True
@@ -148,5 +143,6 @@ def on_admin_push(request):
         return HttpResponse(json.dumps({'flag_succeed':'true',}))
 
     except Exception as e:
+        print(str(e))
         return HttpResponse(json.dumps({'flag_succeed':'false',}))
 

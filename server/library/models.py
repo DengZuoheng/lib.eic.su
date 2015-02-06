@@ -123,10 +123,11 @@ class Borrower(AbstractUser):
 """
 值班人员表
 """
-class Watcher(models.Model):
+class Watcher(AbstractUser):
     password = models.CharField(max_length=128)
+    watchsum = models.IntegerField(default=0)
     iswatching = models.BooleanField(default=False)
-    watchsum = models.IntegerField()
+    
     #TODO:这里的watchsum不知道什么自增
     def __unicode__(self):
         return {
@@ -145,7 +146,7 @@ class Watcher(models.Model):
         else :
             return 'no'
 
-    def watchsum(self):
+    def watchsum_(self):
         #TODO:这里的计算方法还不明确
         return 0
 
