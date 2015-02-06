@@ -253,8 +253,19 @@ def insert_action(request):
         return HttpResponseRedirect("/failed/insert")
     
 
-def return_action(request):
-    pass
+def return1_action(request):
+    user_account=None
+    try:
+        user_account=request.POST['rt-input-uid']
+        return HttpResponseRedirect(reverse('library.views.history', args=[0,user_account,'false']))
+    except Exception as e:
+        what={
+            'inputed_uid':user_account,
+            'what':str(e),
+        }
+        error=Error(what=json.dumps(what))
+        error.save()
+        return HttpResponseRedirect(reverse('library.views.return1', args=[error.id]))
 
 def return2_action(request):
     pass

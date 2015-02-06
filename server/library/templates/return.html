@@ -1,11 +1,21 @@
 {% include 'includes/header.html' %}
         <div class="lead"></div>
         <div class="container">
-            <form class="form-horizontal" role="form" method="post" action="/ReturnAction/">
+            <form class="form-horizontal" role="form" method="post" action="/Return1Action/">
+                {% csrf_token %}
+                {% if error_item %}
+                <div class="form-group">
+                    <label class="text-danger col-sm-2 control-label">* 异常</label>
+                    <div class="col-sm-10 form-control-static" role="alert">
+                        <strong class="text-danger">{{ error_item.what }}</strong>
+                    </div>
+                </div>
+                
+                {% endif %}
                 <div class="form-group">
                     <label for="rt-input-uid" class="col-sm-2 control-label">还书人学号:</label>
                     <div class="col-sm-10 has-feedback">
-                        <input type="text" class="form-control" id="rt-input-uid" name="rt-input-uid" placeholder="学号">
+                        <input type="text" class="form-control" id="rt-input-uid" name="rt-input-uid" placeholder="学号" {% if error_item %}value="{{ error_item.inputed_uid }}"{% endif %}>
                         <span id="feedback-uid" class="glyphicon form-control-feedback"></span>
                     </div>
                 </div>

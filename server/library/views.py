@@ -217,3 +217,19 @@ def cancel_booking(request,book_id='0',user_account='0',brid='0'):
 
 def admin(request):
     return render_to_response('admin.html',context_instance=RequestContext(request))
+
+
+def return1(request,error_id='0'):
+    error=None
+    if(0!=int(error_id)):
+        try:
+            error=Error.objects.get(id=error_id)
+            data=json.loads(error.what)
+            error_item={'waht':data['what'],'inputed_uid':data['inputed_uid']}
+        except Exception as e:
+            error_item={'what':str(e),}
+    context={'error_item':error_item,}
+    return render_to_response('return.html',context,context_instance=RequestContext(request))
+
+def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='0'):
+    pass

@@ -234,8 +234,9 @@ class BorrowRecord(models.Model):
 
     def btime_str(self):
         return self.btime.strftime("%y/%m/%d %H:%M")
+
     def return_href(self):
-        return "/return2/"+str(self.id)
+        return "/return2/bid/"+str(self.book_id)+"/uid/"+str(self.borrower_id)+"/brrid/"+str(self.id)+"/err/0"
 
 
 """

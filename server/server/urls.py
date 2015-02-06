@@ -25,6 +25,9 @@ urlpatterns = patterns('',
     url(r'^insert/',views.insert),
     url(r'^booking/bid/(\d+)/uid/(\d+)/err/(\d+)$',views.booking),
     url(r'^admin/',views.admin),
+    url(r'^return/$',views.return1),
+    url(r'^return/err/(\d+)$',views.return1),#好吧, 不能用return做函数名
+    url(r'^return2/bid/(\d+)/uid/(\d+)/brrid/(\d+)/err/(\d+)$',views.return2),
 
     #按钮响应
     url(r'^accept/bid/(\d+)/uid/(\d+)/brid/(\d+)$',views.accept_booking),
@@ -35,7 +38,7 @@ urlpatterns = patterns('',
     url(r'^BookingAction/(\d+)$',actions.booking_action),
     url(r'^BorrowAction/',actions.borrow_action),
     url(r'^InsertAction/',actions.insert_action),
-    url(r'^ReturnAction/',actions.return_action),
+    url(r'^Return1Action/',actions.return1_action),
     url(r'^Return2Action/',actions.return2_action),
 
     #响应前端的ajax请求
