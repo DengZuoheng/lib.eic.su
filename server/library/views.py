@@ -133,8 +133,32 @@ def booking(request,book_id,user_account,error_id):
 def subject(request):
     pass
 
-def history(request):
-    pass
+def history(request,book_id='0',user_account='0',return_status='null'):
+    filter_kwargs={}
+    history_list=None
+
+    if(0!=int(book_id)):
+        filter_kwargs['book_id']=book_id
+
+    if('0'!=user_account):
+        filter_kwargs['borrower_id']=user_account
+
+    if('null'!=return_status):
+        if('true'==return_status):
+            filter_kwargs['hasreturn']=True
+        elif('false'==return_status):
+            filter_kwargs['hasreturn']=False
+
+    try:
+        if(0==len(filter_kwargs)):
+            history_list=list(BorrowRecord.objects.all().order_by('-btime'))
+        else:
+            history_list=list(BorrowRecord.objects.filter(**filter_kwargs).order_by('-btime'))
+
+        return render_to_response('history.html',{'history_list':history_list})
+    
+    except Exception as e:
+            print(str(e))
 
 def index(request):
     pass

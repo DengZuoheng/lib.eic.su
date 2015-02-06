@@ -26,6 +26,9 @@ class Book(models.Model):
     publisher = models.CharField(max_length=30,blank=True)
     totalnum = models.IntegerField()#总册数
     available = models.IntegerField()#在馆数
+
+    __booked_num = -1
+
     def __unicode__(self):
         return {
             "id":self.id,
@@ -61,17 +64,29 @@ class Book(models.Model):
 
     #已经预约的数量
     def booked(self):
-        #TODO:这里性能好像很不科学
-        try:
-            #TODO : 这里貌似有bug
-            return BookingRecord.objects.all().filter(
-                hasborrowed=False, book_id=self.id).count()
-        except Exception as err:
-            return 0
+        if(self.__booked_num==-1):
+            try:
+                booked_num=0;
+                book_record_list=list(BookingRecord.objects.all().filter(
+                    hasborrowed=False, book_id=self.id))
+                for item in book_record_list:
+                    booked_num=booked_num+item.bnum
+
+                self.__booked_num=booked_num
+
+                return booked_num
+
+            except Exception as err:
+                return 0
+        else:
+            return self.__booked_num
 
     #可预约等于在馆数减去预约但未外借的数量
     def bookable(self):
-        return self.available - self.booked()
+        if self.__booked_num==-1:
+            return self.available - self.booked()
+        else:
+            return self.avaliable - self.__booked_num
 
 
     #预约地址
@@ -150,53 +165,73 @@ class Watcher(AbstractUser):
         #TODO:这里的计算方法还不明确
         return 0
 
+    @classmethod
+    def class_get_current_watcher(cls):
+        return Watcher.objects.get(iswatching=True)
+
 """
 外借记录表
 """
 class BorrowRecord(models.Model):
     book = models.ForeignKey(Book)
     borrower = models.ForeignKey(Borrower,related_name='+')
-    btime = models.DateTimeField() #借书时间
-    rtime = models.DateTimeField(blank=True) #还书时间
+    btime = models.DateTimeField(auto_now=True) #借书时间
+    rtime = models.DateTimeField(blank=True,auto_now=True) #还书时间
     bsubc = models.TextField(blank=True) #借书时书的状态, 用text描述
     #还书时的状态{正常:normal,预期:overdue,损坏:damaged,遗失:lost}
     rsubc = models.CharField(max_length=12,blank=True) 
     hasreturn = models.BooleanField(default=False)
-    boperator = models.ForeignKey(Watcher,related_name='+',on_delete=models.DO_NOTHING,blank=True)
-    roperator = models.ForeignKey(Watcher,related_name='+',on_delete=models.DO_NOTHING,blank=True)
+    boperator = models.ForeignKey(
+            Watcher,
+            related_name='+',
+            on_delete=models.DO_NOTHING,
+            blank=True,
+            null=True)
+    roperator = models.ForeignKey(
+            Watcher,
+            related_name='+',
+            on_delete=models.DO_NOTHING,
+            blank=True,
+            null=True)
 
     def __unicode__(self):
         return {
-            "id":self.id,
-            "book_id":self.book_id,
-            "borrower_id":self.borrower_id,
-            "btime":self.bitme,
-            "rtime":self.rtime,
-            "bsubc":self.bsubc,
-            "rsubc":self.rsubc,
-            "boperator_id":self.boperator_id,
-            "roperator":self.roperator_id,
+            "id":str(self.id),
+            "book_id":str(self.book_id),
+            "borrower_id":str(self.borrower_id),
+            "btime":str(self.btime),
+            "rtime":str(self.rtime),
+            "bsubc":str(self.bsubc),
+            "rsubc":str(self.rsubc),
+            "boperator_id":str(self.boperator_id),
+            "roperator_id":str(self.roperator_id),
         }
     #借用时长
     def duration(self):
-        today = datetime.date.today()
-        delta = today - btime
-        return delta
+        today = datetime.datetime.now()
+        delta = today.date() - self.btime.date()
+        return delta.days
+
     def danger(self):
         if(self.hasreturn==False and self.duration()>=60):
             return True
         else :
             return False
+
+
+
     def warning(self):
         if(self.hasreturn==False and self.duration()>=30):
             return True
         else :
             return False
+
     def info(self):
         if(self.hasreturn==False and self.duration()<30):
             return True
         else :
             return False
+
     def btime_str(self):
         return self.btime.strftime("%y/%m/%d %H:%M")
     def return_href(self):
