@@ -10,6 +10,7 @@ from models import Borrower
 from models import BookingRecord
 from models import Error
 from models import BorrowRecord
+from models import Watcher
 import datetime
 import json
 from django.template import RequestContext
@@ -142,8 +143,10 @@ def borrow_action(request):
             raise Exception(u'无法找到该书籍:'+str(e))
 
         #然后获取值班人信息
-        #TODO:本来这里应该使用用户认证和session之类的, 不过还没实现就先不管了
-        current_watcher=None
+        try:
+            current_watcher=Watcher.class_get_current_watcher()
+        except Exception as e:
+            raise Exception(u'值班人员数据异常:'+str(e))
 
         #产生多个借书记录
         for i in range(inputed_bnum):
@@ -153,6 +156,9 @@ def borrow_action(request):
                 btime=datetime.datetime.now(),
                 bsubc=inputed_bsubc,
                 boperator=current_watcher,
+                roperator=current_watcher,
+                #这里用当前值班人员做还书操作者只是权宜之计
+                #应该认为, roperator在和hasreturn为False时是无效的
                 )
             #每个借书记录只借1本书
             book.available=book.available-1
@@ -167,7 +173,7 @@ def borrow_action(request):
             except Exception as e:
                 raise Exception(u'预约记录不存在:'+str(e))
 
-        return HttpResponseRedirect("/success/borrow/")
+        return HttpResponseRedirect("/success/borrow")
 
     except Exception as e:
        

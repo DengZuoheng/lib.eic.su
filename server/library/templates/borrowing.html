@@ -67,11 +67,11 @@
                         <select class="form-control" id="br-input-bnum" name="br-input-bnum">
                             {% if booking_record %}
                             {% for item in booking_record.selectable_range %}
-                            <option value="{{ forloop.counter }}"{% if forloop.first %} selected="selected"{% endif %}>{{ forloop.counter }}</option>
+                            <option value="{{ forloop.counter }}"{% if forloop.last %} selected="selected"{% endif %}>{{ forloop.counter }}</option>
                             {% endfor %}
                             {% else %}
                             {% for item in booklist.0.selectable_range %}
-                            <option value="{{ forloop.counter }}"{% if forloop.last %} selected="selected"{% endif %}>{{ forloop.counter }}</option>
+                            <option value="{{ forloop.counter }}"{% if forloop.first %} selected="selected"{% endif %}>{{ forloop.counter }}</option>
                             {% endfor %}
                             {% endif %}
                         </select>
