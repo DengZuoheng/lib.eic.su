@@ -165,10 +165,22 @@ def history(request,book_id='0',user_account='0',return_status='null'):
 def index(request):
     return  render_to_response('index.html',context_instance=RequestContext(request))
 
-def insert(request):
-    return  render_to_response('insert.html',context_instance=RequestContext(request))
+def insert(request,error_id='0'):
+    context={}
+    if(0!=int(error_id)):
+        try:
+            error=Error.objects.get(id=error_id)
+            data=json.loads(error.what)
+            
+            context={
+                "error_item":data,
+            }
+        except Exception as e:
+            print(str(e))
 
-def success(request,type):
+    return  render_to_response('insert.html',context,context_instance=RequestContext(request))
+
+def success(request,type,extra_param='0'):
     success_dict={
         'booking':False,
         'return':False,
@@ -186,11 +198,25 @@ def success(request,type):
         success_dict['back_href']='/admin/'
         success_dict['admin']=True
     elif(type=='borrow'):
+        try:
+            borrower=Borrower.objects.get(account=extra_param)
+            success_dict['borrower']=borrower
+        except:
+            pass
         success_dict['back_href']='/borrow/'
         success_dict['borrow']=True
     elif(type=='return'):
+        try:
+            borrower=Borrower.objects.get(account=extra_param)
+            success_dict['borrower']=borrower
+        except:
+            pass
         success_dict['back_href']='/return/'
         success_dict['return']=True
+    elif(type=='booking'):
+
+        success_dict['watcher']=Watcher.class_get_current_watcher()
+        success_dict['booking']=True
     return render_to_response('success.html',{'success':success_dict})
 
 def accept_booking(request,book_id='0',user_account='0',brid='0'):
@@ -198,7 +224,7 @@ def accept_booking(request,book_id='0',user_account='0',brid='0'):
         booking_record=BookingRecord.objects.get(id=brid);
         booking_record.hasaccepted=True
         booking_record.save()
-        return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,0]))
+        return HttpResponseRedirect(reverse('library.views.order', args=[0,0,0]))
     except Exception as e:
         error=Error(what=str(e))
         error.save()
@@ -223,6 +249,7 @@ def admin(request):
 
 def return1(request,error_id='0'):
     error=None
+    error_item=None
     if(0!=int(error_id)):
         try:
             error=Error.objects.get(id=error_id)

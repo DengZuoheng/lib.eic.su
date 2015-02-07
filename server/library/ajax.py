@@ -111,6 +111,7 @@ def on_insert_bookinfo_request(request):
     
 
 def on_admin_push(request):
+    #TODO:要求用户验证
     #前端传过来的是序列化后的json字符串, 需要loads一下
     watcher=None
     try:

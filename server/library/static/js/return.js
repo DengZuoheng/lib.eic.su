@@ -29,6 +29,15 @@
                 .attr("disabled",false);
         }
     });
+    try{
+        $("#rt-input-uid")[0].oninput=function(){
+            if($(this).val().length==10){
+                $(this).change();
+            }
+        }
+    }catch(e){
+        console.log("不支持oninput")
+    }
     $("#submit").click(function(){
         if($("#rt-input-uid").val().length==0)
         {

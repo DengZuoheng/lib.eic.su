@@ -1,17 +1,6 @@
 //全局变量
 var afx_result;
-var afx_flag_bcover_filled=false;
-var afx_flag_bname_filled=false;
-var afx_flag_author_filled=false;
-var afx_flag_translator_filled=false;
-var afx_flag_publisher_filled=false;
-var afx_flag_byear_filled=false;
-var afx_flag_pagination_filled=false;
-var afx_flag_price_filled=false;
-var afx_flag_dict={"bcover":afx_flag_bcover_filled,"bname":afx_flag_bcover_filled,
-                    "author":afx_flag_author_filled,"translator":afx_flag_translator_filled,
-                    "publisher":afx_flag_publisher_filled,"byear":afx_flag_byear_filled,
-                    "pagination":afx_flag_pagination_filled,"price":afx_flag_price_filled};
+
 var afx_attr=new Array("bcover","bname","author","translator",
                         "publisher","byear","pagination","price");
 
@@ -20,11 +9,16 @@ var afx_attr=new Array("bcover","bname","author","translator",
         "bname":"面向对象软件工程","author":"[美]佚名","translator":"张三","flag":"true",
     "publisher":"高等教育出版社","byear":"2012.9","pagination":"1024","price":"36.00",
     "totalnum":"24"}
+
     $("#br-input-isbn")[0].oninput=on_isbn_change;
     
     function on_isbn_change(){
         //isbn有12位的时候就ajax
         if($("#br-input-isbn").val().length==13){
+
+            $("#feedback-isbn").attr(
+                "class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
+            
             //django需要带上csrftoken
             var csrftoken = $.cookie('csrftoken');
             function csrfSafeMethod(method) {
@@ -39,9 +33,7 @@ var afx_attr=new Array("bcover","bname","author","translator",
                     }
                 }
             });
-
-            $("#feedback-isbn").attr(
-                "class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
+      
             isbn=$("#br-input-isbn").val();
             console.log(isbn);
             if(afx_debug==false/*&&isIsbn(isbn)*/){
@@ -84,7 +76,7 @@ var afx_attr=new Array("bcover","bname","author","translator",
         $("#feedback-isbn").addClass("glyphicon-ok");
         $("#br-input-isbn").parent().addClass("has-success");
         for(var i=0;i<afx_attr.length;++i){
-            if(afx_flag_dict[afx_attr[i]]==false&&obj[afx_attr[i]].length!=0){
+            if($("#br-input-"+afx_attr[i]).val()!=" "&&obj[afx_attr[i]].length!=0){
                 console.log(obj[afx_attr[i]]);
                 $("#br-input-"+afx_attr[i]).val(obj[afx_attr[i]]).change();
             }
@@ -97,7 +89,6 @@ var afx_attr=new Array("bcover","bname","author","translator",
       #br-input-pagination,#br-input-price,#br-input-insertednum").change(function(){
         
         attr=$(this).attr("id").replace("br-input-","");
-        afx_flag_dict[attr]=true;
        
         var temp=$(this).val();
         var flag_illegal=false;
@@ -154,5 +145,29 @@ var afx_attr=new Array("bcover","bname","author","translator",
         $("#submit").removeClass("btn-danger").addClass("btn-primary").attr("disabled",false);
         return true;
     }
+
+    //submit检查
+    $("#submit").click(function(){
+            return (function(){
+                lst=["isbn","bcover","bname","author","publisher","byear","price","insertednum"]
+                dict={
+                    "isbn":"ISBN",
+                    "bcover":"封面",
+                    "bname":"书名",
+                    "author":"作者",
+                    "publisher":"出版社",
+                    "byear":"出版年月",
+                    "price":"价格",
+                    "insertednum":"新增册数",
+                }
+                for(var i=0;i<lst.length;i++){
+                    if($("#br-input-"+lst[i]).val()==""){
+                        illegal_feedback($("#br-input-"+lst[i]),lst[i],dict[lst[i]]+"不能为空");
+                        return false;
+                    }
+                }
+                return true;
+            })();
+    });
     
 })();

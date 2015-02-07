@@ -67,6 +67,10 @@ def booking_action(request,book_id):
 
     if (inputed_bnum+__bookednum+__borrowednum>=Borrower.STATIC_MAX_BORROWABLE_NUM):
         #超过额定数量
+        print(inputed_bnum)
+        print(__bookednum)
+        print(__borrowednum)
+        print(Borrower.STATIC_MAX_BORROWABLE_NUM)
         raise Exception(BookingRecord.STATIC_OUT_OF_BOOKINGABLE_RANGE)
 
     #这里没有明显加锁, 同步问题怎么解决?
@@ -197,7 +201,7 @@ def borrow_action(request):
             except Exception as e:
                 raise Exception(BookingRecord.STATIC_BOOKINGRECORD_NOT_FIND+str(e))
 
-        return HttpResponseRedirect("/success/borrow")
+        return HttpResponseRedirect("/success/borrow/"+borrower.account)
 
     except Exception as e:
        
@@ -269,15 +273,30 @@ def insert_action(request):
                 )
             if(inputed_pagination!=''):
                 book.pagination=int(inputed_pagination)
+
             book.save()
             return HttpResponseRedirect("/success/insert")
-            #TODO:错误应该返回原来的页面
-        except Book.MultipleObjectsReturned: #isbn不唯一
-            return HttpResponseRedirect("/failed/insert")
+        except Book.MultipleObjectsReturned as e: #isbn不唯一
+            #TODO:其实这里新建一条记录可能比较好
+            raise Exception(Book.STATIC_BOOKS_WITH_SAME_ISBN+str(e))
 
     except Exception as err:
-        print(str(err))
-        return HttpResponseRedirect("/failed/insert")
+        error_item={
+            "inputed_isbn":inputed_isbn,
+            "inputed_bcover":inputed_bcover,
+            "inputed_bname":inputed_bname,
+            "inputed_author":inputed_author,
+            "inputed_translator":inputed_translator,
+            "inputed_publisher":inputed_publisher,
+            "inputed_byear":inputed_byear,
+            "inputed_pagination":inputed_pagination,
+            "inputed_price":inputed_price,
+            "inputed_insertednum":inputed_insertednum,
+            "what":str(err),
+        }
+        error=Error(what=json.dumps(error_item))
+        error.save()
+        return HttpResponseRedirect(reverse('library.views.insert', args=[error.id]))
     
 
 def return1_action(request):
@@ -335,7 +354,7 @@ def return2_action(request):
         borrow_record.borrower.save()
         borrow_record.save()
 
-        return HttpResponseRedirect("/success/return")
+        return HttpResponseRedirect("/success/return/"+borrow_record.borrower.account)
     except Exception as e:
         
         data={

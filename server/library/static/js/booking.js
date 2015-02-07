@@ -3,7 +3,7 @@ var afx_result;
 var afx_flag_name_filled=false;
 var afx_flag_spnumber_filled=false;
 var afx_flag_lpnumber_filled=false;
-var afx_ajaxed=false;
+
 //TODO:允许修改学号时重新ajax
 
 (function(){
@@ -12,16 +12,23 @@ var afx_ajaxed=false;
     "bookednum":9, "badcredit":"false"};
     //bookednum表示这个人已经预约的书数,总数大于8就不允许了
     //badcredit表示这个人信用度已经没有了, true表示不能借书也不能预约
-    $("#br-input-uid")[0].oninput=on_account_change;
+    try{
+        $("#br-input-uid")[0].oninput=on_account_change;
+    }catch(e){
+        $("#br-input-uid").change(on_account_change);
+    }    
 
     function on_account_change()
     {
 
-        //先发生keypress事件, 然后才输入, 也就是说
+        //先发生input事件, 然后才输入, 也就是说
 
         if($("#br-input-uid").val().length==10){
+            
+            $("#feedback-uid").attr(
+                "class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
+            
             //django需要带上csrftoken
-
             var csrftoken = $.cookie('csrftoken');
             function csrfSafeMethod(method) {
                 // these HTTP methods do not require CSRF protection
@@ -37,7 +44,7 @@ var afx_ajaxed=false;
             });
 
             account=$("#br-input-uid").val();
-            if(afx_debug==false&&afx_ajaxed==false&&isAccount(account)){
+            if(afx_debug==false&&isAccount(account)){
                 $.ajax({
                     url:"http://127.0.0.1:8000/RequestAjaxPerInfo/",
                     data:{"account":account},
@@ -60,35 +67,48 @@ var afx_ajaxed=false;
     }
     
     function fill_table(obj){
-
+        $("#feedback-uid").attr("class","glyphicon form-control-feedback");
         console.log(obj);
         //如果没有找到这个人
         if(obj["flag"]=="false"){
-            $("#br-input-uid,#br-input-una,#br-input-usp,#br-input-ulp")
+            $("#br-input-uid,#br-input-una,#br-input-usp,#br-input-ulp,#br-input-bnum")
                 .attr("placeholder","数据库中没有找到缓存信息,请自行填写")
-                .parent().addClass("has-warning");
+                .parent()
+                .removeClass('has-error has-success')
+                .addClass("has-warning");
+            $("#feedback-uid,#feedback-una,#feedback-ulp,#feedback-usp")
+                .attr("class","glyphicon form-control-feedback glyphicon-exclamation-sign");
+            $("#submit").removeClass("btn-danger disabled");
             return false;
         }
 
         //如果已经是黑名单了, 就把所有东西红掉
         if(obj["badcredit"]=="true"){
-            $("#br-input-uid,#br-input-una,#br-input-usp,#br-input-ulp,#br-input-br-bnum")
+            $("#br-input-uid,#br-input-una,#br-input-usp,#br-input-ulp,#br-input-bnum")
                 .addClass("disabled")
                 .attr("placeholder","您已经多次遗失书籍或预期归还, 按照规定, 您已经不能预约或借书了")
-                .parent().addClass("has-error");
-            $("#submit").addClass("btn-danger disabled");
+                .parent()
+                .removeClass('has-warning has-success')
+                .addClass("has-error");
+            $("#feedback-uid,#feedback-una,#feedback-usp,#feedback-ulp")
+                .attr("class","glyphicon form-control-feedback glyphicon-remove");
+            $("#submit").addClass("btn-danger disabled") ;
             return false;
         }
         
-        //如果找到了这个人
-        if(afx_flag_name_filled==false){
-            $("#br-input-una").val(obj["name"]);
+        //如果找到了这个人,而且不是黑名单
+        $("#feedback-uid").addClass("glyphicon-ok");
+        $("#br-input-uid").parent().removeClass("has-warning has-error").addClass("has-success");
+        console.log($("#br-input-una").val());
+        if($("#br-input-una").val()!=" "){
+
+            $("#br-input-una").val(obj["name"]).change();
         }
-        if(afx_flag_lpnumber_filled==false){
-            $("#br-input-ulp").val(obj["lpnumber"]);
+        if($("#br-input-ulp").val()!=" "){
+            $("#br-input-ulp").val(obj["lpnumber"]).change();
         }
-        if(afx_flag_spnumber_filled==false){
-            $("#br-input-usp").val(obj["spnumber"]);
+        if($("#br-input-usp").val()!=" "){
+            $("#br-input-usp").val(obj["spnumber"]).change();
         }
         //限制借书和预约数量
         book_bookable=$("#br-input-bnum option:last").html();
@@ -107,9 +127,31 @@ var afx_ajaxed=false;
         
     }
     
-    $("#br-input-una").change(function(){afx_flag_name_filled=true;});
-    $("#br-input-ulp").change(function(){afx_flag_lpnumber_filled=true;});
-    $("#br-input-usp").change(function(){afx_flag_spnumber_filled=true;});
+    $("#br-input-una").change(function(){
+        var temp=$(this).val();
+        if(isSqlInjection(temp)){
+            return illegal_feedback($(this),"una","非法输入");
+        }else{
+            return legal_feedback($(this),"una","");
+        }
+
+    });
+    $("#br-input-ulp").change(function(){
+        var temp=$(this).val();
+        if(isSqlInjection(temp)||!isLpnumber(temp)){
+            return illegal_feedback($(this),"ulp","非法输入");
+        }else{
+            return legal_feedback($(this),"ulp","");
+        }
+    });
+    $("#br-input-usp").change(function(){
+        var temp=$(this).val();
+        if(isSqlInjection(temp)||!isSpnumber(temp)){
+            return illegal_feedback($(this),"usp","非法输入");
+        }else{
+            return legal_feedback($(this),"usp","");
+        }
+    });
     
     $("#submit").click(function(){
         var uid=$("#br-input-uid").val();
@@ -140,8 +182,25 @@ var afx_ajaxed=false;
                 .parent().addClass("has-error");
             return false;
         }
-        console.log("FFFFF");
+
         return true;
     });
+    //非法反馈
+    function illegal_feedback(obj,attr,placeholder){
+        
+        $("#feedback-"+attr).attr("class","glyphicon glyphicon-remove form-control-feedback");
+        obj.val("").parent().removeClass("has-success has-warning").addClass("has-error"); 
+        obj.attr("placeholder",placeholder);
+        $("#submit").removeClass("btn-primary").addClass("btn-danger").attr("disabled",true);
+        return false;
+    }
+    //合法反馈
+    function legal_feedback(obj,attr,placeholder){
+        console.log(attr+"合法");
+        $("#feedback-"+attr).attr("class","glyphicon glyphicon-ok form-control-feedback");
+        obj.parent().removeClass("has-error has-warning").addClass("has-success");
+        $("#submit").removeClass("btn-danger").addClass("btn-primary").attr("disabled",false);
+        return true;
+    }
                   
 })();

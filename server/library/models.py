@@ -32,6 +32,8 @@ class Book(models.Model):
 
     #静态成员
     STATIC_BOOK_NOT_FIND=u'无法找到该书籍:'
+    STATIC_BOOKS_WITH_SAME_ISBN=u'不同的书有相同的isbn:'
+
 
 
 
@@ -132,7 +134,7 @@ class Borrower(AbstractUser):
     credit=models.IntegerField(default=0)
     #static_max_borrowable_num是一个人最多可借和预约的数量
     #你必须当做静态常量来用
-    STATIC_MAX_BORROWABLE_NUM=0
+    STATIC_MAX_BORROWABLE_NUM=8
     STATIC_CREDIT_LIMIT=4
     STATIC_BAD_BORROWER_INFO=u'无法创建借书人记录, 借书人信息有误:'
     STATIC_BAD_CREDIT_WANING=u'逾期归还, 损坏, 丢失次数过多, 已取消预约和借书资格'
