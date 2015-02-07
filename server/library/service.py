@@ -34,6 +34,7 @@ def douban_book_api(isbn):
         ret_dict['price']=ret_dict['price'].replace('元','')
         try:# 我也不知道豆瓣怎么处理没有译者的情况
             ret_dict['translator']=ret['translator']
+            ret_dict['bcover']=ret['images']['large']
             return ret_dict
         except:
             return ret_dict

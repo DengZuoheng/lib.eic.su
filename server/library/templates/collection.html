@@ -19,10 +19,10 @@
                     {% for item in book_list %}
                     <tr {% if item.danger %}class="danger"{% else %}{% if item.warning %}class="warning"{% else %}{%if item.info %}class="info"{% endif %}{% endif %}{% endif %}>
                         <td>{{item.isbn}}</td>
-                        <td>{{item.bname}}</td>
+                        <td><a href="{{ item.subject }}">{{item.bname}}</a></td>
                         <td>{{item.author}}</td>
                         <td>{{item.publisher}}</td>
-                        <td>{{item.price}}元</td>
+                        <td>{{item.price_str}}元</td>
                         <td>{{item.totalnum}}</td>
                         <td>{{item.available}}</td>
                         <td>{{item.bookable}}</td>

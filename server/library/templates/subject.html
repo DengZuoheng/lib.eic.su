@@ -5,7 +5,7 @@
             <div class="row ">
                 <div class="pic col-md-2 xs-left subject-warning">
                     <a class="nbg" href="subject.html">
-                        <img src="{{ book.bcover_src }}">
+                        <img src="{{ book.bcover_src }}" width="138px">
                     </a>
                 </div>
                 <div class="info col-md-8">
@@ -19,15 +19,14 @@
                     <div class="pub"><strong>译者 : </strong>{{ book.translator }}</div>
                     {% endif %}
                     {% if book.byear %}
-                    <div class="pub"><strong>出版年 : </strong>{{ book.byear }}</div>
+                    <div class="pub"><strong>出版年 : </strong>{{ book.byear }} / 
                     {% endif %}
                     {% if book.pagination %}
-                    <div class="pub"><strong>页数 : </strong>{{ book.pagination }}</div>
+                    <strong>页数 : </strong>{{ book.pagination }} / 
                     {% endif %}
-                    <div class="pub"><strong>定价 : </strong> {{ book.price }}</div>
+                    <strong>定价 : </strong> {{ book.price }}元</div>
                     <div class="pub"><strong>ISBN : </strong>{{ book.isbn }}</div>
-                    <div class="pub"><strong>总册数 : </strong>{{ book.totalnum }} / <strong>在馆数: </strong>{{ book.avaliable }}</div>
-                    <div class="pub"><strong>已预约 : </strong>{{ book.booked }}</div>
+                    <div class="pub"><strong>总册数 : </strong>{{ book.totalnum }} / <strong>在馆数: </strong>{{ book.available }} / <strong>已预约 : </strong>{{ book.booked }}</div>
                     <div class="pub"><strong>剩余 : </strong>{{ book.bookable }}</div>
                     <div class="lead">
                         <a id="btn-appoint" class="btn btn-warning btn-sm" href="{{ book.href }}" {% if not book.bookable %}disabled="disabled"{% endif %}>预约</a>

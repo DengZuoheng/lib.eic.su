@@ -92,7 +92,7 @@ class Book(models.Model):
         if self.__booked_num==-1:
             return self.available - self.booked()
         else:
-            return self.avaliable - self.__booked_num
+            return self.available - self.__booked_num
 
 
     #预约地址
@@ -109,7 +109,10 @@ class Book(models.Model):
 
     #封面地址
     def bcover_src(self):
-        return "封面地址"
+        return self.bcover
+
+    def price_str(self):
+        return '%.2f'%self.price
 
 """
 借书人和值班人员的基类模型

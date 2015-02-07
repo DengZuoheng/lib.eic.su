@@ -131,8 +131,9 @@ def booking(request,book_id,user_account,error_id):
         context_instance=RequestContext(request))
 
 
-def subject(request):
-    pass
+def subject(request,book_id):
+    book=Book.objects.get(id=book_id)
+    return render_to_response('subject.html',{'book':book,})
 
 def history(request,book_id='0',user_account='0',return_status='null'):
     filter_kwargs={}

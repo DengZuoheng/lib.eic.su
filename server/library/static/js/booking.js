@@ -16,7 +16,7 @@ var afx_ajaxed=false;
 
     function on_account_change()
     {
-        console.log("FFFFF");
+
         //先发生keypress事件, 然后才输入, 也就是说
 
         if($("#br-input-uid").val().length==10){
