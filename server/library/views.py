@@ -13,8 +13,7 @@ import service
 
 # Create your views here.
 def collection(request):
-    #TODO:过滤掉总数为0的
-    book_list=list(Book.objects.all())
+    book_list=list(Book.objects.all().exclude(totalnum=0))
     return render_to_response('collection.html', {'book_list': book_list})
 
 def order(reuqest,book_id,user_account,error_id):
