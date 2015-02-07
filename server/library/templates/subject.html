@@ -4,7 +4,7 @@
             <h1>{{ book.bname }}</h1>
             <div class="row ">
                 <div class="pic col-md-2 xs-left subject-warning">
-                    <a class="nbg" href="subject.html">
+                    <a class="nbg" href="{{ book.subject }}">
                         <img src="{{ book.bcover_src }}" width="138px">
                     </a>
                 </div>
@@ -29,11 +29,12 @@
                     <div class="pub"><strong>总册数 : </strong>{{ book.totalnum }} / <strong>在馆数: </strong>{{ book.available }} / <strong>已预约 : </strong>{{ book.booked }}</div>
                     <div class="pub"><strong>剩余 : </strong>{{ book.bookable }}</div>
                     <div class="lead">
-                        <a id="btn-appoint" class="btn btn-warning btn-sm" href="{{ book.href }}" {% if not book.bookable %}disabled="disabled"{% endif %}>预约</a>
+                        <a id="btn-appoint" class="btn btn-warning btn-sm" href="{{ book.href }}" {% if not book.bookable %}disabled="disabled"{% endif %}>预 约</a>
                     </div>
                 </div> 
             </div>
         </div>
+        <div class="lead"></div>
 {% include 'includes/footer.html' %}
 {% load staticfiles %}
   </body>
