@@ -9,6 +9,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 import json
+import service
 
 # Create your views here.
 def collection(request):
@@ -163,7 +164,7 @@ def history(request,book_id='0',user_account='0',return_status='null'):
             print(str(e))
 
 def index(request):
-    pass
+    return  render_to_response('index.html',context_instance=RequestContext(request))
 
 def insert(request):
     return  render_to_response('insert.html',context_instance=RequestContext(request))
@@ -272,3 +273,77 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
         return render_to_response('returns2.html',context,context_instance=RequestContext(request))
     except Exception as e:
         print(str(e))
+
+def search(request,start_idx,key_word):
+    start_idx=int(start_idx)
+    book_list=service.search_by(key_word)
+    result={}
+    MAX_NO_PAGING=24#如果结果不超过32个,这一页显示完所有结果
+    NORMAL_PAGING=12#如果结果超过32个, 这每页16个
+    book_list_len=len(book_list)
+    try:
+        if(0==book_list_len):
+            raise Exception('no result')
+        result['begin_idx']=start_idx
+        result['total']=book_list_len
+        if(start_idx==1):
+            if(book_list_len<=MAX_NO_PAGING):
+                result['end_idx']=book_list_len
+            else:
+                result['end_idx']=start_idx+NORMAL_PAGING-1 #1+16=17, 所以应减1
+        else:
+            if(book_list_len<=start_idx+NORMAL_PAGING):
+                result['end_idx']=book_list_len
+            else:
+                result['end_idx']=start_idx+NORMAL_PAGING-1
+
+        if(book_list_len>MAX_NO_PAGING):
+            result['pagination'] = True
+            if(start_idx==1):
+                url=u'/search/start/1/keyword/'+key_word
+                result['prev_page']=url
+                result['is_first_page']=True
+                url=u'/search/start/17/keyword/'+key_word
+                result['next_page']=url
+            else:
+                url=u'/search/start/'+str(start_idx-NORMAL_PAGING)+'/keyword/'+key_word
+                result['prev_page']=url
+                result['is_first_page']=False
+                url=u'/search/start/'+str(start_idx+NORMAL_PAGING)+'/keyword/'+key_word
+                result['next_page']=url
+            #page bar
+            result['page_href_list']=[]
+            begin_idx=1
+            while NORMAL_PAGING <=book_list_len:
+                url=u'/search/start/'+str(begin_idx)+'/keyword/'+key_word
+                result['page_href_list'].append(url)
+                if(begin_idx==start_idx):
+                    result['current_page']=int((begin_idx)/NORMAL_PAGING)+1
+                begin_idx=begin_idx+NORMAL_PAGING
+                book_list_len=book_list_len-NORMAL_PAGING
+
+            if(book_list_len>0):
+                url=u'/search/start/'+str(begin_idx)+'/keyword/'+key_word
+                result['page_href_list'].append(url)
+                if(begin_idx==start_idx):
+                    result['current_page']=int((begin_idx)/NORMAL_PAGING)+1
+                    result['is_last_page']=True
+                    result['next_page']=url
+
+            result['book_list']=book_list[(result['begin_idx']-1):(result['end_idx'])]
+        else:
+            result['book_list']=book_list 
+
+        context={
+            'result':result,
+        }
+    except:
+        context={
+            'result':{
+                'begin_idx':0,
+                'end_idx':0,
+                'total':0,
+            }
+        }
+
+    return render_to_response('search.html',context,context_instance=RequestContext(request))

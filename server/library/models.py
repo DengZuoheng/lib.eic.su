@@ -19,7 +19,7 @@ class Book(models.Model):
     bname = models.CharField(max_length=30)
     author = models.CharField(max_length=128,blank=True)
     translator = models.CharField(max_length=128,blank=True)
-    byear = models.CharField(max_length=8,blank=True)
+    byear = models.CharField(max_length=10,blank=True)
     pagination = models.IntegerField(blank=True)
     price = models.FloatField(blank=True)
     bcover = models.URLField(blank=True)

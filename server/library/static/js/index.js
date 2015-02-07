@@ -3,7 +3,9 @@
         if(!isEmpty($("#search-key-word").val())
             && !isSqlInjection($("#search-key-word").val())){
             console.log("合法字符");
-            $("#search-from").submit();          
+            $("#search-form").submit();
+           
+            console.log("submited")          
         }
         else{
             console.log("非法字符");

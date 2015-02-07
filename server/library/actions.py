@@ -17,7 +17,12 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 
 def search_action(request):
-    pass
+    try:
+        key_word=request.GET['search-key-word']
+        return HttpResponseRedirect(reverse('library.views.search', args=[1,key_word,]))
+    except Exception as e:
+        print(str(e))
+        return HttpResponseRedirect(reverse('library.views.index'))     
 
 def booking_action(request,book_id):
     inputed_account=request.POST['br-input-uid']
@@ -254,7 +259,7 @@ def insert_action(request):
                 author=inputed_author,
                 translator=inputed_translator,
                 byear=inputed_byear,
-                pagination=int(inputed_pagination),
+                pagination = 0,
                 price=float(inputed_price),
                 # TODO : 封面应该下载到本地储存或SAE storage
                 bcover=inputed_bcover,
@@ -262,6 +267,8 @@ def insert_action(request):
                 totalnum=int(inputed_insertednum),
                 available=int(inputed_insertednum),
                 )
+            if(inputed_pagination!=''):
+                book.pagination=int(inputed_pagination)
             book.save()
             return HttpResponseRedirect("/success/insert")
             #TODO:错误应该返回原来的页面
@@ -269,6 +276,7 @@ def insert_action(request):
             return HttpResponseRedirect("/failed/insert")
 
     except Exception as err:
+        print(str(err))
         return HttpResponseRedirect("/failed/insert")
     
 

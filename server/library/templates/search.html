@@ -4,17 +4,18 @@
             <div class="container">
                 <h1>LIB.EISC</h1>
             </div>
-            <form role="form" class="form-inline" method="post" action="/SearchAction/">
+            <form  id="search-form" name="search-form" role="form" class="form-inline" method="get" action="/SearchAction/">
+                {% csrf_token %}
                 <div class="form-group">
                     <div class="input-group center">
-                        <input type="search" class="form-control" id="search-key-word" placeholder="书名、作者、ISBN">
+                        <input type="search" class="form-control" id="search-key-word" name="search-key-word"placeholder="书名、作者、ISBN">
                         <div id="submit" class="btn btn-large input-group-addon btn-primary  "><span class="glyphicon glyphicon-search"></span></div>
                     </div>
                 </div>
             </form>
         </div>
         <div class="container" id="artcle">
-            <div class="container text-right">搜索结果{{ result.begin_idx }}-{{ result.end_idx }}&nbsp;共{{ result.total }}</div>
+            <div class="container text-right">搜索结果{{ result.begin_idx }}-{{ result.end_idx }}&nbsp;共 {{ result.total }} 个结果</div>
         </div>
         <div class="container" id="subject-list">
             <ul class="list-unstyled">
@@ -32,11 +33,21 @@
                                     {{ item.bname }}
                                 </a>
                             </h2>
-                            <div class="pub">{{ item.author }} / {{ item.translator }} / {{ item.publish }} / {{ item.byear }} / {{ item.price }}元</div>
-                            <div class="pub">ISBN:{ item.isbn }</div>
-                            <div class="pub">总册数:{{ item.totalnum }} / 在馆数:{{ item.available }} / 已预约:{{ item.booked }} / 剩余:{{ item.bookable }}</div>
+                            <div class="pub">
+                                {{ item.author }} / 
+                                {% if item.translator %}[译]{{ item.translator }} / {% endif %}
+                                {% if item.publish %}{{ item.publish }} / {% endif %}
+                                {{ item.byear }} / 
+                                {{ item.price }}元
+                            </div>
+                            <div class="pub">ISBN:{{ item.isbn }}</div>
+                            <div class="pub">
+                                总册数:{{ item.totalnum }} / 
+                                在馆数:{{ item.available }} / 
+                                已预约:{{ item.booked }} / 
+                                剩余:{{ item.bookable }}</div>
                             <div class="lead">
-                                <a class="btn btn-warning btn-xs" href="{{ item.href }}" {% if not item.bookable %}disabled="disbaled"{% endif %}>预约</div>
+                                <a class="btn btn-warning btn-xs" href="{{ item.href }}" {% if not item.bookable %}disabled="disbaled"{% endif %}>预约</a>
                             </div>
                         </div> 
                     </div>
@@ -51,11 +62,11 @@
         <div class="container">
             <nav>
                 <ul class="pagination">
-                    <li><a href="{{ result.prev_page }}" {% if result.is_first_page %}disabled="disabled"{% endif  %}>&laquo;</a></li>
+                    <li {% if result.is_first_page %}class="disabled"{% endif  %}><a href="{{ result.prev_page }}">&laquo;</a></li>
                     {% for page in result.page_href_list %}
-                    <li><a href="{{ page.href }}" {% ifequal forloop.counter result.current_page %}class="active"{ %endifequal% }>{{ forloop.counter }}</a></li>
+                    <li {% ifequal forloop.counter result.current_page %}class="active"{% endifequal %}><a href="{{ page }}">{{ forloop.counter }}</a></li>
                     {% endfor %}
-                    <li><a href="{{ result.next_page }}" {% if result.is_last_page %}disabled="disabled"{% endif  %}>&raquo;</a></li>
+                    <li {% if result.is_last_page %}class="disabled"{% endif  %}><a href="{{ result.next_page }}">&raquo;</a></li>
                 </ul>
             </nav>
         </div>

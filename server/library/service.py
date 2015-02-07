@@ -4,7 +4,7 @@
 import urllib2
 import json
 import unittest
-
+from library.models import * 
 
 def download_book_info(isbn):
     return douban_book_api(isbn)
@@ -32,6 +32,10 @@ def douban_book_api(isbn):
         ret_dict['byear']=ret_dict['byear'].replace('-','.')
         ret_dict['byear']=ret_dict['byear'].replace('/','.')
         ret_dict['price']=ret_dict['price'].replace('元','')
+        ret_dict['pagination']=ret_dict['pagination'].replace('页','')
+        ret_dict['pagination']=ret_dict['pagination'].replace('p','')
+        ret_dict['pagination']=ret_dict['pagination'].replace('P','')
+        print(ret_dict['price'])
         try:# 我也不知道豆瓣怎么处理没有译者的情况
             ret_dict['translator']=ret['translator']
             ret_dict['bcover']=ret['images']['large']
@@ -46,6 +50,14 @@ def douban_book_api(isbn):
 
 def library_thing_api(isbn):
     pass
+
+
+def search_by(key_word):
+    return search_result_example()
+
+def search_result_example():
+    return list(Book.objects.all())
+
 
 #单元测试
 class ServiceTestCase(unittest.TestCase):
