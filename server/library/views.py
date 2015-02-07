@@ -12,6 +12,7 @@ import json
 
 # Create your views here.
 def collection(request):
+    #TODO:过滤掉总数为0的
     book_list=list(Book.objects.all())
     return render_to_response('collection.html', {'book_list': book_list})
 
@@ -116,7 +117,7 @@ def booking(request,book_id,user_account,error_id):
     try:
         booking_item=Book.objects.get(id=book_id)
     except:
-        error_item={'what':'书籍不存在'}
+        error_item={'what':Book.STATIC_BOOK_NOT_FIND}
         booking_item=None
 
     context={
@@ -225,11 +226,48 @@ def return1(request,error_id='0'):
         try:
             error=Error.objects.get(id=error_id)
             data=json.loads(error.what)
-            error_item={'waht':data['what'],'inputed_uid':data['inputed_uid']}
+            error_item={'waht':data['what'],'inputed_uid':data['inputed_uid'],}
         except Exception as e:
             error_item={'what':str(e),}
     context={'error_item':error_item,}
     return render_to_response('return.html',context,context_instance=RequestContext(request))
 
 def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='0'):
-    pass
+    borrow_record=None
+    error_item={}
+    try:
+        try:
+            borrow_record=BorrowRecord.objects.get(id=borrow_record_id)
+
+            if(int(book_id)!=int(borrow_record.book_id)):
+                
+                raise Exception(BorrowRecord.STATIC_INCONSISTENT_ID)
+            if(user_account!=borrow_record.borrower_id):
+                raise Exception(BorrowRecord.STATIC_INCONSISTENT_ACCOUNT)
+
+        except Exception as e:
+            raise Exception(BorrowRecord.STATIC_BAD_BORROWRECORD+str(e))
+
+        if(0!=int(error_id)):
+            try:
+                error=Error.objects.get(id=error_id)
+                data=json.loads(error.what)
+                error_item['what']=data['what']
+                try:
+                    error_item['inputed_status']=data['inputed_status']
+                except Exception as e:
+                    raise Exception(BorrowRecord.STATIC_CANNOT_GET_STATUS+str(e))
+
+            except Exception as e:
+                try:
+                    error_item['what']=error_item['what']+str(e)
+                except:
+                    error_item['what']=str(e)
+        print(error_item)
+        context={
+            'record':borrow_record,
+            'error_item':error_item,
+        }
+        return render_to_response('returns2.html',context,context_instance=RequestContext(request))
+    except Exception as e:
+        print(str(e))

@@ -27,7 +27,13 @@ class Book(models.Model):
     totalnum = models.IntegerField()#总册数
     available = models.IntegerField()#在馆数
 
+    #私有成员
     __booked_num = -1
+
+    #静态成员
+    STATIC_BOOK_NOT_FIND=u'无法找到该书籍:'
+
+
 
     def __unicode__(self):
         return {
@@ -120,7 +126,13 @@ class AbstractUser(models.Model):
 借书人和预约人表
 """
 class Borrower(AbstractUser):
-    credit=models.IntegerField()
+    credit=models.IntegerField(default=0)
+    #static_max_borrowable_num是一个人最多可借和预约的数量
+    #你必须当做静态常量来用
+    STATIC_MAX_BORROWABLE_NUM=0
+    STATIC_CREDIT_LIMIT=4
+    STATIC_BAD_BORROWER_INFO=u'无法创建借书人记录, 借书人信息有误:'
+    STATIC_BAD_CREDIT_WANING=u'逾期归还, 损坏, 丢失次数过多, 已取消预约和借书资格'
     def __unicode__(self):
         return {
             "account":self.account,
@@ -130,10 +142,20 @@ class Borrower(AbstractUser):
             "credit":self.credit,
         }
     def badcredit(self):
-        if(self.credit<=0):
+        if(self.credit>=Borrower.STATIC_CREDIT_LIMIT):
             return True
         else:
             return False
+
+    def credit_overdue(self):
+        self.credit=self.credit+1
+
+    def credit_damaged(self):
+        self.credit=self.credit+1
+
+    def credit_lost(self):
+        self.credit=self.credit+1
+
 
 """
 值班人员表
@@ -143,6 +165,9 @@ class Watcher(AbstractUser):
     watchsum = models.IntegerField(default=0)
     iswatching = models.BooleanField(default=False)
     
+    STATIC_INVILID_WATCHER_INFO=u'值班人员数据异常:'
+
+
     #TODO:这里的watchsum不知道什么自增
     def __unicode__(self):
         return {
@@ -194,11 +219,17 @@ class BorrowRecord(models.Model):
             blank=True,
             null=True)
 
+    STATIC_BAD_BORROWRECORD=u'借书记录异常:'
+    STATIC_INCONSISTENT_ID=u'输入书籍ID与借书记录不一致'
+    STATIC_INCONSISTENT_ACCOUNT=u'输入学号与借书记录不一致'
+    STATIC_CANNOT_GET_STATUS=u'无法获得"状态":'
+    STATIC_OUT_OF_BORROWABLE_RANGE=u'借书数超过借书者的限额'
+
     def __unicode__(self):
         return {
             "id":str(self.id),
             "book_id":str(self.book_id),
-            "borrower_id":str(self.borrower_id),
+            #"borrower_id":str(self.borrower_id),
             "btime":str(self.btime),
             "rtime":str(self.rtime),
             "bsubc":str(self.bsubc),
@@ -250,6 +281,10 @@ class BookingRecord(models.Model):
     hasaccepted = models.BooleanField(default=False)
     hasborrowed = models.BooleanField(default=False)
 
+    #静态常量
+    STATIC_OUT_OF_BOOKINGABLE_RANGE=u'预约数量超过预约者的额度'
+    STATIC_AVAILABLE_LESS_THAN_BOOKNUM=u'该书库存量小于预约数量'
+    STATIC_BOOKINGRECORD_NOT_FIND=u'预约记录不存在:'
     def __unicode__(self):
         return {
             "id":self.id,
@@ -301,7 +336,6 @@ class Error(models.Model):
             ret=json.loads(self.what)
             return ret
         except Exception as e:
-            print("]]]]]]]]]]]]]]]]]]]]]]]]]]]"+str(e))
             return {'what':self.what}
     def __unicode__(self):
         return {

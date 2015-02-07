@@ -1,7 +1,19 @@
 {% include 'includes/header.html' %}
         <div class="lead"></div>
         <div class="container">
-            <form class="form-horizontal" role="form" method="post" action="Return2Action/{{ record.id }}">
+            <form class="form-horizontal" role="form" method="post" action="/Return2Action/">
+                {% csrf_token %}
+                <input type="hidden" name="borrow-record-token" value="{{ record.id }}" />
+                <input type="hidden" name="book-token" value="{{ record.book.id }}" />
+                <input type="hidden" name="borrower-token" value="{{ record.borrower.account }}" />
+                {% if error_item %}
+                <div class="form-group">
+                    <label class="text-danger col-sm-2 control-label">* 异常:</label>
+                    <div class="col-sm-10 form-control-static" role="alert">
+                        <strong class="text-danger">{{ error_item.what }}</strong>
+                    </div>
+                </div>
+                {% endif %}
                 <div class="form-group">
                     <label for="rt-input-uid" class="col-sm-2 control-label">还书人学号:</label>
                     <div class="col-sm-10">
@@ -27,20 +39,27 @@
                         <p class="form-control-static">{{ record.duration }}天</p>
                     </div>
                 </div>
-                 <div class="form-group">
+                <div class="form-group">
                     <label for="rt-input-isbn" class="col-sm-2 control-label">书名:</label>
                     <div class="col-sm-10">
                         <p class="form-control-static">{{ record.book.bname }}</p>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="br-input-br-bname" class="col-sm-2 control-label">状态:</label>
+                    <label for="rt-input-bsubc" class="col-sm-2 control-label">借时状态:</label>
                     <div class="col-sm-10">
-                        <select class="form-control" id="br-input-status" name="br-input-status">
-                            <option value="normal" seleted="selected">正常</option>
-                            <option value="overdue">逾期</option>
-                            <option value="damaged">损坏</option>
-                            <option value="lost">遗失</option>  
+                        <p class="form-control-static">{{ record.bsubc }}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="br-input-status" class="col-sm-2 control-label">状态:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="rt-input-status" name="rt-input-status">
+                            <option value="normal" {% if not error_item %}selected="selected"
+                            {% else %}{% ifequal error_item.inputed_status 'normal' %}selected="selected"{% endifequal %}{% endif %}>正常</option>
+                            <option value="overdue"{% ifequal error_item.inputed_status 'overdue' %}selected="selected"{% endifequal %}>逾期</option>
+                            <option value="damaged"{% ifequal error_item.inputed_status 'damaged' %}selected="selected"{% endifequal %}>损坏</option>
+                            <option value="lost"{% ifequal error_item.inputed_status 'lost' %}selected="selected"{% endifequal %}>遗失</option>  
                         </select>
                     </div>
                 </div>

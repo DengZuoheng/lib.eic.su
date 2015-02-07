@@ -1,6 +1,6 @@
 //全局变量
 var afx_debug=false;//设定JS是否处于debug状态
-var afx_max_booknum=12;//最大借书和预约数量
+var afx_max_booknum=8;//最大借书和预约数量
 var afx_float_default_prec=2;//默认浮点数精度
 
 //检查SQL注入特征, 含有SQL语句这返回真
