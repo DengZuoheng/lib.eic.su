@@ -58,4 +58,9 @@ urlpatterns = patterns('',
     #调试用
     url(r'^filldb/', debug.filldb),
 
+    #登录
+    url(r'^account/', include('login.urls')),
+
+    #验证码
+    url(r'^captcha/', include('captcha.urls')),
 )

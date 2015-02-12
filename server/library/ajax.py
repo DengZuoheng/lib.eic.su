@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #类似views.py, 不过这是用来处理ajax请求的
 

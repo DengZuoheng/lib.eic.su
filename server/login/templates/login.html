@@ -1,0 +1,6 @@
+<form action='' method="post">
+{% csrf_token %}
+{{form.as_p}}
+{{error}}
+<input type="submit" value="login"/>
+</form>

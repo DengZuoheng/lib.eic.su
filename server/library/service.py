@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # service就用来封装view层觉得太长的代码吧
 import urllib2
@@ -14,7 +13,7 @@ def douban_book_api(isbn):
     try:
         socket=urllib2.urlopen(url)
         json_str=socket.read()
-        ret=json.loads(json_str)
+        ret=json.loads(json_str.decode('utf-8'))
         ret_dict = {
             'flag':'true',
             'isbn':ret['isbn13'],
@@ -26,17 +25,17 @@ def douban_book_api(isbn):
             'bcover':ret['image'],
             'publisher':ret['publisher'],
             }
-        ret_dict['byear']=ret_dict['byear'].replace('年','.')
-        ret_dict['byear']=ret_dict['byear'].replace('月','.')
-        ret_dict['byear']=ret_dict['byear'].replace('日','')
-        ret_dict['byear']=ret_dict['byear'].replace('-','.')
-        ret_dict['byear']=ret_dict['byear'].replace('/','.')
-        ret_dict['price']=ret_dict['price'].replace('元','')
-        ret_dict['pagination']=ret_dict['pagination'].replace('页','')
-        ret_dict['pagination']=ret_dict['pagination'].replace('p','')
-        ret_dict['pagination']=ret_dict['pagination'].replace('P','')
+        ret_dict['byear']=ret_dict['byear'].replace(u'年','.')
+        ret_dict['byear']=ret_dict['byear'].replace(u'月','.')
+        ret_dict['byear']=ret_dict['byear'].replace(u'日','')
+        ret_dict['byear']=ret_dict['byear'].replace(u'-','.')
+        ret_dict['byear']=ret_dict['byear'].replace(u'/','.')
+        ret_dict['price']=ret_dict['price'].replace(u'元','')
+        ret_dict['pagination']=ret_dict['pagination'].replace(u'页','')
+        ret_dict['pagination']=ret_dict['pagination'].replace(u'p','')
+        ret_dict['pagination']=ret_dict['pagination'].replace(u'P','')
         print(ret_dict['price'])
-        try:# 我也不知道豆瓣怎么处理没有译者的情况
+        try:
             ret_dict['translator']=ret['translator']
             ret_dict['bcover']=ret['images']['large']
             return ret_dict
@@ -51,10 +50,11 @@ def douban_book_api(isbn):
 def library_thing_api(isbn):
     pass
 
-
+from search.search import search
 def search_by(key_word):
-    #TODO: 这里需要返回搜索结果, 是一个Book对象的列表, 按相关度降序
-    return search_result_example()
+    #TODO: 这里需要返回搜索结果, 是一个Book对象的列表, 按相关度降序   
+    return search(key_word) 
+#    return search_result_example()
 
 def search_result_example():
     return list(Book.objects.all())

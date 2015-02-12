@@ -211,18 +211,18 @@ class BorrowRecord(models.Model):
     #还书时的状态{正常:normal,预期:overdue,损坏:damaged,遗失:lost}
     rsubc = models.CharField(max_length=12,blank=True) 
     hasreturn = models.BooleanField(default=False)
-    #boperator = models.ForeignKey(
-    #        Watcher,
-    #       related_name='+',
-    #        on_delete=models.DO_NOTHING,
-    #        blank=True,
-    #        null=True)
-    #roperator = models.ForeignKey(
-    #        Watcher,
-    #        related_name='+',
-    #        on_delete=models.DO_NOTHING,
-    #        blank=True,
-    #        null=True)
+    boperator = models.ForeignKey(
+            Watcher,
+            related_name='+',
+            on_delete=models.DO_NOTHING,
+            blank=True,
+            null=True)
+    roperator = models.ForeignKey(
+            Watcher,
+            related_name='+',
+            on_delete=models.DO_NOTHING,
+            blank=True,
+            null=True)
 
     STATIC_BAD_BORROWRECORD=u'借书记录异常:'
     STATIC_INCONSISTENT_ID=u'输入书籍ID与借书记录不一致'

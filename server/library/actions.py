@@ -158,10 +158,10 @@ def borrow_action(request):
             raise Exception(Book.STATIC_BOOK_NOT_FIND+str(e))
 
         #然后获取值班人信息
-        #try:
-        #    current_watcher=Watcher.class_get_current_watcher()
-        #except Exception as e:
-        #    raise Exception(Watcher.STATIC_INVILID_WATCHER_INFO+str(e))
+        try:
+            current_watcher=Watcher.class_get_current_watcher()
+        except Exception as e:
+            raise Exception(Watcher.STATIC_INVILID_WATCHER_INFO+str(e))
 
         #检查是否超过额度
         try:
@@ -183,8 +183,8 @@ def borrow_action(request):
                 borrower=borrower,
                 btime=datetime.datetime.now(),
                 bsubc=inputed_bsubc,
-                #boperator=current_watcher,
-                #roperator=current_watcher,
+                boperator=current_watcher,
+                roperator=current_watcher,
                 #这里用当前值班人员做还书操作者只是权宜之计
                 #应该认为, roperator在和hasreturn为False时是无效的
                 )
