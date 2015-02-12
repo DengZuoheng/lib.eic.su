@@ -246,7 +246,7 @@ var afx_result;
                 flag++;
             }
         }
-        if(flag==1){
+        if(flag>=1){
             return false;
         }else{
             return true;
