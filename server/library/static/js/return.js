@@ -41,7 +41,7 @@
     $("#submit").click(function(){
         if($("#rt-input-uid").val().length==0)
         {
-            $("rt-input-uid").change();
+            $("#rt-input-uid").change();
             return false;
         }else{
             return true;
