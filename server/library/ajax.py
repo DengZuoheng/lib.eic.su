@@ -12,6 +12,8 @@ from models import Book
 from models import Borrower
 from models import BookingRecord
 from models import Watcher
+import os.path
+import md5
 
 def on_admin_request(request):
     #TODO: 要添加用户认证
@@ -146,4 +148,17 @@ def on_admin_push(request):
     except Exception as e:
         print(str(e))
         return HttpResponse(json.dumps({'flag_succeed':'false',}))
+
+def on_upload_push(request):
+    try:
+        input_file=request.FILES['input-cover']
+        filename=input_file.name
+        extension = os.path.splitext(filename)[1][1:]
+        m = md5.new()
+        m.update(input_file.read())
+        new_file_name=m.hexdigest()+'.'+extension
+        file_url=service.storage(input_file,new_file_name)
+    except Exception as e:
+        print(str(e))
+    return HttpResponse(json.dumps({'flag_succeed':'true','filename':filename,'file_url':file_url,}))
 

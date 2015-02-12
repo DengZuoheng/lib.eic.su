@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 import json
 import service
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 # Create your views here.
 def collection(request):
@@ -373,3 +374,7 @@ def search(request,start_idx,key_word):
         }
 
     return render_to_response('search.html',context,context_instance=RequestContext(request))
+
+def upload(request):
+    context={"upload":True}
+    return render_to_response('upload.html',context,context_instance=RequestContext(request))

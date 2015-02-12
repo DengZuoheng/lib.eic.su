@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^return/$',views.return1),
     url(r'^return/err/(\d+)$',views.return1),#好吧, 不能用return做函数名
     url(r'^return2/bid/(\d+)/uid/(\d+)/brrid/(\d+)/err/(\d+)$',views.return2),
+    url(r'^upload/$',views.upload),
 
     #按钮响应
     url(r'^accept/bid/(\d+)/uid/(\d+)/brid/(\d+)$',views.accept_booking),
@@ -54,6 +55,7 @@ urlpatterns = patterns('',
 
     #处理前端的ajax发送过来的数据
     url(r'^PushAjaxAdmin/',ajax.on_admin_push),
+    url(r'^PushAjaxUpload/',ajax.on_upload_push),
 
     #调试用
     url(r'^filldb/', debug.filldb),

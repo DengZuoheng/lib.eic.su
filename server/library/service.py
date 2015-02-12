@@ -59,6 +59,9 @@ def search_by(key_word):
 def search_result_example():
     return list(Book.objects.all())
 
+def storage(input_file,file_name):
+    return r'http://127.0.0.1/static/upload/images/'+file_name
+
 
 #单元测试
 class ServiceTestCase(unittest.TestCase):

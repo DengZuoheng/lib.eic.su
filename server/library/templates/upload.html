@@ -1,0 +1,29 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container">
+            <form class="form-horizontal" role="form" method="post" action="#">
+            {% csrf_token %}
+                <input id="input-cover" type="file" multiple="true" class="file-loading" data-upload-url="http://127.0.0.1:8000/PushAjaxUpload/" data-max-file-count="10" name="input-cover">
+            </form>
+            <div id="image_url"></div>          
+        </div>
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="{% static "bootstrap-fileinput/js/fileinput.min.js" %}"></script>
+        <script>
+            // with plugin options
+            $("#input-cover").fileinput({
+                'showUpload':true,
+                'previewFileType':'any',
+                'ajaxSettings':{headers: {'X-CSRFToken':$.cookie('csrftoken')}},
+                'dropZoneTitle':'拖放图片文件到这里...',
+            });
+            //成功之后
+            $('#input-cover').on('fileuploaded',function(event,data,previewId,index) {
+                response = data.response;
+                $("#image_url").append($("<p></p>").html(response['file_url']));
+            });
+                      
+        </script>
+  </body>
+</html>
