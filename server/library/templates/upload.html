@@ -5,8 +5,10 @@
             {% csrf_token %}
                 <input id="input-cover" type="file" multiple="true" class="file-loading" data-upload-url="http://127.0.0.1:8000/PushAjaxUpload/" data-max-file-count="10" name="input-cover">
             </form>
-            <div id="image_url"></div>          
+                     
         </div>
+        <div class="lead"></div>
+        <div class="container" id="image_url"></div> 
 {% include 'includes/footer.html' %}
 {% load staticfiles %}
         <script src="{% static "bootstrap-fileinput/js/fileinput.min.js" %}"></script>
@@ -21,7 +23,14 @@
             //成功之后
             $('#input-cover').on('fileuploaded',function(event,data,previewId,index) {
                 response = data.response;
-                $("#image_url").append($("<p></p>").html(response['file_url']));
+                console.log(response)
+                $("#image_url")
+                    .append(
+                        $("<div class='alert alert-success' role='alert'></div>")
+                    .append(
+                        $("<p><span class='glyphicon glyphicon-ok' aria-hidden='true'></span><strong>&nbsp;您上传的图片 "+response['filename']+" 新地址:</strong></p>"))
+                    .append(
+                        $("<p></p>").html(response['file_url'])));
             });
                       
         </script>
