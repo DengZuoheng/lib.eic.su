@@ -2,6 +2,20 @@
     $("#fake-captcha").attr("src",$("#hidden-form img.captcha").attr("src"));
     $("#br-input-uid").val($("#hidden-form #id_account").val())
     $("#br-input-pw").val($("#hidden-form #id_password").val())
+    //看不清,换一张
+    $("#fake-refresh,#fake-captcha").click(function(){
+        $form = $("#hidden-form");
+        var url = location.protocol + "//" + window.location.hostname + ":"
+                  + location.port + "/captcha/refresh/";
+        $.getJSON(url, {}, function(json) {
+            console.log(json);
+            $form.find('input[name="captcha_0"]').val(json.key);
+            $form.find('img.captcha').attr('src', json.image_url);
+            $("#fake-captcha").attr("src",$("#hidden-form img.captcha").attr("src"));
+        });
+
+    return false;
+    })
     $("#br-input-uid").change(function(){
         temp=$(this).val();
         if(temp.length==4 && temp=='root'){
