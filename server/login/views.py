@@ -17,7 +17,7 @@ class BaseForm(forms.Form):
     def clean_password(self):
         password = self.cleaned_data['password']
         num_words = len(password)
-        if (num_words < 6) or (num_words >32):
+        if (num_words < 6) or (num_words >64):
             raise forms.ValidationError(u'密码长度不符!')
         return password
 
@@ -28,7 +28,7 @@ class LoginForm(BaseForm):
         if('root'==account):
             return account
         num_words = len(account)
-        if (num_words < 10) or (num_words >10):
+        if (num_words!=4 or num_words!=10):
             raise forms.ValidationError(u'学号长度不符!')
         return account
 
