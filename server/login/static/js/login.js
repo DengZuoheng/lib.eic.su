@@ -71,8 +71,8 @@
             return false;
         }
         $("#id_account").val($("#br-input-uid").val());
-        //$("#id_password").val(md5($("#br-input-pw").val()));
-        $("#id_password").val($("#br-input-pw").val());
+        $("#id_password").val(md5($("#br-input-pw").val()));
+        //$("#id_password").val($("#br-input-pw").val());
         $("#id_captcha_1").val($("#br-input-capt").val());
         
         $("#hidden-form").submit();

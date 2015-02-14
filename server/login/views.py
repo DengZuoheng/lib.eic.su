@@ -102,8 +102,8 @@ def login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             account = form.cleaned_data['account']
-            password = hashlib.md5(form.cleaned_data['password']).hexdigest()
-            password = hashlib.sha1(password).hexdigest()
+            
+            password = hashlib.sha1(form.cleaned_data['password']).hexdigest()
             try:
                 u = Watcher.objects.get(account=account)
                 if u.password == password:
