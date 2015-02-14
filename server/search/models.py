@@ -56,13 +56,19 @@ def book_post_save(sender, instance, signal, *args, **kwargs):
     words = jieba.cut_for_search(book.bname)#字典分词
     for w in words:
         save_index(w,book)
-    words = re.findall(ur"([\u4e00-\u9fa5]+)|(\w+)", book.author)#取连续的中文与英文作为分词
+    words = re.findall(ur"([\u4e00-\u9fa5]+)|(\w+)", delzifu(book.author))#取连续的中文与英文作为分词
+    words.append(re.findall(ur"([\u4e00-\u9fa5]+)|(\w+)", delzifu(book.translator)))#取连续的中文与英文作为分词
     for w_ in words:
-        if w_[0]:
-            w=w_[0]
-        elif w_[1]:
-            w=w_[1]
-        save_index(w,book)
+        if w_:
+            if w_[0]:
+                w=w_[0]
+            elif w_[1]:
+                w=w_[1]
+            save_index(w,book)
+    w = re.sub(ur'(出版社)','',delzifu(book.publisher))
+    print w
+    if w:
+        save_index(w,book)#出版社存储不带出版社字眼分词
 
 
 #Book数据库存储时触发book_post_save
