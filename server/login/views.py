@@ -8,6 +8,7 @@ from django.template import RequestContext
 
 from captcha.fields import CaptchaField
 import hashlib
+from django.core.urlresolvers import reverse
 
 from library.models import Watcher,Error
 
@@ -129,3 +130,42 @@ def login(request):
 def logout(request):
     del request.session['account']
     return HttpResponseRedirect('/')#已注销
+
+def modify(request,error_id='0'):
+    context={}
+    if(error_id!='0'):
+        try:
+            error=Error.objects.get(id=error_id)
+            context['error_item']={
+                'what':error.what,
+            }
+        except Exception as e:
+            context['error_item']={
+                'what':str(e),
+            }
+
+    context['session']=Watcher.class_get_session_name(request.session)
+    return render_to_response('modify.html',context,context_instance = RequestContext(request))
+
+def modify_action(request):
+    session_id=request.session['account']
+    try:
+        orig_pw=hashlib.sha1(request.POST['br-input-orig-pw']).hexdigest()
+        new_pw=hashlib.sha1(request.POST['br-input-new-pw']).hexdigest()
+        confirm_pw=hashlib.sha1(request.POST['br-input-confirm-pw']).hexdigest()
+        if(new_pw!=confirm_pw):
+            raise Exception(u'新密码与确认密码不一致')
+
+        watcher=Watcher.objects.get(account=session_id)
+        if(orig_pw!=watcher.password):
+            raise Exception(u'原密码错误')
+
+        watcher.password=new_pw
+        watcher.save()
+        del request.session['account']
+        return HttpResponseRedirect('/account/login/')
+    except Exception as e:
+        error=Error(what=str(e))
+        error.save()
+        return HttpResponseRedirect(reverse('login.views.modify', args=[error.id]))
+
