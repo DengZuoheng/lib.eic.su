@@ -1,0 +1,58 @@
+{% include 'includes/header.html' %}
+    <div class="lead"></div>
+        <div class="container">
+            <form class="form-horizontal" role="form" method="post" action="/account/ModifyAction/">
+                {% csrf_token %}
+                <div class="form-group has-feedback">
+                    <label class="col-sm-2 control-label"></label>
+                    <div class="col-sm-10">
+                        <h2>修改密码<small> <span class="glyphicon glyphicon-exclamation-sign text-danger"></span></small></h2>
+                    </div>
+                </div>
+                
+                {% if error_item %}
+
+                <div class="form-group has-feedback">
+                    <label class="text-danger col-sm-2 control-label">* 异常</label>
+                    <div class="col-sm-10 form-control-static" role="alert">
+                        <strong class="text-danger">{{ error_item.what }}</strong>
+                    </div>
+                </div>
+                
+                {% endif %}
+                <div class="form-group has-feedback">
+                    <label for="br-input-orig-pw" class="col-sm-2 control-label">* 原密码:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="br-input-orig-pw" name="br-input-orig-pw" placeholder="原密码">
+                        <span id="feedback-orig-pw" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <label for="br-input-new-pw" class="col-sm-2 control-label">* 新密码:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="br-input-new-pw" name="br-input-new-pw" placeholder="新密码" >
+                        <span id="feedback-new-pw" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <label for="br-input-confirm-pw" class="col-sm-2 control-label">* 确认密码:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="br-input-confirm-pw" name="br-input-confirm-pw" placeholder="确认密码" >
+                        <span id="feedback-confirm-pw" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>             
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" id="submit" class="btn btn-primary btn-block">提 交</button>
+                    </div>
+                </div>
+            </form>             
+        </div>
+
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script>
+        <script src="{% static "js/modify.js" %}"></script>
+  </body>
+</html>

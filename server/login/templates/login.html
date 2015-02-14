@@ -1,6 +1,80 @@
-<form action='' method="post">
-{% csrf_token %}
-{{form.as_p}}
-{{error}}
-<input type="submit" value="login"/>
-</form>
+{% include 'includes/header.html' %}
+
+    <form action='' method="post" hidden="hidden" id="hidden-form">
+        {% csrf_token %}
+        {{form.as_p}}
+        {{error}}
+        <input type="submit" value="login" id="login"/>
+    </form>
+
+    <div class="lead"></div>
+        <div class="container">
+            <form class="form-horizontal" role="form" method="post" action="#">
+
+                <div class="form-group has-feedback">
+                    <label for="br-input-uid" class="col-sm-2 control-label"></label>
+                    <div class="col-sm-10">
+                        <h2>登录您的账号</h2>
+                    </div>
+                </div>
+                
+                {% if error %}
+
+                <div class="form-group has-feedback">
+                    <label class="text-danger col-sm-2 control-label">* 异常</label>
+                    <div class="col-sm-10 form-control-static" role="alert">
+                        <strong class="text-danger">{{ error }}</strong>
+                    </div>
+                </div>
+                
+                {% endif %}
+                <div class="form-group has-feedback">
+                    <label for="br-input-uid" class="col-sm-2 control-label">* 账号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="br-input-uid" name="br-input-uid" placeholder="学号">
+                        <span id="feedback-uid" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <label for="br-input-pw" class="col-sm-2 control-label">* 密码:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="br-input-pw" name="br-input-pw" placeholder="密码" >
+                        <span id="feedback-pw" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <label for="br-input-una" class="col-sm-2 control-label"></label>
+                    <div class="col-sm-10">
+                        <a id="fake-refresh" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-refresh"></span> 看不清, 换一张</a>
+                        <img id="fake-captcha" src="#" alt="captcha" class="captcha btn">
+                        
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <label for="br-input-capt" class="col-sm-2 control-label">* 验证码:</label>
+                    <div class="col-sm-10">
+
+                        <input type="password" class="form-control" id="br-input-capt" name="br-input-capt" placeholder="验证码(不区分大小写)">
+                        <span id="feedback-capt" class="glyphicon form-control-feedback"></span>
+                    </div>
+                    
+                    
+                </div>
+                
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" id="submit" class="btn btn-primary btn-block">登 录</button>
+                    </div>
+                </div>
+            </form>
+
+            
+        </div>
+
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script>
+        <script src="{% static "js/login.js" %}"></script>
+  </body>
+</html>

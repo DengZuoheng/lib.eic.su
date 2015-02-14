@@ -32,7 +32,7 @@ var afx_book_ajaxed=false;
         //学号输入了前9位就应该ajax请求了
         
         if($("#br-input-uid").val().length==10){
-            console.log("F");
+
             //加载loading动画
             $("#feedback-uid").attr(
                 "class","glyphicon glyphicon-refresh glyphicon-refresh-animate form-control-feedback");
@@ -80,7 +80,7 @@ var afx_book_ajaxed=false;
         //如果已经是黑名单了, 就把所有东西红掉
         if(obj["badcredit"]=="true"){
             
-            $("#feedback-uid").attr("class","c");
+            $("#feedback-uid").attr("class","glyphicon glyphicon-remove form-control-feedback");
             //禁止所有输入
             $("input,textarea,select,#submit")
                 .attr("placeholder","该借书人已经多次遗失书籍或预期归还, 按照规定, 已经不能预约或借书了")
@@ -180,7 +180,6 @@ var afx_book_ajaxed=false;
     });
     
     $("#br-input-usp").change(function(){
-        console.log("GGGGG");
         afx_flag_spnumber_filled=true;
         $(this).parent()
             .removeClass("has-error")
