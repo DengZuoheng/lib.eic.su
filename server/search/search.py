@@ -17,9 +17,24 @@ def search_easy(text):
 			rlist.append(b)
 			return rlist
 		except Index.DoesNotExist:
-			pass
+			return rlist
 		except Exception as e:
 			error=Error(what='search isbn:"'+isbn+'"error:'+str(e))
+			error.save()
+			return rlist
+	c = re.search(ur'([\u4e00-\u9fa5]+|\w+)出版社',text)
+	if c:
+		publisher = c.group(0)
+		try:
+			i = Index.objects.get(index=w)
+			q = i.books.all()
+			for t in q:
+				rlist.append(t)
+			return rlist
+		except Index.DoesNotExist:
+			pass
+		except Exception as e:
+			error=Error(what='search:"'+w+'"error:'+str(e))
 			error.save()
 			return rlist
 	num = 0
@@ -44,21 +59,20 @@ def search_easy(text):
 				rdict[t.id]+=1
 			else:
 				rdict[t.id]=0
-	if not rdict:
-		w = delzifu(text)
-		if w=='':
-			return rlist
-		try:
-			i = Index.objects.get(index=w)
-			q = i.books.all()
-		except Index.DoesNotExist:
-			return rlist
-		except Exception as e:
-			error=Error(what='search:"'+w+'"error:'+str(e))
-			error.save()
-			return rlist
+	w = delzifu(text)
+	if w=='':
+		return rlist
+	try:
+		i = Index.objects.get(index=w)
+		q = i.books.all()
 		for t in q:
 			rlist.append(t)
+		return rlist
+	except Index.DoesNotExist:
+		pass
+	except Exception as e:
+		error=Error(what='search:"'+w+'"error:'+str(e))
+		error.save()
 		return rlist
 	if rdict:
 		r = sorted(rdict.iteritems(),key=lambda x:x[1],reverse=True)
@@ -102,7 +116,7 @@ def search_deep(text):
 			continue
 		num+=1
 		try:
-			q = Book.objects.filter(Q(bname__contains=w)|Q(author__contains=w))
+			q = Book.objects.filter(Q(bname__contains=w)|Q(author__contains=w)|Q(translator__contains=w)|Q(publisher__contains=w))
 		except Index.DoesNotExist:
 			continue
 		except Exception as e:
@@ -137,4 +151,6 @@ def search_test(text):
 	return rlist
 
 #搜索方式定义接口
-search = search_test
+def search(text):
+	return search_easy(text.lower())
+	#return search_deep(text.lower())
