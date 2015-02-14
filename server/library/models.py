@@ -8,6 +8,7 @@ dengzuoheng@gmail.com
 from django.db import models
 import datetime
 import json
+import hashlib
 
 # Create your models here.
 #blank=True表示该属性可以为NULL
@@ -161,7 +162,6 @@ class Borrower(AbstractUser):
     def credit_lost(self):
         self.credit=self.credit+1
 
-
 """
 值班人员表
 """
@@ -198,6 +198,46 @@ class Watcher(AbstractUser):
     @classmethod
     def class_get_current_watcher(cls):
         return Watcher.objects.get(iswatching=True)
+
+    @classmethod
+    def class_get_session_name(cls,session):
+        if 'account' in session:
+            #已登录
+            try:
+                account=session['account']
+                watcher=Watcher.objects.get(account=account)
+                #不是当前值班就不算
+                if(not watcher.iswatching):
+                    if(watcher.account=='root'):
+                        return {'name':watcher.name}
+                    else:
+                        return None
+                else:
+                    return {'name':watcher.name}
+            except:
+                return None
+        else:
+
+            return None
+    #创建root账户
+    @classmethod
+    def class_checkout_root(cls):
+        try:
+            watcher=Watcher.objects.get(account='root')
+            return True
+        except:
+            #默认密码是guido大神的名字
+            default_password=hashlib.md5('Guido_van_Rossum').hexdigest()
+            default_password=hashlib.sha1(default_password).hexdigest()
+
+            watcher=Watcher(
+                account='root',
+                name='Administrator',
+                spnumber='',
+                password=default_password,
+                )
+            watcher.save()
+            return False
 
 """
 外借记录表

@@ -29,31 +29,56 @@
                 </div>
                 <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
                     <ul class="nav navbar-nav">
-                        <li>
+                        <li {% if collection %}class="active"{% endif %}>
+                            <a href="/collection/">查看所有馆藏</a>
+                        </li>
+                        {% if session %}
+                        <li {% if order %}class="active"{% endif %}>
                             <a href="/order/bid/0/uid/0/err/0">查看预约记录</a>
                         </li>
-                        <li>
+                        <li {% if history %}class="active"{% endif %}>
+                            <a href="/history/">查看外借记录</a>
+                        <li {% if borrowing %}class="active"{% endif %}>
                             <a href="/borrowing/">外借</a>
                         </li>
-                        <li>
+                        <li {% if return %}class="active"{% endif %}>
                             <a href="/return/">归还</a>
                         </li>
+                        {% endif %}
                         
-                        <li class="dropdown">
+                        
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if session %}
+                        <li class="dropdown {% if admin or insert or upload %}active{% endif %}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">系统<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="/admin/">管理值班干事</a></li>
-                                <li><a href="/insert/">新书入库</a></li>
+                                <li {% if admin %}class="active"{% endif %}><a href="/admin/">管理值班干事</a></li>
+                                <li {% if insert %}class="active"{% endif %}><a href="/insert/">新书入库</a></li>
                                 <li class="divider"></li>
-                                <li><a href="/upload/">上传图片</a></li>
+                                <li {% if upload %}class="active"{% endif %}><a href="/upload/">上传图片</a></li>
+                                
+
                             </ul>
+                        </li>
+                        <li class="dropdown {% if modify %}active{% endif %}">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ session.name }}<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li {% if collection %}class="active"{% endif %}><a href="/account/modify">修改密码</a></li>
+                                <li class="divider"></li>
+                                <li><a href="/account/logout">退出</a></li>
+
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li {% if login %}class="active"{% endif %}>
+                            <a href="/account/login">登录</a>
+                        </li>
+                        
+                        {% endif %}
                         <li>
                             <a href="/help/">帮助</a>
                         </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/history/" onclick="_hmt.push(['_trackEvent', 'docv3-navbar', 'click', 'doc-home-navbar-job'])" target="_blank">查看外借记录</a></li>
-                        <li><a href="/collection/" onclick="_hmt.push(['_trackEvent', 'docv3-navbar', 'click', 'doc-home-navbar-expo'])" target="_blank">查看所有馆藏</a></li>
                         
                     </ul>
                 </nav>

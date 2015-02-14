@@ -17,7 +17,7 @@ class BaseForm(forms.Form):
     def clean_password(self):
         password = self.cleaned_data['password']
         num_words = len(password)
-        if (num_words < 6) or (num_words >12):
+        if (num_words < 6) or (num_words >32):
             raise forms.ValidationError(u'密码长度不符!')
         return password
 
@@ -25,6 +25,8 @@ class LoginForm(BaseForm):
     captcha = CaptchaField(label=u'验证码:')
     def clean_account(self):
         account = self.cleaned_data['account']
+        if('root'==account):
+            return account
         num_words = len(account)
         if (num_words < 10) or (num_words >10):
             raise forms.ValidationError(u'学号长度不符!')
@@ -100,7 +102,8 @@ def login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             account = form.cleaned_data['account']
-            password = hashlib.sha1(form.cleaned_data['password']).hexdigest()
+            password = hashlib.md5(form.cleaned_data['password']).hexdigest()
+            password = hashlib.sha1(password).hexdigest()
             try:
                 u = Watcher.objects.get(account=account)
                 if u.password == password:
@@ -116,7 +119,12 @@ def login(request):
             return render_to_response('login.html',{'form':form,'error':error},context_instance = RequestContext(request))
     else:
         form = LoginForm()
-    return render_to_response('login.html',{'form':form},context_instance = RequestContext(request))
+        Watcher.class_checkout_root()
+    context={
+        'login':True,
+        'form':form,
+    }
+    return render_to_response('login.html',context,context_instance = RequestContext(request))
 
 def logout(request):
     del request.session['account']

@@ -13,10 +13,18 @@ import service
 
 # Create your views here.
 def collection(request):
+    context={'collection':True}
+    
+    context['session']=Watcher.class_get_session_name(request.session)
+
     book_list=list(Book.objects.all().exclude(totalnum=0))
-    return render_to_response('collection.html', {'book_list': book_list})
+    context['book_list']=book_list
+    return render_to_response('collection.html', context)
 
 def order(reuqest,book_id,user_account,error_id):
+    context={'order':True}
+    context['session']=Watcher.class_get_session_name(request.session)
+
     order_list=list(BookingRecord.objects.all().order_by('-btime'))
     error_item=None
     if(0!=int(error_id)):
@@ -37,8 +45,9 @@ def order(reuqest,book_id,user_account,error_id):
                 BookingRecord.objects.filter(book_id=book_id).order_by('-btime'))
         except:
             order_list=None        
-    
-    return render_to_response('order.html',{'order_list':order_list,'error_item':error_item})
+    context['order_list']=order_list
+    context['error_item']=error_item
+    return render_to_response('order.html',context)
 
 def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_id='0'):
     booklist=[]
@@ -46,6 +55,9 @@ def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_i
     inputed_bsubc=None
     error_item=None
     booking_record=None
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     #如果有书籍id,就填充书籍信息
     if(0!=int(book_id)):
         try:
@@ -83,6 +95,8 @@ def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_i
             pass
 
     context={
+        'borrowing':True,
+        'session':session,
         'booklist':booklist,
         'user_item':user_item,
         'inputed_bsubc':inputed_bsubc,
@@ -101,6 +115,9 @@ def booking(request,book_id,user_account,error_id):
     error_item=None
     inputed_bsubc=None
     #user_account和error_id都可以是0, 但是book_id必须有效
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
 
     if(u'0'!=user_account):
         try:
@@ -121,6 +138,8 @@ def booking(request,book_id,user_account,error_id):
         booking_item=None
 
     context={
+        'booking':True,
+        'session':session,
         'booking_item':booking_item,
         'user_item':user_item,
         'error_item':error_item,
@@ -132,13 +151,22 @@ def booking(request,book_id,user_account,error_id):
 
 
 def subject(request,book_id):
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     book=Book.objects.get(id=book_id)
-    return render_to_response('subject.html',{'book':book,})
+    context={
+        'session':session,
+        'book':book,
+    }
+    return render_to_response('subject.html',context)
 
 def history(request,book_id='0',user_account='0',return_status='null'):
     filter_kwargs={}
     history_list=None
-
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     if(0!=int(book_id)):
         filter_kwargs['book_id']=book_id
 
@@ -156,25 +184,37 @@ def history(request,book_id='0',user_account='0',return_status='null'):
             history_list=list(BorrowRecord.objects.all().order_by('-btime'))
         else:
             history_list=list(BorrowRecord.objects.filter(**filter_kwargs).order_by('-btime'))
-
-        return render_to_response('history.html',{'history_list':history_list})
+        context={
+            'history':True,
+            'session':session,
+            'history_list':history_list,
+        }
+        return render_to_response('history.html',context)
     
     except Exception as e:
             print(str(e))
 
 def index(request):
-    return  render_to_response('index.html',context_instance=RequestContext(request))
+    session=Watcher.class_get_session_name(request.session)
+    context={
+        'session':session,
+    }
+    print(str(context))
+    return  render_to_response('index.html',context,context_instance=RequestContext(request))
 
 def insert(request,error_id='0'):
-    context={}
+    context={'insert':True,}
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
+    context['session']=session
+
     if(0!=int(error_id)):
         try:
             error=Error.objects.get(id=error_id)
-            data=json.loads(error.what)
-            
-            context={
-                "error_item":data,
-            }
+            data=json.loads(error.what)          
+            context['error_item']=data
+
         except Exception as e:
             print(str(e))
 
@@ -190,6 +230,9 @@ def success(request,type,extra_param='0'):
         'back_href':'/index/',
         'github':'https://github.com/DengZuoheng/lib.eic.su/issues'
     }
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
 
     if(type=='insert'):
         success_dict['back_href']='/insert/'
@@ -217,7 +260,11 @@ def success(request,type,extra_param='0'):
 
         success_dict['watcher']=Watcher.class_get_current_watcher()
         success_dict['booking']=True
-    return render_to_response('success.html',{'success':success_dict})
+    context={
+        'session':session,
+        'success':success_dict,
+    }
+    return render_to_response('success.html',context)
 
 def accept_booking(request,book_id='0',user_account='0',brid='0'):
     try:
@@ -244,10 +291,20 @@ def cancel_booking(request,book_id='0',user_account='0',brid='0'):
         return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id]))
 
 def admin(request):
-    return render_to_response('admin.html',context_instance=RequestContext(request))
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
+    context={
+        'session':session,
+        'admin':True,
+    }
+    return render_to_response('admin.html',context,context_instance=RequestContext(request))
 
 
 def return1(request,error_id='0'):
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     error=None
     error_item=None
     if(0!=int(error_id)):
@@ -257,12 +314,19 @@ def return1(request,error_id='0'):
             error_item={'waht':data['what'],'inputed_uid':data['inputed_uid'],}
         except Exception as e:
             error_item={'what':str(e),}
-    context={'error_item':error_item,}
+    context={
+        'error_item':error_item,
+        'session':session,
+        'return':True,
+    }
     return render_to_response('return.html',context,context_instance=RequestContext(request))
 
 def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='0'):
     borrow_record=None
     error_item={}
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     try:
         try:
             borrow_record=BorrowRecord.objects.get(id=borrow_record_id)
@@ -295,6 +359,8 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
         context={
             'record':borrow_record,
             'error_item':error_item,
+            'return':True,
+            'session':session,
         }
         return render_to_response('returns2.html',context,context_instance=RequestContext(request))
     except Exception as e:
@@ -302,6 +368,7 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
 
 def search(request,start_idx,key_word):
     start_idx=int(start_idx)
+    session=Watcher.class_get_session_name(request.session)
     book_list=service.search_by(key_word)
     result={}
     MAX_NO_PAGING=24#如果结果不超过32个,这一页显示完所有结果
@@ -369,7 +436,8 @@ def search(request,start_idx,key_word):
                 'begin_idx':0,
                 'end_idx':0,
                 'total':0,
-            }
+            },
+            'session':session,
         }
 
     return render_to_response('search.html',context,context_instance=RequestContext(request))
