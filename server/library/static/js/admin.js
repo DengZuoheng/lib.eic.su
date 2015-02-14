@@ -56,7 +56,9 @@ var afx_result;
             var adding_class;
             //是否当前值班会导致表格内容不同, 这里准备好
             if(item["iswatching"]=="yes"){
-                adding_htm="是";
+                adding_htm="是&nbsp;<span class='btn btn-default btn-xs' id='";
+                adding_htm+=item["account"]+"-cancelwatching"
+                                +"''>撤销值班</span>";
                 adding_class="warning";
             }else if(item["iswatching"]=="no"){
                 adding_htm="否&nbsp;<span class='btn btn-warning btn-xs' id='";
@@ -88,16 +90,41 @@ var afx_result;
                 console.log(id);
                 for(var i=0;i<afx_result["watch_list"].length;++i)
                 {
+                    /*
                     if(id==afx_result["watch_list"][i]["account"]){
                         afx_result["watch_list"][i]["iswatching"]="yes";
                     }else{
                         afx_result["watch_list"][i]["iswatching"]="no";
+                    }
+                    */
+                    if(id==afx_result["watch_list"][i]["account"]){
+                        afx_result["watch_list"][i]["iswatching"]="yes";
                     }
                 }
                 
                 fill_table(afx_result);
 
             });
+            //响应取消值班按钮
+            $("#"+item["account"]+"-cancelwatching").click(function(){
+                id=$(this).attr("id").replace("-cancelwatching","");
+                console.log(id);
+                for(var i=0;i<afx_result["watch_list"].length;++i)
+                {
+                    /*
+                    if(id==afx_result["watch_list"][i]["account"]){
+                        afx_result["watch_list"][i]["iswatching"]="yes";
+                    }else{
+                        afx_result["watch_list"][i]["iswatching"]="no";
+                    }
+                    */
+                    if(id==afx_result["watch_list"][i]["account"]){
+                        afx_result["watch_list"][i]["iswatching"]="no";
+                    }
+                }
+                
+                fill_table(afx_result);
+            })
             //响应删除按钮
             $("#"+item["account"]+"-delete").click(function(){
                 id=$(this).attr("id").replace("-delete","");

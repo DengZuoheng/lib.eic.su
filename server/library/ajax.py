@@ -118,7 +118,7 @@ def on_admin_push(request):
         push_json_str=request.POST['data']
         push_json=json.loads(push_json_str)
         #其实, 每次都必须删掉所有Watcher记录,然后重建
-        Watcher.objects.all().delete()
+        Watcher.objects.all().exclude(account='root').delete()
         for item in push_json['watch_list']:
             try:
                 watcher=Watcher.objects.get(account=item['account'])
