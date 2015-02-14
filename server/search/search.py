@@ -24,7 +24,7 @@ def search_easy(text):
 			return rlist
 	c = re.search(ur'([\u4e00-\u9fa5]+|\w+)出版社',text)
 	if c:
-		publisher = c.group(0)
+		w = c.group(0)
 		try:
 			i = Index.objects.get(index=w)
 			q = i.books.all()
