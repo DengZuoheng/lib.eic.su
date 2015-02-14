@@ -53,7 +53,7 @@ def library_thing_api(isbn):
 from search.search import search
 def search_by(key_word):
     #TODO: 这里需要返回搜索结果, 是一个Book对象的列表, 按相关度降序   
-    return search(key_word) 
+    return search(key_word.lower()) 
 #    return search_result_example()
 
 def search_result_example():
