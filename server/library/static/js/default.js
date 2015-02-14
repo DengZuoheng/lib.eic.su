@@ -79,8 +79,8 @@ function isSpnumber(str){
 function isIsbn(str){
     try{
         var pattern13=/^\d{13}$/;
-        var pattern9=/^\d{9}$/;
-        if(pattern13.test(str)||pattern9.test(str)){
+        var pattern10=/^\d{10}$/;
+        if(pattern13.test(str)||pattern10.test(str)){
             return true;
         }else{
             return false;
