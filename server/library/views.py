@@ -24,7 +24,8 @@ def collection(request):
 def order(request,book_id,user_account,error_id):
     context={'order':True}
     context['session']=Watcher.class_get_session_name(request.session)
-
+    if( context['session']==None ):
+        return HttpResponseRedirect('/account/login/')
     order_list=list(BookingRecord.objects.all().order_by('-btime'))
     error_item=None
     if(0!=int(error_id)):
