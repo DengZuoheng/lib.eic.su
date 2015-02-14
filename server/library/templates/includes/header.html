@@ -33,11 +33,26 @@
                             <a href="/collection/">查看所有馆藏</a>
                         </li>
                         {% if session %}
-                        <li {% if order %}class="active"{% endif %}>
-                            <a href="/order/bid/0/uid/0/err/0">查看预约记录</a>
+                        <li class="dropdown{% if order %} active{% endif %}">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">查看预约记录<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li {% if order_all %}class="active"{% endif %}><a href="/order/">所有记录</a></li>
+                                <li class="divider"></li>
+                                <li {% if order_noncomplete %}class="active"{% endif %}><a href="/order/bid/0/uid/0/err/0/accept/null/borrow/false">未完成</a></li>
+                                <li class="divider"></li>
+                                <li {% if order_nonaccept %}class="active"{% endif %}><a href="/order/bid/0/uid/0/err/0/accept/false/borrow/null">仅未受理</a></li>
+                                <li {% if order_nonborrow %}class="active"{% endif %}><a href="/order/bid/0/uid/0/err/0/accept/true/borrow/false">仅未外借</a></li>
+                            </ul>
                         </li>
-                        <li {% if history %}class="active"{% endif %}>
-                            <a href="/history/">查看外借记录</a>
+                        <li class="dropdown{% if history %} active{% endif %}">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">查看外借记录<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li {% if history_all %}class="active"{% endif %}><a href="/history/">所有记录</a></li>
+                                <li class="divider"></li>
+                                <li {% if history_nonreturn %}class="active"{% endif %}><a href="/history/bid/0/uid/0/return/false">仅未归还</a></li>
+                                <li {% if history_hasreturn %}class="active"{% endif %}><a href="/history/bid/0/uid/0/return/true">仅已归还</a></li>
+                            </ul>
+                        </li>
                         <li {% if borrowing %}class="active"{% endif %}>
                             <a href="/borrowing/">外借</a>
                         </li>
@@ -64,7 +79,7 @@
                         <li class="dropdown {% if modify %}active{% endif %}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ session.name }}<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li {% if collection %}class="active"{% endif %}><a href="/account/modify">修改密码</a></li>
+                                <li {% if modify %}class="active"{% endif %}><a href="/account/modify">修改密码</a></li>
                                 <li class="divider"></li>
                                 <li><a href="/account/logout">退出</a></li>
 
