@@ -21,7 +21,7 @@ def collection(request):
     context['book_list']=book_list
     return render_to_response('collection.html', context)
 
-def order(reuqest,book_id,user_account,error_id):
+def order(request,book_id,user_account,error_id):
     context={'order':True}
     context['session']=Watcher.class_get_session_name(request.session)
 
