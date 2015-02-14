@@ -2,6 +2,8 @@
 var afx_debug=false;//设定JS是否处于debug状态
 var afx_max_booknum=8;//最大借书和预约数量
 var afx_float_default_prec=2;//默认浮点数精度
+var afx_min_passw_length=6;//最小密码长度
+var afx_max_passw_length=64;//最大密码长度
 
 //检查SQL注入特征, 含有SQL语句这返回真
 function isSqlInjection(str){
@@ -170,4 +172,22 @@ function isYearMonth(str){
         console.log(e);
         return false;
     }
+}
+
+//非法反馈
+function illegal_feedback(obj,attr,placeholder){
+    
+    $("#feedback-"+attr).attr("class","glyphicon glyphicon-remove form-control-feedback");
+    obj.val("").parent().removeClass("has-success has-warning").addClass("has-error"); 
+    obj.attr("placeholder",placeholder);
+    $("#submit").removeClass("btn-primary").addClass("btn-danger").attr("disabled",true);
+    return false;
+}
+//合法反馈
+function legal_feedback(obj,attr,placeholder){
+    console.log(attr+"合法");
+    $("#feedback-"+attr).attr("class","glyphicon glyphicon-ok form-control-feedback");
+    obj.parent().removeClass("has-error has-warning").addClass("has-success");
+    $("#submit").removeClass("btn-danger").addClass("btn-primary").attr("disabled",false);
+    return true;
 }

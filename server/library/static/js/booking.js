@@ -185,22 +185,5 @@ var afx_flag_lpnumber_filled=false;
 
         return true;
     });
-    //非法反馈
-    function illegal_feedback(obj,attr,placeholder){
-        
-        $("#feedback-"+attr).attr("class","glyphicon glyphicon-remove form-control-feedback");
-        obj.val("").parent().removeClass("has-success has-warning").addClass("has-error"); 
-        obj.attr("placeholder",placeholder);
-        $("#submit").removeClass("btn-primary").addClass("btn-danger").attr("disabled",true);
-        return false;
-    }
-    //合法反馈
-    function legal_feedback(obj,attr,placeholder){
-        console.log(attr+"合法");
-        $("#feedback-"+attr).attr("class","glyphicon glyphicon-ok form-control-feedback");
-        obj.parent().removeClass("has-error has-warning").addClass("has-success");
-        $("#submit").removeClass("btn-danger").addClass("btn-primary").attr("disabled",false);
-        return true;
-    }
                   
 })();
