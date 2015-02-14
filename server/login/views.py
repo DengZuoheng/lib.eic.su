@@ -29,7 +29,9 @@ class LoginForm(BaseForm):
         if('root'==account):
             return account
         num_words = len(account)
-        if (num_words!=4 or num_words!=10):
+        if (num_words==4 or num_words==10):
+            pass
+        else:
             raise forms.ValidationError(u'学号长度不符!')
         return account
 
@@ -107,6 +109,8 @@ def login(request):
             password = hashlib.sha1(form.cleaned_data['password']).hexdigest()
             try:
                 u = Watcher.objects.get(account=account)
+                if(u.iswatching!=True and u.account!='root'):
+                    raise Exception(u'不是当前值班干事!')
                 if u.password == password:
                     request.session['account'] = account
                     return HttpResponseRedirect('/')#登录成功
@@ -117,7 +121,7 @@ def login(request):
             except Exception as e:
                 error=Error(what='login:"'+account+'"error:'+str(e))
                 error.save()
-            return render_to_response('login.html',{'form':form,'error':error},context_instance = RequestContext(request))
+            return render_to_response('login.html',{'form':form,'error':error.what},context_instance = RequestContext(request))
     else:
         form = LoginForm()
         Watcher.class_checkout_root()
@@ -132,7 +136,7 @@ def logout(request):
     return HttpResponseRedirect('/')#已注销
 
 def modify(request,error_id='0'):
-    context={}
+    context={'modify':True,}
     if(error_id!='0'):
         try:
             error=Error.objects.get(id=error_id)

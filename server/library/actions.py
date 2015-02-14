@@ -335,6 +335,7 @@ def return2_action(request):
 
         #然后视情况改变借书者的信用情况和库存情况
         if(inputed_status=='overdue'):
+            
             borrow_record.borrower.credit_overdue()
 
         if(inputed_status=='damaged'):
@@ -344,6 +345,8 @@ def return2_action(request):
             #丢失了应该是只减总数
             borrow_record.book.totalnum=borrow_record.book.totalnum-1
             borrow_record.borrower.credit_lost()
+        else:
+            borrow_record.book.available+=1
             
         #保存借书记录信息
         borrow_record.rtime=datetime.datetime.now()

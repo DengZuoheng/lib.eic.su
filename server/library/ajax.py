@@ -143,6 +143,13 @@ def on_admin_push(request):
                 pass
             
             watcher.save()
+            try:
+                account=request.session['account']
+                u=Watcher.objects.get(account=account)
+                if(u.iswatching==False and u.account!='root'):
+                    del request.session['account']
+            except:
+                del request.session['account']
 
         return HttpResponse(json.dumps({'flag_succeed':'true',}))
 

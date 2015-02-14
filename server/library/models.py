@@ -288,8 +288,11 @@ class BorrowRecord(models.Model):
         }
     #借用时长
     def duration(self):
-        today = datetime.datetime.now()
-        delta = today.date() - self.btime.date()
+        if(self.hasreturn==False):
+            today = datetime.datetime.now()
+            delta = today.date() - self.btime.date()
+        else:
+            delta = self.rtime.date()-self.btime.date()
         return delta.days
 
     def danger(self):
