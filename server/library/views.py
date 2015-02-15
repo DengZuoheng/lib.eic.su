@@ -14,32 +14,64 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 # Create your views here.
 def collection(request):
-    book_list=list(Book.objects.all().exclude(totalnum=0))
-    return render_to_response('collection.html', {'book_list': book_list})
+    context={'collection':True}
+    
+    context['session']=Watcher.class_get_session_name(request.session)
 
-def order(reuqest,book_id,user_account,error_id):
-    order_list=list(BookingRecord.objects.all().order_by('-btime'))
+    book_list=list(Book.objects.all().exclude(totalnum=0))
+    context['book_list']=book_list
+    return render_to_response('collection.html', context)
+
+def order(request,book_id='0',user_account='0',error_id='0',accept_status='null',borrow_status='null'):
+    context={'order':True}
+    filter_kwargs={}
+    context['session']=Watcher.class_get_session_name(request.session)
+    if( context['session']==None ):
+        return HttpResponseRedirect('/account/login/')
+    
     error_item=None
     if(0!=int(error_id)):
         try:
             error_item=Error.objects.get(id=error_id)
         except Exception as e:
             error_item={'what':str(e),}
+    #设置过滤条件
     if(u'0'!=user_account):
-        try:
-            order_list=list(
-                BookingRecord.objects.filter(borrower_id=user_account).order_by('-btime'))
-        except Exception as e:
-            print(str(e))
-            order_list=None
+        filter_kwargs['borrower_id']=user_account
+        
     if(0!=int(book_id)):
-        try:
-            order_list=list(
-                BookingRecord.objects.filter(book_id=book_id).order_by('-btime'))
-        except:
-            order_list=None        
+        filter_kwargs['book_id']=book_id
+        
+    if(r'null'!=accept_status):
+        if(r'false'==accept_status):
+            filter_kwargs['hasaccepted']=False
+        elif(r'true'==accept_status):
+            filter_kwargs['hasaccepted']=True
     
-    return render_to_response('order.html',{'order_list':order_list,'error_item':error_item})
+    if(r'null'!=borrow_status):
+        if(r'false'==borrow_status):
+            filter_kwargs['hasborrowed']=False
+        elif(r'true'==borrow_status):
+            filter_kwargs['hasborrowed']=True
+    
+    #设置前端导航栏的高亮
+    if(accept_status=='null' and borrow_status=='false'):
+        context['order_noncomplete']=True
+    elif(accept_status=='false' and borrow_status=='null'):
+        context['order_nonaccept']=True
+    elif(accept_status=='true' and borrow_status=='false'):
+        context['order_nonborrow']=True
+
+    #执行查询
+    if(0==len(filter_kwargs)):
+        context['order_all']=True
+        order_list=list(BookingRecord.objects.all().order_by('-btime'))
+    else:
+        order_list=list(BookingRecord.objects.filter(**filter_kwargs).order_by('-btime'))
+    
+    context['order_list']=order_list
+    context['error_item']=error_item
+    return render_to_response('order.html',context)
 
 def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_id='0'):
     booklist=[]
@@ -47,6 +79,9 @@ def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_i
     inputed_bsubc=None
     error_item=None
     booking_record=None
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     #如果有书籍id,就填充书籍信息
     if(0!=int(book_id)):
         try:
@@ -84,6 +119,8 @@ def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_i
             pass
 
     context={
+        'borrowing':True,
+        'session':session,
         'booklist':booklist,
         'user_item':user_item,
         'inputed_bsubc':inputed_bsubc,
@@ -102,6 +139,9 @@ def booking(request,book_id,user_account,error_id):
     error_item=None
     inputed_bsubc=None
     #user_account和error_id都可以是0, 但是book_id必须有效
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
 
     if(u'0'!=user_account):
         try:
@@ -122,6 +162,8 @@ def booking(request,book_id,user_account,error_id):
         booking_item=None
 
     context={
+        'booking':True,
+        'session':session,
         'booking_item':booking_item,
         'user_item':user_item,
         'error_item':error_item,
@@ -133,13 +175,23 @@ def booking(request,book_id,user_account,error_id):
 
 
 def subject(request,book_id):
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     book=Book.objects.get(id=book_id)
-    return render_to_response('subject.html',{'book':book,})
+    context={
+        'session':session,
+        'book':book,
+    }
+    return render_to_response('subject.html',context)
 
 def history(request,book_id='0',user_account='0',return_status='null'):
     filter_kwargs={}
     history_list=None
-
+    session=Watcher.class_get_session_name(request.session)
+    context={}
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     if(0!=int(book_id)):
         filter_kwargs['book_id']=book_id
 
@@ -149,33 +201,49 @@ def history(request,book_id='0',user_account='0',return_status='null'):
     if('null'!=return_status):
         if('true'==return_status):
             filter_kwargs['hasreturn']=True
+            context['history_hasreturn']=True
         elif('false'==return_status):
             filter_kwargs['hasreturn']=False
+            context['history_nonreturn']=True
+    else:
+        context['history_all']=True
 
     try:
         if(0==len(filter_kwargs)):
             history_list=list(BorrowRecord.objects.all().order_by('-btime'))
         else:
             history_list=list(BorrowRecord.objects.filter(**filter_kwargs).order_by('-btime'))
-
-        return render_to_response('history.html',{'history_list':history_list})
+        context.update({
+            'history':True,
+            'session':session,
+            'history_list':history_list,
+        })
+        return render_to_response('history.html',context)
     
     except Exception as e:
             print(str(e))
 
 def index(request):
-    return  render_to_response('index.html',context_instance=RequestContext(request))
+    session=Watcher.class_get_session_name(request.session)
+    context={
+        'session':session,
+    }
+    print(str(context))
+    return  render_to_response('index.html',context,context_instance=RequestContext(request))
 
 def insert(request,error_id='0'):
-    context={}
+    context={'insert':True,}
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
+    context['session']=session
+
     if(0!=int(error_id)):
         try:
             error=Error.objects.get(id=error_id)
-            data=json.loads(error.what)
-            
-            context={
-                "error_item":data,
-            }
+            data=json.loads(error.what)          
+            context['error_item']=data
+
         except Exception as e:
             print(str(e))
 
@@ -191,6 +259,9 @@ def success(request,type,extra_param='0'):
         'back_href':'/index/',
         'github':'https://github.com/DengZuoheng/lib.eic.su/issues'
     }
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
 
     if(type=='insert'):
         success_dict['back_href']='/insert/'
@@ -218,18 +289,22 @@ def success(request,type,extra_param='0'):
 
         success_dict['watcher']=Watcher.class_get_current_watcher()
         success_dict['booking']=True
-    return render_to_response('success.html',{'success':success_dict})
+    context={
+        'session':session,
+        'success':success_dict,
+    }
+    return render_to_response('success.html',context)
 
 def accept_booking(request,book_id='0',user_account='0',brid='0'):
     try:
         booking_record=BookingRecord.objects.get(id=brid);
         booking_record.hasaccepted=True
         booking_record.save()
-        return HttpResponseRedirect(reverse('library.views.order', args=[0,0,0]))
+        return HttpResponseRedirect(reverse('library.views.order', args=[0,0,0,'null','false']))
     except Exception as e:
         error=Error(what=str(e))
         error.save()
-        return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id]))
+        return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id,'null','false']))
 
 def cancel_booking(request,book_id='0',user_account='0',brid='0'):
     try:
@@ -238,17 +313,27 @@ def cancel_booking(request,book_id='0',user_account='0',brid='0'):
         book.available=book.available+booking_record.bnum
         book.save()
         booking_record.delete()
-        return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,0]))
+        return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,0,'null','null']))
     except Exception as e:
         error=Error(what=str(e))
         error.save()
-        return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id]))
+        return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id,'null','null']))
 
 def admin(request):
-    return render_to_response('admin.html',context_instance=RequestContext(request))
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
+    context={
+        'session':session,
+        'admin':True,
+    }
+    return render_to_response('admin.html',context,context_instance=RequestContext(request))
 
 
 def return1(request,error_id='0'):
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     error=None
     error_item=None
     if(0!=int(error_id)):
@@ -258,12 +343,19 @@ def return1(request,error_id='0'):
             error_item={'waht':data['what'],'inputed_uid':data['inputed_uid'],}
         except Exception as e:
             error_item={'what':str(e),}
-    context={'error_item':error_item,}
+    context={
+        'error_item':error_item,
+        'session':session,
+        'return':True,
+    }
     return render_to_response('return.html',context,context_instance=RequestContext(request))
 
 def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='0'):
     borrow_record=None
     error_item={}
+    session=Watcher.class_get_session_name(request.session)
+    if( session==None ):
+        return HttpResponseRedirect('/account/login/')
     try:
         try:
             borrow_record=BorrowRecord.objects.get(id=borrow_record_id)
@@ -296,6 +388,8 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
         context={
             'record':borrow_record,
             'error_item':error_item,
+            'return':True,
+            'session':session,
         }
         return render_to_response('returns2.html',context,context_instance=RequestContext(request))
     except Exception as e:
@@ -303,6 +397,7 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
 
 def search(request,start_idx,key_word):
     start_idx=int(start_idx)
+    session=Watcher.class_get_session_name(request.session)
     book_list=service.search_by(key_word)
     result={}
     MAX_NO_PAGING=24#如果结果不超过32个,这一页显示完所有结果
@@ -363,6 +458,7 @@ def search(request,start_idx,key_word):
 
         context={
             'result':result,
+            'session':session,
         }
     except:
         context={
@@ -370,7 +466,8 @@ def search(request,start_idx,key_word):
                 'begin_idx':0,
                 'end_idx':0,
                 'total':0,
-            }
+            },
+            'session':session,
         }
 
     return render_to_response('search.html',context,context_instance=RequestContext(request))

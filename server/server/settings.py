@@ -32,10 +32,13 @@ import library
 INSTALLED_APPS = (
     #'django.contrib.auth',
     #'django.contrib.contenttypes',
-    #'django.contrib.sessions',
+    'django.contrib.sessions',
     #'django.contrib.messages',
     'django.contrib.staticfiles',
     'library',
+    'search',
+    'login',
+    'captcha',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -55,13 +58,12 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
+'''
 LOCAL_MYSQL_DB = 'libeicsu'
 LOCAL_MYSQL_USER = 'root'
 LOCAL_MYSQL_PASS = '299792458'
 LOCAL_MYSQL_HOST = '127.0.0.1'
 LOCAL_MYSQL_PORT = '3306'
-
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.mysql',
@@ -72,7 +74,13 @@ DATABASES = {
         'PORT':     LOCAL_MYSQL_PORT,
     }
 }
-
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db/db.sqlite3'),
+    }
+}
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 

@@ -56,7 +56,9 @@ var afx_result;
             var adding_class;
             //是否当前值班会导致表格内容不同, 这里准备好
             if(item["iswatching"]=="yes"){
-                adding_htm="是";
+                adding_htm="是&nbsp;<span class='btn btn-default btn-xs' id='";
+                adding_htm+=item["account"]+"-cancelwatching"
+                                +"''>撤销值班</span>";
                 adding_class="warning";
             }else if(item["iswatching"]=="no"){
                 adding_htm="否&nbsp;<span class='btn btn-warning btn-xs' id='";
@@ -88,16 +90,41 @@ var afx_result;
                 console.log(id);
                 for(var i=0;i<afx_result["watch_list"].length;++i)
                 {
+                    /*
                     if(id==afx_result["watch_list"][i]["account"]){
                         afx_result["watch_list"][i]["iswatching"]="yes";
                     }else{
                         afx_result["watch_list"][i]["iswatching"]="no";
+                    }
+                    */
+                    if(id==afx_result["watch_list"][i]["account"]){
+                        afx_result["watch_list"][i]["iswatching"]="yes";
                     }
                 }
                 
                 fill_table(afx_result);
 
             });
+            //响应取消值班按钮
+            $("#"+item["account"]+"-cancelwatching").click(function(){
+                id=$(this).attr("id").replace("-cancelwatching","");
+                console.log(id);
+                for(var i=0;i<afx_result["watch_list"].length;++i)
+                {
+                    /*
+                    if(id==afx_result["watch_list"][i]["account"]){
+                        afx_result["watch_list"][i]["iswatching"]="yes";
+                    }else{
+                        afx_result["watch_list"][i]["iswatching"]="no";
+                    }
+                    */
+                    if(id==afx_result["watch_list"][i]["account"]){
+                        afx_result["watch_list"][i]["iswatching"]="no";
+                    }
+                }
+                
+                fill_table(afx_result);
+            })
             //响应删除按钮
             $("#"+item["account"]+"-delete").click(function(){
                 id=$(this).attr("id").replace("-delete","");
@@ -198,7 +225,11 @@ var afx_result;
     }  
     //响应提交
     $("#submit").click(function(){
-        if(has_no_watching())
+        if(has_no_watching()==true){
+            alert_danger("不能没有值班干事")
+            return false;
+        }
+            
         try{
             if(afx_debug==true)
             {
@@ -228,9 +259,9 @@ var afx_result;
                 type:"POST",
                 success:function(result){
                     if(result['flag_succeed']=='true'){
-                        alert("提交成功");
+                        alert_success("提交成功!")
                     }else{
-                        alert("提交失败, 请重试或联系管理员");
+                        alert_danger("提交失败, 请重试或联系管理员");
                     }
                 }
             });
@@ -239,9 +270,10 @@ var afx_result;
             alert("提交失败, 请重试或联系管理员");
         }
     });
+    //检查是不是没有值班干事, 没有值班干事返回真
     function has_no_watching(){
         flag=0;
-        for(var i=0;i<afx_result['watch_list'];i++){
+        for(var i=0;i<afx_result['watch_list'].length;i++){
             if(afx_result['watch_list'][i]['iswatching']=="yes"){
                 flag++;
             }
@@ -251,5 +283,25 @@ var afx_result;
         }else{
             return true;
         }
-    }     
+    }
+    function alert_success(str){
+        now=new Date();
+        str=now.toString()+": "+str;
+        $("#submit").parent().after(
+            $("<div class='container'></div>").append(           
+                $("<div class='alert alert-success' role='alert'></div>").html(str)
+            )
+            
+        );
+    }  
+
+    function alert_danger(str){
+        now=new Date();
+        str=now.toString()+": "+str;
+        $("#submit").parent().after(
+            $("<div class='container'></div>").append(
+                $("<div class='alert alert-danger' role='alert'></div>").html(str)
+            )
+        );
+    }   
 })();

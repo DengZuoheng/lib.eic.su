@@ -20,8 +20,10 @@ urlpatterns = patterns('',
     url(r'^index[/]$',views.index),
     url(r'^search/start/(\d+)/keyword/(.+)',views.search),
     url(r'^collection/',views.collection),
-    url(r'^order/bid/(\d+)/uid/(\d+)/err/(\d+)$',views.order),
+    url(r'^order[/]$',views.order),
+    url(r'^order/bid/(\d+)/uid/(\d+)/err/(\d+)/accept/(true|false|null)/borrow/(true|false|null)$',views.order),
     url(r'^borrowing/bid/(\d+)/uid/(\d+)/brid/(\d+)/err/(\d+)$',views.borrowing),
+    url(r'^borrowing/$',views.borrowing),
     url(r'^subject/(\d+)$',views.subject),
     url(r'^history[/]$',views.history),
     url(r'^history/bid/(\d+)/uid/(\d+)/return/(true|false|null)$',views.history),
@@ -60,4 +62,9 @@ urlpatterns = patterns('',
     #调试用
     url(r'^filldb/', debug.filldb),
 
+    #登录
+    url(r'^account/', include('login.urls')),
+
+    #验证码
+    url(r'^captcha/', include('captcha.urls')),
 )

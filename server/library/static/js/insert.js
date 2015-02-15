@@ -1,6 +1,6 @@
 //全局变量
 var afx_result;
-
+afx_ajax_loading=false;
 var afx_attr=new Array("bcover","bname","author","translator",
                         "publisher","byear","pagination","price");
 
@@ -37,6 +37,7 @@ var afx_attr=new Array("bcover","bname","author","translator",
             isbn=$("#br-input-isbn").val();
             console.log(isbn);
             if(afx_debug==false/*&&isIsbn(isbn)*/){
+                afx_ajax_loading=true;
                 $.ajax({
                     url:"http://127.0.0.1:8000/RequestAjaxInsertBookInfo/",
                     data:{"isbn":isbn},
@@ -46,6 +47,7 @@ var afx_attr=new Array("bcover","bname","author","translator",
                         console.log(result);
                         afx_result=result;
                         fill_table(afx_result);
+                        afx_ajax_loading=false;
                     },
                     failure: function(result){
                         alert("faild");
@@ -95,6 +97,10 @@ var afx_attr=new Array("bcover","bname","author","translator",
         if(isSqlInjection(temp)){
             return illegal_feedback($(this),attr,"非法输入");
         }else if(attr=="isbn"){
+            if(afx_ajax_loading==true){
+                console.log("FFFFFFFFFFFFFF");
+                return false;
+            }
             if(!isIsbn(temp)){
                 return illegal_feedback($(this),attr,"ISBN非法");
             }else{
@@ -128,24 +134,7 @@ var afx_attr=new Array("bcover","bname","author","translator",
             return legal_feedback($(this),attr,"");
         }
     });
-    //非法反馈
-    function illegal_feedback(obj,attr,placeholder){
-        
-        $("#feedback-"+attr).attr("class","glyphicon glyphicon-remove form-control-feedback");
-        obj.val("").parent().removeClass("has-success").addClass("has-error"); 
-        obj.attr("placeholder",placeholder);
-        $("#submit").removeClass("btn-primary").addClass("btn-danger").attr("disabled",true);
-        return false;
-    }
-    //合法反馈
-    function legal_feedback(obj,attr,placeholder){
-        console.log(attr+"合法");
-        $("#feedback-"+attr).attr("class","glyphicon glyphicon-ok form-control-feedback");
-        obj.parent().removeClass("has-error").addClass("has-success");
-        $("#submit").removeClass("btn-danger").addClass("btn-primary").attr("disabled",false);
-        return true;
-    }
-
+    
     //submit检查
     $("#submit").click(function(){
             return (function(){

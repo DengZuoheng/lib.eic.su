@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #类似views.py, 不过这是用来处理ajax请求的
 
@@ -14,13 +13,15 @@ from models import BookingRecord
 from models import Watcher
 import os.path
 import md5
+import hashlib
+
 
 def on_admin_request(request):
     #TODO: 要添加用户认证
     var={'watch_list':[]}
 
     try:
-        watcher_list=Watcher.objects.all()
+        watcher_list=Watcher.objects.all().exclude(account='root')
         for item in watcher_list:
             var['watch_list'].append({
                 'account':item.account,
@@ -120,18 +121,21 @@ def on_admin_push(request):
         push_json_str=request.POST['data']
         push_json=json.loads(push_json_str)
         #其实, 每次都必须删掉所有Watcher记录,然后重建
-        Watcher.objects.all().delete()
+        Watcher.objects.all().exclude(account='root').delete()
         for item in push_json['watch_list']:
-            
-            watcher=Watcher(
-                account=item['account'],
-                name=item['name'],
-                lpnumber=item['lpnumber'],
-                spnumber=item['spnumber'],
-                #TODO:这里的密码还需要改
-                password=item['account'],
-                watchsum=0,
-                iswatching=False)   
+            try:
+                watcher=Watcher.objects.get(account=item['account'])
+            except:
+                default_password=hashlib.md5(item['account']).hexdigest()
+                default_password=hashlib.sha1(default_password).hexdigest()
+                watcher=Watcher(
+                    account=item['account'],
+                    name=item['name'],
+                    lpnumber=item['lpnumber'],
+                    spnumber=item['spnumber'],
+                    password=default_password,
+                    watchsum=0,
+                    iswatching=False)   
 
             if('yes'==item['iswatching']):
                 watcher.iswatching=True
@@ -142,6 +146,13 @@ def on_admin_push(request):
                 pass
             
             watcher.save()
+            try:
+                account=request.session['account']
+                u=Watcher.objects.get(account=account)
+                if(u.iswatching==False and u.account!='root'):
+                    del request.session['account']
+            except:
+                del request.session['account']
 
         return HttpResponse(json.dumps({'flag_succeed':'true',}))
 
