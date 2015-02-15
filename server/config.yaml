@@ -1,0 +1,13 @@
+name: libeicsu
+version: 1
+
+libraries:
+- name: PIL
+  version: "1.1.7"
+  
+- name: django
+  version: "1.5"
+  
+handlers:
+- url: /static/
+  static_path: "library/static"
