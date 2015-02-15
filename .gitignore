@@ -99,3 +99,6 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 server/db/db.sqlite3
+server/search/migrations/0001_initial.py
+server/library/migrations/0001_initial.py
+server/search/migrations/0001_initial.py
