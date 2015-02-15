@@ -55,7 +55,7 @@ var afx_book_ajaxed=false;
             account=$("#br-input-uid").val();
             if(afx_debug==false&&isAccount(account)){
                 $.ajax({
-                    url:"http://127.0.0.1:8000/RequestAjaxPerInfo/",
+                    url:getBaseURL()+"/RequestAjaxPerInfo/",
                     data:{"account":account},
                     async:true,
                     dataType:"json",
@@ -229,7 +229,7 @@ var afx_book_ajaxed=false;
             isbn=$("#br-input-isbn").val();
             if(afx_debug==false&&isIsbn(isbn)){
                 $.ajax({
-                    url:"http://127.0.0.1:8000/RequestAjaxBookInfo/",
+                    url:getBaseURL()+"/RequestAjaxBookInfo/",
                     data:{"isbn":isbn},
                     async:true,
                     dataType:"json",

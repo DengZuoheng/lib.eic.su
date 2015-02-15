@@ -39,7 +39,7 @@ var afx_attr=new Array("bcover","bname","author","translator",
             if(afx_debug==false/*&&isIsbn(isbn)*/){
                 afx_ajax_loading=true;
                 $.ajax({
-                    url:"http://127.0.0.1:8000/RequestAjaxInsertBookInfo/",
+                    url:getBaseURL()+"/RequestAjaxInsertBookInfo/",
                     data:{"isbn":isbn},
                     dataType:"json",
                     type:"POST",
@@ -98,7 +98,6 @@ var afx_attr=new Array("bcover","bname","author","translator",
             return illegal_feedback($(this),attr,"非法输入");
         }else if(attr=="isbn"){
             if(afx_ajax_loading==true){
-                console.log("FFFFFFFFFFFFFF");
                 return false;
             }
             if(!isIsbn(temp)){

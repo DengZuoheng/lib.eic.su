@@ -46,7 +46,7 @@ var afx_flag_lpnumber_filled=false;
             account=$("#br-input-uid").val();
             if(afx_debug==false&&isAccount(account)){
                 $.ajax({
-                    url:"http://127.0.0.1:8000/RequestAjaxPerInfo/",
+                    url:getBaseURL()+"/RequestAjaxPerInfo/",
                     data:{"account":account},
                     async:true,
                     dataType:"json",

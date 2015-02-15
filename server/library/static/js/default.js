@@ -191,3 +191,10 @@ function legal_feedback(obj,attr,placeholder){
     $("#submit").removeClass("btn-danger").addClass("btn-primary").attr("disabled",false);
     return true;
 }
+
+//获取基本URL
+function getBaseURL(){
+    var url = location.protocol + "//" + window.location.hostname + ":"
+                  + location.port;
+    return url;
+}

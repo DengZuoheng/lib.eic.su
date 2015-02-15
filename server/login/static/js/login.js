@@ -5,8 +5,7 @@
     //看不清,换一张
     $("#fake-refresh,#fake-captcha").click(function(){
         $form = $("#hidden-form");
-        var url = location.protocol + "//" + window.location.hostname + ":"
-                  + location.port + "/captcha/refresh/";
+        var url = getBaseURL() + "/captcha/refresh/";
         $.getJSON(url, {}, function(json) {
             console.log(json);
             $form.find('input[name="captcha_0"]').val(json.key);

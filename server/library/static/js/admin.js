@@ -34,7 +34,7 @@ var afx_result;
         });   
 
         $.ajax({
-            url:"http://127.0.0.1:8000/RequestAjaxAdmin/",
+            url:getBaseURL()+"/RequestAjaxAdmin/",
             async:true,
             dataType:"json",
             type:"POST",
@@ -252,7 +252,7 @@ var afx_result;
                 }
             });  
             $.ajax({
-                url:"http://127.0.0.1:8000/PushAjaxAdmin/",
+                url:getBaseURL()+"/PushAjaxAdmin/",
                 data:{'data':JSON.stringify(afx_result),},
                 async:true,
                 dataType:"json",
