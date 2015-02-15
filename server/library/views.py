@@ -474,4 +474,6 @@ def search(request,start_idx,key_word):
 
 def upload(request):
     context={"upload":True}
+    session=Watcher.class_get_session_name(request.session)
+    context['session']=session
     return render_to_response('upload.html',context,context_instance=RequestContext(request))

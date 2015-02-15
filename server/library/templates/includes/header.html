@@ -12,11 +12,35 @@
             电气院内图书馆
         </title>      
         {% load staticfiles %}
-        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
-        <link rel="stylesheet" href="{% static "css/default.css" %}">
+        {# <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}"> #}
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.2/css/bootstrap.min.css">
         {% if upload %}
         <link rel="stylesheet" href="{% static "bootstrap-fileinput/css/fileinput.min.css" %}">
         {% endif %}
+        <link rel="stylesheet" href="{% static "css/default.css" %}">
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <style>
+            @-webkit-viewport   { width: device-width; }
+            @-moz-viewport      { width: device-width; }
+            @-ms-viewport       { width: device-width; }
+            @-o-viewport        { width: device-width; }
+            @viewport           { width: device-width; }
+        </style>
+        <script>
+            if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+                var msViewportStyle = document.createElement('style')
+                msViewportStyle.appendChild(
+                    document.createTextNode(
+                        '@-ms-viewport{width:auto!important}'
+                    )
+                )
+                document.querySelector('head').appendChild(msViewportStyle)
+            }
+        </script>
+        
     </head>
     <body>
         <header class="navbar navbar-static-top bs-docs-nav navbar-inverse" id="top" role="banner">
