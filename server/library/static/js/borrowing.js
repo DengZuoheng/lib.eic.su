@@ -320,6 +320,22 @@ var afx_book_ajaxed=false;
             return true;
         }
     });
+
+    $("#submit").parents("form").submit(function(){
+        return $("#submit").click();
+    });
+    $("#submit").click(function(){
+        arr=['uid','una','ulp','isbn','bsubc'];
+        for(var i=0;i<arr.length;i++){
+            temp=$("#br-input-"+arr[i]).val();
+            if(temp==''||temp==' '){
+                illegal_feedback($("#br-input-"+arr[i]),arr[i],"该字段不能为空");
+                return false;
+            }
+        }
+        return true;
+    });
+
         
 })();
                 

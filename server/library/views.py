@@ -306,6 +306,7 @@ def accept_booking(request,book_id='0',user_account='0',brid='0'):
     try:
         booking_record=BookingRecord.objects.get(id=brid);
         booking_record.hasaccepted=True
+        
         booking_record.save()
         return HttpResponseRedirect(reverse('library.views.order', args=[0,0,0,'null','false']))
     except Exception as e:
@@ -316,9 +317,7 @@ def accept_booking(request,book_id='0',user_account='0',brid='0'):
 def cancel_booking(request,book_id='0',user_account='0',brid='0'):
     try:
         booking_record=BookingRecord.objects.get(id=brid)
-        book=Book.objects.get(id=booking_record.book_id)
-        book.available=book.available+booking_record.bnum
-        book.save()
+        
         booking_record.delete()
         return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,0,'null','null']))
     except Exception as e:

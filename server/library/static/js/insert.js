@@ -135,6 +135,9 @@ var afx_attr=new Array("bcover","bname","author","translator",
     });
     
     //submit检查
+    $("#submit").parents("form").submit(function(){
+        return $("#submit").click();
+    });
     $("#submit").click(function(){
             return (function(){
                 lst=["isbn","bcover","bname","author","publisher","byear","price","insertednum"]

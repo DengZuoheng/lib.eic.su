@@ -108,7 +108,7 @@ class Book(models.Model):
 
     #可预约的范围
     def selectable_range(self):
-        return range(self.bookable())
+        return range(min(Borrower.STATIC_MAX_BORROWABLE_NUM,self.bookable()))
 
     #封面地址
     def bcover_src(self):

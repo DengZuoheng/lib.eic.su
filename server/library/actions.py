@@ -86,6 +86,7 @@ def booking_action(request,book_id):
         )
         #检查还够不够数量
         if(book.bookable()>=inputed_bnum):
+            #外借过后才减
             #book.available=book.available-inputed_bnum
             
             booking_record.save()

@@ -152,7 +152,9 @@ var afx_flag_lpnumber_filled=false;
             return legal_feedback($(this),"usp","");
         }
     });
-    
+    $("#submit").parents("form").submit(function(){
+        return $("#submit").click();
+    })
     $("#submit").click(function(){
         var uid=$("#br-input-uid").val();
         var una=$("#br-input-una").val();

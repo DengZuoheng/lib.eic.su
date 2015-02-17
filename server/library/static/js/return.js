@@ -38,6 +38,9 @@
     }catch(e){
         console.log("不支持oninput")
     }
+    $("#submit").parents("form").submit(function(){
+        return $("#submit").click();
+    });
     $("#submit").click(function(){
         if($("#rt-input-uid").val().length==0)
         {

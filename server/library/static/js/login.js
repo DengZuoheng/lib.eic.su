@@ -57,7 +57,7 @@
         }
     });
     $("#br-input-capt").change(function(){
-        if($(this).val().length>4){
+        if($(this).val().length>4||$(this).val()==''){
             return illegal_feedback($(this),"capt","非法输入");
         }else if($(this).val().length=4){
             return legal_feedback($(this),"capt","");
@@ -77,24 +77,29 @@
     }catch(e){
         console.log(e);
     }
+    $("#submit").parents("form").submit(function(){
+        return $("#submit").click();
+    });
+    
     $("#submit").click(function(){
         $("#br-input-pw,#br-input-uid,#br-input-capt").change();
-        if($("#br-input-pw").val()==' '){
+        if($("#br-input-pw").val()==' '||$("#br-input-pw").val()==''){
             illegal_feedback($("#br-input-pw"),"pw","密码不能为空");
             return false;
 
-        }else if($("#br-input-uid").val()==' '){
+        }
+        if($("#br-input-uid").val()==' '||$("#br-input-uid").val()==''){
             illegal_feedback($("#br-input-uid"),"uid","账号不能为空");
             return false;
-        }else if($("#br-input-capt").val()==' '){
-            illegal_feedback($("#br-input-capt"),"capt","账号不能为空");
+        }
+        if($("#br-input-capt").val()==' '||$("#br-input-capt").val()==''){
+            illegal_feedback($("#br-input-capt"),"capt","验证码不能为空");
             return false;
         }
         $("#id_account").val($("#br-input-uid").val());
         $("#id_password").val(md5($("#br-input-pw").val()));
         //$("#id_password").val($("#br-input-pw").val());
         $("#id_captcha_1").val($("#br-input-capt").val());
-        
         $("#hidden-form").submit();
         return false;
 
