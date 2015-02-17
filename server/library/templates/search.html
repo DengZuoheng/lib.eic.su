@@ -47,7 +47,7 @@
                                 已预约:{{ item.booked }} / 
                                 剩余:{{ item.bookable }}</div>
                             <div class="lead">
-                                <a class="btn btn-warning btn-xs" href="{{ item.href }}" {% if not item.bookable %}disabled="disbaled"{% endif %}>预约</a>
+                                <a class="btn btn-warning btn-xs" href="{{ item.href }}" {% if not item.is_bookable %}disabled="disbaled"{% endif %}>预约</a>
                             </div>
                         </div> 
                     </div>

@@ -97,6 +97,8 @@ class Book(models.Model):
         else:
             return self.available - self.__booked_num
 
+    def is_bookable(self):
+        return self.bookable()>0
 
     #预约地址
     def href(self):

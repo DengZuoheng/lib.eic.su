@@ -29,7 +29,7 @@
                     <div class="pub"><strong>总册数 : </strong>{{ book.totalnum }} / <strong>在馆数: </strong>{{ book.available }} / <strong>已预约 : </strong>{{ book.booked }}</div>
                     <div class="pub"><strong>剩余 : </strong>{{ book.bookable }}</div>
                     <div class="lead">
-                        <a id="btn-appoint" class="btn btn-warning btn-sm" href="{{ book.href }}" {% if not book.bookable %}disabled="disabled"{% endif %}>预 约</a>
+                        <a id="btn-appoint" class="btn btn-warning btn-sm" href="{{ book.href }}" {% if not item.is_bookable %}disabled="disabled"{% endif %}>预 约</a>
                     </div>
                 </div> 
             </div>

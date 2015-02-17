@@ -26,7 +26,7 @@
                         <td>{{item.totalnum}}</td>
                         <td>{{item.available}}</td>
                         <td>{{item.bookable}}</td>
-                        <td><a class="btn btn-success btn-xs" href="{{item.href}}" {% ifequal item.available 0 %}disabled="disabled"{% endifequal %}>预约</a></td>
+                        <td><a class="btn btn-success btn-xs" href="{{item.href}}" {% if not item.is_bookable %}disabled="disabled"{% endif %}>预约</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
