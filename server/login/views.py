@@ -104,23 +104,28 @@ def login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            account = form.cleaned_data['account']
-            
-            password = hashlib.sha1(form.cleaned_data['password']).hexdigest()
             try:
-                u = Watcher.objects.get(account=account)
-                if(u.iswatching!=True and u.account!='root'):
-                    raise Exception(u'不是当前值班干事!')
-                if u.password == password:
-                    request.session['account'] = account
-                    return HttpResponseRedirect('/')#登录成功
-                else:
-                   error=u'请检测帐号密码是否填写正确!'
-            except Watcher.DoesNotExist:
-                error=u'请检测帐号密码是否填写正确!'
+                account = form.cleaned_data['account']
+                
+                password = hashlib.sha1(form.cleaned_data['password']).hexdigest()
+                try:
+                    u = Watcher.objects.get(account=account)
+                    if(u.iswatching!=True and u.account!='root'):
+                        raise Exception(unicode(u'不是当前值班干事!'))
+                    if u.password == password:
+                        request.session['account'] = account
+                        return HttpResponseRedirect('/')#登录成功
+                    else:
+                       raise Exception(unicode(u'账号或密码错误'))
+                except Watcher.DoesNotExist:
+                    raise Exception(unicode(u'账号不存在!'))
+                except Exception as e:
+                    raise Exception(unicode(e))
+
             except Exception as e:
-                error=Error(what='login:"'+account+'"error:'+str(e))
+                error=Error(what='account: %s error: %s'%(account,unicode(e)))
                 error.save()
+            
             return render_to_response('login.html',{'form':form,'error':error.what},context_instance = RequestContext(request))
     else:
         form = LoginForm()
@@ -132,7 +137,11 @@ def login(request):
     return render_to_response('login.html',context,context_instance = RequestContext(request))
 
 def logout(request):
-    del request.session['account']
+    try:
+        del request.session['account']
+    except:
+        #可能是已经退出过的
+        pass
     return HttpResponseRedirect('/')#已注销
 
 def modify(request,error_id='0'):

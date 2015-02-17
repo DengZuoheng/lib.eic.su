@@ -34,7 +34,7 @@ def order(request,book_id='0',user_account='0',error_id='0',accept_status='null'
         try:
             error_item=Error.objects.get(id=error_id)
         except Exception as e:
-            error_item={'what':str(e),}
+            error_item={'what':unicode(e),}
     #设置过滤条件
     if(u'0'!=user_account):
         filter_kwargs['borrower_id']=user_account
@@ -102,7 +102,7 @@ def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_i
             booklist=[booking_record.book]
             user_item=booking_record.borrower
         except Exception as e:
-            print(str(e))
+            print(unicode(e))
     #如果有error, 就附带错误信息
     
     if(0!=int(error_id)):
@@ -141,7 +141,7 @@ def booking(request,book_id,user_account,error_id):
     #user_account和error_id都可以是0, 但是book_id必须有效
     session=Watcher.class_get_session_name(request.session)
     if( session==None ):
-        return HttpResponseRedirect('/account/login/')
+        pass
 
     if(u'0'!=user_account):
         try:
@@ -177,7 +177,7 @@ def booking(request,book_id,user_account,error_id):
 def subject(request,book_id):
     session=Watcher.class_get_session_name(request.session)
     if( session==None ):
-        return HttpResponseRedirect('/account/login/')
+        pass
     book=Book.objects.get(id=book_id)
     context={
         'session':session,
@@ -221,14 +221,14 @@ def history(request,book_id='0',user_account='0',return_status='null'):
         return render_to_response('history.html',context)
     
     except Exception as e:
-            print(str(e))
+            print(unicode(e))
 
 def index(request):
     session=Watcher.class_get_session_name(request.session)
     context={
         'session':session,
     }
-    print(str(context))
+    print(unicode(context))
     return  render_to_response('index.html',context,context_instance=RequestContext(request))
 
 def insert(request,error_id='0'):
@@ -245,7 +245,7 @@ def insert(request,error_id='0'):
             context['error_item']=data
 
         except Exception as e:
-            print(str(e))
+            print(unicode(e))
 
     return  render_to_response('insert.html',context,context_instance=RequestContext(request))
 
@@ -261,7 +261,7 @@ def success(request,type,extra_param='0'):
     }
     session=Watcher.class_get_session_name(request.session)
     if( session==None ):
-        return HttpResponseRedirect('/account/login/')
+        pass
 
     if(type=='insert'):
         success_dict['back_href']='/insert/'
@@ -286,9 +286,16 @@ def success(request,type,extra_param='0'):
         success_dict['back_href']='/return/'
         success_dict['return']=True
     elif(type=='booking'):
-
-        success_dict['watcher']=Watcher.class_get_current_watcher()
-        success_dict['booking']=True
+        try:
+            success_dict['booking']=True
+            success_dict['watcher']=Watcher.class_get_current_watcher()
+        except:
+            success_dict['watcher']={
+                'name':Watcher.STATIC_HAS_NO_WATCHER,
+                'spnumber':'',
+                'lpnumber':'',
+            }
+            
     context={
         'session':session,
         'success':success_dict,
@@ -302,7 +309,7 @@ def accept_booking(request,book_id='0',user_account='0',brid='0'):
         booking_record.save()
         return HttpResponseRedirect(reverse('library.views.order', args=[0,0,0,'null','false']))
     except Exception as e:
-        error=Error(what=str(e))
+        error=Error(what=unicode(e))
         error.save()
         return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id,'null','false']))
 
@@ -315,7 +322,7 @@ def cancel_booking(request,book_id='0',user_account='0',brid='0'):
         booking_record.delete()
         return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,0,'null','null']))
     except Exception as e:
-        error=Error(what=str(e))
+        error=Error(what=unicode(e))
         error.save()
         return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id,'null','null']))
 
@@ -342,7 +349,7 @@ def return1(request,error_id='0'):
             data=json.loads(error.what)
             error_item={'waht':data['what'],'inputed_uid':data['inputed_uid'],}
         except Exception as e:
-            error_item={'what':str(e),}
+            error_item={'what':unicode(e),}
     context={
         'error_item':error_item,
         'session':session,
@@ -367,7 +374,7 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
                 raise Exception(BorrowRecord.STATIC_INCONSISTENT_ACCOUNT)
 
         except Exception as e:
-            raise Exception(BorrowRecord.STATIC_BAD_BORROWRECORD+str(e))
+            raise Exception(BorrowRecord.STATIC_BAD_BORROWRECORD+unicode(e))
 
         if(0!=int(error_id)):
             try:
@@ -377,13 +384,13 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
                 try:
                     error_item['inputed_status']=data['inputed_status']
                 except Exception as e:
-                    raise Exception(BorrowRecord.STATIC_CANNOT_GET_STATUS+str(e))
+                    raise Exception(BorrowRecord.STATIC_CANNOT_GET_STATUS+unicode(e))
 
             except Exception as e:
                 try:
-                    error_item['what']=error_item['what']+str(e)
+                    error_item['what']=error_item['what']+unicode(e)
                 except:
-                    error_item['what']=str(e)
+                    error_item['what']=unicode(e)
         print(error_item)
         context={
             'record':borrow_record,
@@ -393,7 +400,7 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
         }
         return render_to_response('returns2.html',context,context_instance=RequestContext(request))
     except Exception as e:
-        print(str(e))
+        print(unicode(e))
 
 def search(request,start_idx,key_word):
     start_idx=int(start_idx)
@@ -428,16 +435,16 @@ def search(request,start_idx,key_word):
                 url=u'/search/start/17/keyword/'+key_word
                 result['next_page']=url
             else:
-                url=u'/search/start/'+str(start_idx-NORMAL_PAGING)+'/keyword/'+key_word
+                url=u'/search/start/'+unicode(start_idx-NORMAL_PAGING)+'/keyword/'+key_word
                 result['prev_page']=url
                 result['is_first_page']=False
-                url=u'/search/start/'+str(start_idx+NORMAL_PAGING)+'/keyword/'+key_word
+                url=u'/search/start/'+unicode(start_idx+NORMAL_PAGING)+'/keyword/'+key_word
                 result['next_page']=url
             #page bar
             result['page_href_list']=[]
             begin_idx=1
             while NORMAL_PAGING <=book_list_len:
-                url=u'/search/start/'+str(begin_idx)+'/keyword/'+key_word
+                url=u'/search/start/'+unicode(begin_idx)+'/keyword/'+key_word
                 result['page_href_list'].append(url)
                 if(begin_idx==start_idx):
                     result['current_page']=int((begin_idx)/NORMAL_PAGING)+1
@@ -445,7 +452,7 @@ def search(request,start_idx,key_word):
                 book_list_len=book_list_len-NORMAL_PAGING
 
             if(book_list_len>0):
-                url=u'/search/start/'+str(begin_idx)+'/keyword/'+key_word
+                url=u'/search/start/'+unicode(begin_idx)+'/keyword/'+key_word
                 result['page_href_list'].append(url)
                 if(begin_idx==start_idx):
                     result['current_page']=int((begin_idx)/NORMAL_PAGING)+1

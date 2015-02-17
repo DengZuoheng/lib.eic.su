@@ -14,6 +14,7 @@ from models import Watcher
 import os.path
 import md5
 import hashlib
+import copy
 
 
 def on_admin_request(request):
@@ -165,11 +166,13 @@ def on_upload_push(request):
         input_file=request.FILES['input-cover']
         filename=input_file.name
         extension = os.path.splitext(filename)[1][1:]
-        m = md5.new()
-        m.update(input_file.read())
-        new_file_name=m.hexdigest()+'.'+extension
+        import hashlib
+        import datetime
+        token=filename+str(datetime.datetime.now())
+        new_file_name=hashlib.sha1(token).hexdigest()+'.'+extension
+        
         file_url=service.storage(input_file,new_file_name)
     except Exception as e:
-        print(str(e))
+        return HttpResponse(json.dumps({'error':unicode(e),}))
     return HttpResponse(json.dumps({'flag_succeed':'true','filename':filename,'file_url':file_url,}))
 

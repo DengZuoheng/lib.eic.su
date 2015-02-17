@@ -1,10 +1,10 @@
-#coding=utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.db.models.signals import post_save
 
-import jieba
 import re
-import json
+import tokenizer
 
 from library.models import Book,Error
 
@@ -53,7 +53,7 @@ def book_post_save(sender, instance, signal, *args, **kwargs):
     except Exception as e:
         error=Error(what='rebuild book index:("'+book.bname+'"")error:'+str(e))
         error.save()
-    words = jieba.cut_for_search(book.bname)#字典分词
+    words = tokenizer.cut_for_search(book.bname)#字典分词
     for w in words:
         save_index(w,book)
     words = re.findall(ur"([\u4e00-\u9fa5]+)|(\w+)", delzifu(book.author))#取连续的中文与英文作为分词

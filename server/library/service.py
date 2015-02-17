@@ -60,8 +60,22 @@ def search_result_example():
     return list(Book.objects.all())
 
 def storage(input_file,file_name):
-    return r'http://127.0.0.1/static/upload/images/'+file_name
+    try:
+  
+        import sae.storage
+        domain_name="images"
 
+        client = sae.storage.Client()
+        if(client==None):
+            raise Exception("null client")
+        obj = sae.storage.Object(input_file.read())
+        if(obj==None):
+            raise Exception("null object")
+        url = client.put(domain_name, file_name, obj) 
+        return url
+
+    except Exception as e:
+        return unicode(e)
 
 #单元测试
 class ServiceTestCase(unittest.TestCase):

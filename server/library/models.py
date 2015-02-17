@@ -32,8 +32,8 @@ class Book(models.Model):
     __booked_num = -1
 
     #静态成员
-    STATIC_BOOK_NOT_FIND=u'无法找到该书籍:'
-    STATIC_BOOKS_WITH_SAME_ISBN=u'不同的书有相同的isbn:'
+    STATIC_BOOK_NOT_FIND=unicode(u'无法找到该书籍:')
+    STATIC_BOOKS_WITH_SAME_ISBN=unicode(u'不同的书有相同的isbn:')
 
 
 
@@ -137,8 +137,8 @@ class Borrower(AbstractUser):
     #你必须当做静态常量来用
     STATIC_MAX_BORROWABLE_NUM=8
     STATIC_CREDIT_LIMIT=4
-    STATIC_BAD_BORROWER_INFO=u'无法创建借书人记录, 借书人信息有误:'
-    STATIC_BAD_CREDIT_WANING=u'逾期归还, 损坏, 丢失次数过多, 已取消预约和借书资格'
+    STATIC_BAD_BORROWER_INFO=unicode(u'无法创建借书人记录, 借书人信息有误:')
+    STATIC_BAD_CREDIT_WANING=unicode(u'逾期归还, 损坏, 丢失次数过多, 已取消预约和借书资格')
     def __unicode__(self):
         return {
             "account":self.account,
@@ -170,8 +170,8 @@ class Watcher(AbstractUser):
     watchsum = models.IntegerField(default=0)
     iswatching = models.BooleanField(default=False)
     
-    STATIC_INVILID_WATCHER_INFO=u'值班人员数据异常:'
-
+    STATIC_INVILID_WATCHER_INFO=unicode(u'值班人员数据异常:')
+    STATIC_HAS_NO_WATCHER=unicode(u'当前没有值班干事')
 
     #TODO:这里的watchsum不知道什么自增
     def __unicode__(self):
@@ -268,11 +268,11 @@ class BorrowRecord(models.Model):
     #        blank=True,
     #        null=True)
 
-    STATIC_BAD_BORROWRECORD=u'借书记录异常:'
-    STATIC_INCONSISTENT_ID=u'输入书籍ID与借书记录不一致'
-    STATIC_INCONSISTENT_ACCOUNT=u'输入学号与借书记录不一致'
-    STATIC_CANNOT_GET_STATUS=u'无法获得"状态":'
-    STATIC_OUT_OF_BORROWABLE_RANGE=u'借书数超过借书者的限额'
+    STATIC_BAD_BORROWRECORD=unicode(u'借书记录异常:')
+    STATIC_INCONSISTENT_ID=unicode(u'输入书籍ID与借书记录不一致')
+    STATIC_INCONSISTENT_ACCOUNT=unicode(u'输入学号与借书记录不一致')
+    STATIC_CANNOT_GET_STATUS=unicode(u'无法获得"状态":')
+    STATIC_OUT_OF_BORROWABLE_RANGE=unicode(u'借书数超过借书者的限额')
 
     def __unicode__(self):
         return {
@@ -334,9 +334,9 @@ class BookingRecord(models.Model):
     hasborrowed = models.BooleanField(default=False)
 
     #静态常量
-    STATIC_OUT_OF_BOOKINGABLE_RANGE=u'预约数量超过预约者的额度'
-    STATIC_AVAILABLE_LESS_THAN_BOOKNUM=u'该书库存量小于预约数量'
-    STATIC_BOOKINGRECORD_NOT_FIND=u'预约记录不存在:'
+    STATIC_OUT_OF_BOOKINGABLE_RANGE=unicode(u'预约数量超过预约者的额度')
+    STATIC_AVAILABLE_LESS_THAN_BOOKNUM=unicode(u'该书库存量小于预约数量')
+    STATIC_BOOKINGRECORD_NOT_FIND=unicode(u'预约记录不存在:')
     def __unicode__(self):
         return {
             "id":self.id,

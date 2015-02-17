@@ -3,7 +3,7 @@
         <div class="container">
             <form class="form-horizontal" role="form" method="post" action="#">
             {% csrf_token %}
-                <input id="input-cover" type="file" multiple="true" class="file-loading" data-upload-url="http://127.0.0.1:8000/PushAjaxUpload/" data-max-file-count="10" name="input-cover">
+                <input id="input-cover" type="file" multiple="true" class="file-loading" data-upload-url="#" data-max-file-count="10" name="input-cover">
             </form>
                      
         </div>
@@ -13,6 +13,8 @@
 {% load staticfiles %}
         <script src="{% static "bootstrap-fileinput/js/fileinput.min.js" %}"></script>
         <script>
+            //设置data-upload-url
+            $("#input-cover").attr("data-upload-url",getBaseURL()+"/PushAjaxUpload/");
             // with plugin options
             $("#input-cover").fileinput({
                 'showUpload':true,

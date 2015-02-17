@@ -21,7 +21,7 @@ def search_action(request):
         key_word=request.GET['search-key-word']
         return HttpResponseRedirect(reverse('library.views.search', args=[1,key_word,]))
     except Exception as e:
-        print(str(e))
+        print(unicode(e))
         return HttpResponseRedirect(reverse('library.views.index'))     
 
 def booking_action(request,book_id):
@@ -38,43 +38,43 @@ def booking_action(request,book_id):
             account=inputed_account,
             name=inputed_name,
             lpnumber=inputed_lpnumber)
-
-    #更新借书者信息
-    borrower.lpnumber=inputed_lpnumber
-    borrower.name=inputed_name
-    if(inputed_spnumber!=''):
-        borrower.spnumber=inputed_spnumber
-
-    #先保存借书者信息, 然后在处理预约问题
-    borrower.save()
-
-    if(borrower.badcredit()):
-        raise Exception(Borrower.STATIC_BAD_CREDIT_WANING)
-
     try:
-        __bookednum = BookingRecord.objects.filter(
+        #更新借书者信息
+        borrower.lpnumber=inputed_lpnumber
+        borrower.name=inputed_name
+        if(inputed_spnumber!=''):
+            borrower.spnumber=inputed_spnumber
+
+        #先保存借书者信息, 然后在处理预约问题
+        borrower.save()
+
+        if(borrower.badcredit()):
+            raise Exception(Borrower.STATIC_BAD_CREDIT_WANING)
+
+        try:
+            __bookednum = BookingRecord.objects.filter(
+                    borrower_id=borrower.account,
+                    hasaccepted=True,
+                    hasborrowed=False).count()
+        except:
+            __bookednum = 0
+        try:
+            __borrowednum=BorowerRecord.objects.filter(
                 borrower_id=borrower.account,
-                hasaccepted=True,
-                hasborrowed=False).count()
-    except:
-        __bookednum = 0
-    try:
-        __borrowednum=BorowerRecord.objects.filter(
-            borrower_id=borrower.account,
-            hasreturn=False).count()
-    except:
-        __borrowednum = 0
+                hasreturn=False).count()
+        except:
+            __borrowednum = 0
 
-    if (inputed_bnum+__bookednum+__borrowednum>=Borrower.STATIC_MAX_BORROWABLE_NUM):
-        #超过额定数量
-        print(inputed_bnum)
-        print(__bookednum)
-        print(__borrowednum)
-        print(Borrower.STATIC_MAX_BORROWABLE_NUM)
-        raise Exception(BookingRecord.STATIC_OUT_OF_BOOKINGABLE_RANGE)
+        if (inputed_bnum+__bookednum+__borrowednum>=Borrower.STATIC_MAX_BORROWABLE_NUM):
+            #超过额定数量
+            print(inputed_bnum)
+            print(__bookednum)
+            print(__borrowednum)
+            print(Borrower.STATIC_MAX_BORROWABLE_NUM)
+            raise Exception(BookingRecord.STATIC_OUT_OF_BOOKINGABLE_RANGE)
 
-    #这里没有明显加锁, 同步问题怎么解决?
-    try:
+        #这里没有明显加锁, 同步问题怎么解决?
+    
         book=Book.objects.get(id=book_id)
         booking_record=BookingRecord(
             book=book,
@@ -98,7 +98,7 @@ def booking_action(request,book_id):
     #有错就返回表单页面
     except Exception as e:
        
-        error=Error(what=str(e))
+        error=Error(what=unicode(e))
         error.save()
         return HttpResponseRedirect(reverse('library.views.booking', args=[book_id,inputed_account,error.id]))
         
@@ -147,7 +147,7 @@ def borrow_action(request):
                     credit=12,)
                 borrower.save()
             except Exception as e:
-                raise Exception(Borrower.STATIC_BAD_BORROWER_INFO+str(e))
+                raise Exception(Borrower.STATIC_BAD_BORROWER_INFO+unicode(e))
         if(borrower.badcredit()):
             raise Exception(Borrower.STATIC_BAD_CREDIT_WANING)
         
@@ -155,13 +155,13 @@ def borrow_action(request):
         try:
             book=Book.objects.get(id=inputed_book_id)
         except Exception as e:
-            raise Exception(Book.STATIC_BOOK_NOT_FIND+str(e))
+            raise Exception(Book.STATIC_BOOK_NOT_FIND+unicode(e))
 
         #然后获取值班人信息
         #try:
         #    current_watcher=Watcher.class_get_current_watcher()
         #except Exception as e:
-        #    raise Exception(Watcher.STATIC_INVILID_WATCHER_INFO+str(e))
+        #    raise Exception(Watcher.STATIC_INVILID_WATCHER_INFO+unicode(e))
 
         #检查是否超过额度
         try:
@@ -199,7 +199,7 @@ def borrow_action(request):
                 booking_record.hasborrowed=True
                 booking_record.save()
             except Exception as e:
-                raise Exception(BookingRecord.STATIC_BOOKINGRECORD_NOT_FIND+str(e))
+                raise Exception(BookingRecord.STATIC_BOOKINGRECORD_NOT_FIND+unicode(e))
 
         return HttpResponseRedirect("/success/borrow/"+borrower.account)
 
@@ -207,7 +207,7 @@ def borrow_action(request):
        
         data={
             'inputed_bsubc':inputed_bsubc,
-            'what':str(e),
+            'what':unicode(e),
         }
 
         error=Error(what=json.dumps(data))
@@ -218,7 +218,7 @@ def borrow_action(request):
                 inputed_booking_record_id,
                 error.id,
             ]
-        print(str(args))
+        print(unicode(args))
         return HttpResponseRedirect(reverse('library.views.borrowing', args=args))
 
 
@@ -278,7 +278,7 @@ def insert_action(request):
             return HttpResponseRedirect("/success/insert")
         except Book.MultipleObjectsReturned as e: #isbn不唯一
             #TODO:其实这里新建一条记录可能比较好
-            raise Exception(Book.STATIC_BOOKS_WITH_SAME_ISBN+str(e))
+            raise Exception(Book.STATIC_BOOKS_WITH_SAME_ISBN+unicode(e))
 
     except Exception as err:
         error_item={
@@ -292,7 +292,7 @@ def insert_action(request):
             "inputed_pagination":inputed_pagination,
             "inputed_price":inputed_price,
             "inputed_insertednum":inputed_insertednum,
-            "what":str(err),
+            "what":unicode(err),
         }
         error=Error(what=json.dumps(error_item))
         error.save()
@@ -307,7 +307,7 @@ def return1_action(request):
     except Exception as e:
         what={
             'inputed_uid':user_account,
-            'what':str(e),
+            'what':unicode(e),
         }
         error=Error(what=json.dumps(what))
         error.save()
@@ -325,13 +325,13 @@ def return2_action(request):
             borrow_record=BorrowRecord.objects.get(id=borrow_record_token)
             
         except Exception as e:
-            raise Exception(BorrowRecord.STATIC_BAD_BORROWRECORD+str(e))
+            raise Exception(BorrowRecord.STATIC_BAD_BORROWRECORD+unicode(e))
 
         #然后获取值班人信息
         try:
             current_watcher=Watcher.class_get_current_watcher()
         except Exception as e:
-            raise Exception(Watcher.STATIC_INVILID_WATCHER_INFO+str(e))
+            raise Exception(Watcher.STATIC_INVILID_WATCHER_INFO+unicode(e))
 
         #然后视情况改变借书者的信用情况和库存情况
         if(inputed_status=='overdue'):
@@ -362,7 +362,7 @@ def return2_action(request):
         
         data={
             'inputed_status':inputed_status,
-            'what':str(e),
+            'what':unicode(e),
         }
 
         error=Error(what=json.dumps(data))
@@ -373,7 +373,7 @@ def return2_action(request):
                 borrow_record_token,
                 error.id,
             ]
-        print(str(args))
+        print(unicode(args))
         return HttpResponseRedirect(reverse('library.views.return2', args=args))
 
 
