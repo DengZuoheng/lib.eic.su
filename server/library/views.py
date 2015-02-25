@@ -483,3 +483,10 @@ def upload(request):
     session=Watcher.class_get_session_name(request.session)
     context['session']=session
     return render_to_response('upload.html',context,context_instance=RequestContext(request))
+
+def help(request):
+    context={"help":True}
+    session=Watcher.class_get_session_name(request.session)
+    context['session']=session
+    context['watcher_item']=Watcher.class_get_current_watcher()
+    return render_to_response('help.html',context)

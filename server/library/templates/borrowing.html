@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="br-input-ulp" class="col-sm-2 control-label">借书人长号:</label>
+                    <label for="br-input-ulp" class="col-sm-2 control-label">* 借书人长号:</label>
                     <div class="col-sm-10 has-feedback">
                         <input type="text" class="form-control" id="br-input-ulp" name="br-input-ulp" placeholder="长号" {% if user_item %}value="{{ user_item.lpnumber }}"{% endif %}>
                         <span id="feedback-ulp" class="glyphicon form-control-feedback"></span>
@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="br-input-bsubc" class="col-sm-2 control-label">图书状态:</label>
+                    <label for="br-input-bsubc" class="col-sm-2 control-label">* 图书状态:</label>
                     <div class="col-sm-10 has-feedback">
                         <textarea class="form-control" rows="3" id="br-input-bsubc" name="br-input-bsubc" placeholder="填写当前书本的损毁情况, 以作为归还时的损毁判定">{% if inputed_bsubc %}{{ inputed_bsubc }}{% endif %}</textarea>
                     </div>

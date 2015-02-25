@@ -36,6 +36,7 @@ urlpatterns = patterns('',
     url(r'^return/err/(\d+)$',views.return1),#好吧, 不能用return做函数名
     url(r'^return2/bid/(\d+)/uid/(\d+)/brrid/(\d+)/err/(\d+)$',views.return2),
     url(r'^upload/$',views.upload),
+    url(r'^help/$',views.help),
 
     #按钮响应
     url(r'^accept/bid/(\d+)/uid/(\d+)/brid/(\d+)$',views.accept_booking),
