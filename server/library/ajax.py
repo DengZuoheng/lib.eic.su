@@ -79,7 +79,7 @@ def on_bookinfo_request(request):
             var['books'].append({
                 'bid':item.id,
                 'bname':item.bname,
-                'binventory':item.available,
+                'binventory':item.bookable(),#被预约的不外借
                 })
 
         var['flag']='true'
