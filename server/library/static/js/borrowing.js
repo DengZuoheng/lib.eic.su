@@ -6,6 +6,7 @@ var afx_flag_spnumber_filled=false;
 var afx_flag_lpnumber_filled=false;
 var afx_person_ajaxed=false;
 var afx_book_ajaxed=false;
+var afx_can_not_submit=false;
 //TODO:允许修改学号和isbn时重新ajax
 
 (function(){
@@ -287,7 +288,10 @@ var afx_book_ajaxed=false;
             fill_book_num(selectidx,1);
         });
         //允许提交
-        $("#submit").attr("disabled",false).html("提交");
+        if(afx_can_not_submit==false){
+            $("#submit").attr("disabled",false).html("提 交");
+        }
+        
     }
     
     //生成可选数量
@@ -303,6 +307,11 @@ var afx_book_ajaxed=false;
                     .appendTo("#br-input-bnum");
         }//for
         $("#br-input-bnum").val(min(selectedval,selectable_num));
+        
+        if(selectable_num<=0){
+            $("#submit").attr("disabled",true).html("册数不可选").addClass("btn-danger");
+            afx_can_not_submit=true;
+        }
     }
     
     $("#br-input-bsubc").change(function(){
@@ -311,12 +320,12 @@ var afx_book_ajaxed=false;
         if(bsubc.length!=0&&isSqlInjection(bsubc)){
             $(this).parent().addClass("has-error");
             $(this).attr("placeholder","图书状态含有非法字符");
-            $("#submit").attr("disable",true);
+            $("#submit").attr("disabled",true);
             return false;
         }
         else if(bsubc.length!=0){
             $(this).parent().addClass("has-success");
-            $("#submit").attr("disable",false);
+            $("#submit").attr("disabled",false);
             return true;
         }
     });
