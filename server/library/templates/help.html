@@ -29,7 +29,7 @@
         </div>
         <div class="container">
             <h2>归还流程(一般用户版)</h2>
-            <p>还书请联系{{ watcher_item.name }}/{{ watcher_item.lpnumber }}/{{ watcher_item.spnumber }}</p>
+            <p>{% if watcher_item %}还书请联系{{ watcher_item.name }}/{{ watcher_item.lpnumber }}/{{ watcher_item.spnumber }}{% else %}目前仍未安排值班, 请稍后归还. {% endif %}</p>
         </div>
         {% if session %}
         <div class="container">
