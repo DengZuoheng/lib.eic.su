@@ -124,7 +124,7 @@ class Book(models.Model):
 """
 class AbstractUser(models.Model):
     account = models.CharField(max_length=10,unique=True,primary_key=True)
-    name = models.CharField(max_length=12)
+    name = models.CharField(max_length=32)
     lpnumber=models.CharField(max_length=12)
     spnumber=models.CharField(max_length=6,blank=True)
     class Meta:
