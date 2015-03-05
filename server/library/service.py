@@ -135,6 +135,45 @@ def db_backups():
         error.save()
         return json.dumps({'error':error.what,})
 
+def db_restore(backup):
+    try:
+        
+        for item in backup['book']:
+            restore_model(item,Book)
+        for item in backup['borrower']:
+            restore_model(item, Borrower)
+        for item in backup['watcher']:
+            restore_model(item,Watcher)
+        for item in backup['borrowrecord']:
+            restore_model(item,BorrowRecord)
+        for item in backup['bookingrecord']:
+            restore_model(item,BookingRecord)
+        return True
+    except:
+        return False
+
+def restore_model(data,cls):
+    try:
+        if(hasattr(data,'id')):
+            item=cls.objects.get(id=data['id'])
+            del data['id']
+            for key,value in data:
+                setattr(item,key,value)
+            item.save()
+        else:
+            item=cls.objects.get(account=data['account'])
+            del data['account']
+            for key,value in data:
+                setattr(item,key,value)
+            item.save()
+    except:
+        if(hasattr(data,'id')):
+            del data['id']
+        item=cls(**item)
+        item.save()
+
+
+
 
 #单元测试
 class ServiceTestCase(unittest.TestCase):
