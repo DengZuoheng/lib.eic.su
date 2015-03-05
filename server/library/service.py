@@ -77,6 +77,65 @@ def storage(input_file,file_name):
     except Exception as e:
         return unicode(e)
 
+def db_backups_stroage(input_data, file_name=''):
+    if(''==file_name):
+        import datetime
+        now=datetime.datetime.now()
+        args=(now.year,now.month,now.day,now.hour,now.minute,now.second)
+        file_name="lib.eic.su.backups.%s.%s.%s.%s.%s.%s.json"%args
+    try:
+        import sae.storage
+        domain_name="backups"
+        client=sae.storage.Client()
+        if(client==None):
+            raise Exception("null client")
+        obj=sae.storage.Object(input_data)
+        if(obj==None):
+            raise Exception("null object")
+        url=client.put(domain_name,file_name,obj)
+        return url
+    except Exception as e:
+        return unicode(e)
+
+def db_backups():
+    
+    book_list=[]
+    borrower_list=[]
+    watcher_list=[]
+    borrowrecord_list=[]
+    bookingrecord_list=[]
+    import json
+    try:
+        book_list=Watcher.objects.all()
+        borrower_list=Borrower.objects.all()
+        watcher_list=Watcher.objects.all()
+        borrowrecord_list=BorrowRecord.objects.all()
+        bookingrecord_list=BookingRecord.objects.all()
+        var={
+            'book':[],
+            'borrower':[],
+            'watcher':[],
+            'borrowrecord':[],
+            'bookingrecord':[],
+        }
+        for item in book_list:
+            var['book'].append(item.__dict__)
+        for item in borrower_list:
+            var['borrower'].append(item.__dict__)
+        for item in watcher_list:
+            var['watcher'].append(item.__dict__)
+        for item in borrowrecord_list:
+            var['borrowrecord'].append(item.__dict__)
+        for item in bookingrecord_list:
+            var['bookingrecord'].append(item.__dict__)
+        
+        return json.dumps(var)
+    except Exception as e:
+        error=Error(what=unicode(e))
+        error.save()
+        return json.dumps({'error':error.what,})
+
+
 #单元测试
 class ServiceTestCase(unittest.TestCase):
 
