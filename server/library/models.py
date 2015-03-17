@@ -174,6 +174,7 @@ class Watcher(AbstractUser):
     
     STATIC_INVILID_WATCHER_INFO=unicode(u'值班人员数据异常:')
     STATIC_HAS_NO_WATCHER=unicode(u'当前没有值班干事')
+    STATIC_YOU_ARE_NOT_WATCHING=unicode(u'警告:您已经退出值班状态!')
 
     #TODO:这里的watchsum不知道什么自增
     def __unicode__(self):

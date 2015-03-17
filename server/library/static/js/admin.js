@@ -8,7 +8,7 @@ var afx_result;
         "watch_list":
             [
                 {"account":"0000000000","name":"干事姓名","lpnumber":"13700000000",
-                "spnumber":"600000","watchsum":"14","iswatching":"no"},    
+                "spnumber":"600000","watchsum":"14","iswatching":"no","type":"new"},    
             ]
     }
     if(afx_debug==true){
@@ -54,6 +54,9 @@ var afx_result;
             
             var adding_htm;
             var adding_class;
+            if(item["type"]=="delete"){
+                continue;
+            }
             //是否当前值班会导致表格内容不同, 这里准备好
             if(item["iswatching"]=="yes"){
                 adding_htm="是&nbsp;<span class='btn btn-default btn-xs' id='";
@@ -131,7 +134,12 @@ var afx_result;
                 for(var i=0;i<afx_result["watch_list"].length;++i)
                 {
                     if(id==afx_result["watch_list"][i]["account"]){
-                        afx_result["watch_list"].splice(i,1);
+                        if(afx_result["watch_list"][i]["type"]=="normal"){
+                            afx_result["watch_list"][i]["type"]="delete";
+                        }else if(afx_result["watch_list"][i]["type"]=="new"){
+                            afx_result["watch_list"].splice(i,1);
+                        }
+                        
                     }
                 }
                 fill_table(afx_result);
@@ -213,7 +221,8 @@ var afx_result;
                     "lpnumber":adding_lpnumber,
                     "spnumber":adding_spnumber,
                     "sum":adding_sum,
-                    "iswatching":adding_iswatching
+                    "iswatching":adding_iswatching,
+                    "type":"new",
                 });
                 fill_table(afx_result);
                 return true;
@@ -259,9 +268,25 @@ var afx_result;
                 type:"POST",
                 success:function(result){
                     if(result['flag_succeed']=='true'){
-                        alert_success("提交成功!")
+                        succeed_str="提交成功!  "
+                        try{
+                            if (typeof(result['warning']) == "undefined"){
+                                throw "undefined warning";
+                            }
+                            succeed_str+='<strong>'+result['warning'];
+                            succeed_str+="&nbsp;单击&nbsp;"
+                                +'<a href="/account/logout" class="btn btn-success btn-xs">退出</a>'
+                                +'&nbsp;完成操作';
+                           
+                        }catch(e){}
+                        alert_success(succeed_str);
                     }else{
-                        alert_danger("提交失败, 请重试或联系管理员");
+                        error_str="提交失败, 请重试或联系管理员";
+                        try{
+                            error_str+=result['error'];
+                        }catch(e){}
+                        
+                        alert_danger(error_str);
                     }
                 }
             });

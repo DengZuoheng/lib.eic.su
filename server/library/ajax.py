@@ -31,6 +31,7 @@ def on_admin_request(request):
                 'spnumber':item.spnumber,
                 'watchsum':item.watchsum,
                 'iswatching':item.iswatching_str(),
+                'type':'normal',
                 })
         var['flag']='true'
         return HttpResponse(json.dumps(var))  
@@ -115,18 +116,20 @@ def on_insert_bookinfo_request(request):
     
 
 def on_admin_push(request):
-    #TODO:要求用户验证
     #前端传过来的是序列化后的json字符串, 需要loads一下
     watcher=None
     try:
         push_json_str=request.POST['data']
         push_json=json.loads(push_json_str)
-        #其实, 每次都必须删掉所有Watcher记录,然后重建
-        Watcher.objects.all().exclude(account='root').delete()
+       
         for item in push_json['watch_list']:
-            try:
-                watcher=Watcher.objects.get(account=item['account'])
-            except:
+            #删掉被删掉的
+            if(item['type']=='delete'):
+                Watcher.objects.get(account=item['account']).delete()
+                continue
+            #创建新增的
+            elif(item['type']=='new'):
+                
                 default_password=hashlib.md5(item['account']).hexdigest()
                 default_password=hashlib.sha1(default_password).hexdigest()
                 watcher=Watcher(
@@ -136,7 +139,10 @@ def on_admin_push(request):
                     spnumber=item['spnumber'],
                     password=default_password,
                     watchsum=0,
-                    iswatching=False)   
+                    iswatching=False)  
+                
+            else:
+                watcher=Watcher.objects.get(account=item['account'])
 
             if('yes'==item['iswatching']):
                 watcher.iswatching=True
@@ -147,19 +153,21 @@ def on_admin_push(request):
                 pass
             
             watcher.save()
+            ret={
+                'flag_succeed':'true',
+            }
             try:
                 account=request.session['account']
                 u=Watcher.objects.get(account=account)
                 if(u.iswatching==False and u.account!='root'):
-                    del request.session['account']
+                    ret['warning']=Watcher.STATIC_YOU_ARE_NOT_WATCHING
             except:
-                del request.session['account']
+                pass
 
-        return HttpResponse(json.dumps({'flag_succeed':'true',}))
+        return HttpResponse(json.dumps(ret))
 
     except Exception as e:
-        print(str(e))
-        return HttpResponse(json.dumps({'flag_succeed':'false',}))
+        return HttpResponse(json.dumps({'flag_succeed':'false','error':unicode(e),}))
 
 def on_upload_push(request):
     try:
