@@ -50,8 +50,7 @@ var afx_result;
         console.log(obj);
         for(var i=0;i<obj["watch_list"].length;++i)
         {
-            item=obj["watch_list"][i];
-            
+            var item=obj["watch_list"][i];
             var adding_htm;
             var adding_class;
             if(item["type"]=="delete"){
@@ -220,7 +219,7 @@ var afx_result;
                     "name":adding_name,
                     "lpnumber":adding_lpnumber,
                     "spnumber":adding_spnumber,
-                    "sum":adding_sum,
+                    "watchsum":adding_sum,
                     "iswatching":adding_iswatching,
                     "type":"new",
                 });
@@ -280,6 +279,15 @@ var afx_result;
                            
                         }catch(e){}
                         alert_success(succeed_str);
+                        for(var i=0;i<afx_result['watch_list'].length;i++){
+                            var item=afx_result['watch_list'][i];
+                            if(item['type']=="delete"){
+                                afx_result["watch_list"].splice(i,1);
+                            }else{
+                                item['type']="normal";
+                            }
+                            
+                        }
                     }else{
                         error_str="提交失败, 请重试或联系管理员";
                         try{

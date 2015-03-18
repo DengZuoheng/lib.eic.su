@@ -11,6 +11,7 @@ from models import Book
 from models import Borrower
 from models import BookingRecord
 from models import Watcher
+from models import Error
 import os.path
 import md5
 import hashlib
@@ -125,8 +126,11 @@ def on_admin_push(request):
         for item in push_json['watch_list']:
             #删掉被删掉的
             if(item['type']=='delete'):
-                Watcher.objects.get(account=item['account']).delete()
-                continue
+                try:
+                    Watcher.objects.get(account=item['account']).delete()
+                    continue
+                except:
+                    continue
             #创建新增的
             elif(item['type']=='new'):
                 
@@ -167,6 +171,8 @@ def on_admin_push(request):
         return HttpResponse(json.dumps(ret))
 
     except Exception as e:
+        error=Error(what=unicode(e))
+        error.save()
         return HttpResponse(json.dumps({'flag_succeed':'false','error':unicode(e),}))
 
 def on_upload_push(request):
