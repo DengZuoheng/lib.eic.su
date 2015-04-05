@@ -78,12 +78,20 @@ def storage(input_file,file_name):
         return unicode(e)
 
 def db_backups_stroage(input_data, file_name=''):
+
     if(''==file_name):
         import datetime
         now=datetime.datetime.now()
         args=(now.year,now.month,now.day,now.hour,now.minute,now.second)
         file_name="lib.eic.su.backups.%s.%s.%s.%s.%s.%s.json"%args
     try:
+        url = '/static/'+file_name
+        file_name = './library/static/'+file_name
+        fp = open(file_name,'w')
+        fp.write(input_data)
+        fp.close()
+        return url
+
         import sae.storage
         domain_name="backups"
         client=sae.storage.Client()
@@ -105,35 +113,31 @@ def db_backups():
     borrowrecord_list=[]
     bookingrecord_list=[]
     import json
-    try:
-        book_list=Watcher.objects.all()
-        borrower_list=Borrower.objects.all()
-        watcher_list=Watcher.objects.all()
-        borrowrecord_list=BorrowRecord.objects.all()
-        bookingrecord_list=BookingRecord.objects.all()
-        var={
-            'book':[],
-            'borrower':[],
-            'watcher':[],
-            'borrowrecord':[],
-            'bookingrecord':[],
-        }
-        for item in book_list:
-            var['book'].append(item.__dict__)
-        for item in borrower_list:
-            var['borrower'].append(item.__dict__)
-        for item in watcher_list:
-            var['watcher'].append(item.__dict__)
-        for item in borrowrecord_list:
-            var['borrowrecord'].append(item.__dict__)
-        for item in bookingrecord_list:
-            var['bookingrecord'].append(item.__dict__)
-        
-        return json.dumps(var)
-    except Exception as e:
-        error=Error(what=unicode(e))
-        error.save()
-        return json.dumps({'error':error.what,})
+    book_list=Book.objects.all()
+    borrower_list=Borrower.objects.all()
+    watcher_list=Watcher.objects.all()
+    borrowrecord_list=BorrowRecord.objects.all()
+    bookingrecord_list=BookingRecord.objects.all()
+    var={
+        'book':[],
+        'borrower':[],
+        'watcher':[],
+        'borrowrecord':[],
+        'bookingrecord':[],
+    }
+    for item in book_list:
+        var['book'].append(item.dict())
+    for item in borrower_list:
+        var['borrower'].append(item.dict())
+    for item in watcher_list:
+        var['watcher'].append(item.dict())
+    for item in borrowrecord_list:
+        var['borrowrecord'].append(item.dict())
+    for item in bookingrecord_list:
+        var['bookingrecord'].append(item.dict())
+    
+    return var
+    
 
 def db_restore(backup):
     try:

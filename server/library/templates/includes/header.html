@@ -63,21 +63,35 @@
                         <li class="dropdown{% if order %} active{% endif %}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">查看预约记录<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li {% if order_all %}class="active"{% endif %}><a href="/order/">所有记录</a></li>
+                                <li {% if order_all %}class="active"{% endif %}>
+                                    <a href="/order/">所有记录</a>
+                                </li>
                                 <li class="divider"></li>
-                                <li {% if order_noncomplete %}class="active"{% endif %}><a href="/order/bid/0/uid/0/err/0/accept/null/borrow/false">未完成</a></li>
+                                <li {% if order_noncomplete %}class="active"{% endif %}>
+                                    <a href="/order/bid/0/uid/0/err/0/accept/null/borrow/false">未完成</a>
+                                </li>
                                 <li class="divider"></li>
-                                <li {% if order_nonaccept %}class="active"{% endif %}><a href="/order/bid/0/uid/0/err/0/accept/false/borrow/null">仅未受理</a></li>
-                                <li {% if order_nonborrow %}class="active"{% endif %}><a href="/order/bid/0/uid/0/err/0/accept/true/borrow/false">仅未外借</a></li>
+                                <li {% if order_nonaccept %}class="active"{% endif %}>
+                                    <a href="/order/bid/0/uid/0/err/0/accept/false/borrow/null">仅未受理</a>
+                                </li>
+                                <li {% if order_nonborrow %}class="active"{% endif %}>
+                                    <a href="/order/bid/0/uid/0/err/0/accept/true/borrow/false">仅未外借</a>
+                                </li>
                             </ul>
                         </li>
                         <li class="dropdown{% if history %} active{% endif %}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">查看外借记录<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li {% if history_all %}class="active"{% endif %}><a href="/history/">所有记录</a></li>
+                                <li {% if history_all %}class="active"{% endif %}>
+                                    <a href="/history/">所有记录</a>
+                                </li>
                                 <li class="divider"></li>
-                                <li {% if history_nonreturn %}class="active"{% endif %}><a href="/history/bid/0/uid/0/return/false">仅未归还</a></li>
-                                <li {% if history_hasreturn %}class="active"{% endif %}><a href="/history/bid/0/uid/0/return/true">仅已归还</a></li>
+                                <li {% if history_nonreturn %}class="active"{% endif %}>
+                                    <a href="/history/bid/0/uid/0/return/false">仅未归还</a>
+                                </li>
+                                <li {% if history_hasreturn %}class="active"{% endif %}>
+                                    <a href="/history/bid/0/uid/0/return/true">仅已归还</a>
+                                </li>
                             </ul>
                         </li>
                         <li {% if borrowing %}class="active"{% endif %}>
@@ -87,18 +101,32 @@
                             <a href="/return/">归还</a>
                         </li>
                         {% endif %}
-                        
-                        
+                            
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         {% if session %}
-                        <li class="dropdown {% if admin or insert or upload %}active{% endif %}">
+                        <li class="dropdown {% if admin or insert or upload or backups%}active{% endif %}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">系统<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li {% if admin %}class="active"{% endif %}><a href="/admin/">管理值班干事</a></li>
-                                <li {% if insert %}class="active"{% endif %}><a href="/insert/">新书入库</a></li>
+                                <li {% if admin %}class="active"{% endif %}>
+                                    <a href="/admin/">管理值班干事</a>
+                                </li>
+                                <li {% if insert %}class="active"{% endif %}>
+                                    <a href="/insert/">新书入库</a>
+                                </li>
                                 <li class="divider"></li>
-                                <li {% if upload %}class="active"{% endif %}><a href="/upload/">上传图片</a></li>
+                                <li {% if upload %}class="active"{% endif %}>
+                                    <a href="/upload/">上传图片</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li {%if backups.backup %}class="active"{% endif %}>
+                                    <a href="/backups/backup/">备份数据</a>   
+                                </li>
+                                <li {%if backups.restore %}class="active"{% endif %}>
+                                    <a href="/backups/restore/">还原数据</a>   
+                                </li>
+
+                                </li>
                                 
 
                             </ul>
@@ -106,9 +134,13 @@
                         <li class="dropdown {% if modify %}active{% endif %}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ session.name }}<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li {% if modify %}class="active"{% endif %}><a href="/account/modify">修改密码</a></li>
+                                <li {% if modify %}class="active"{% endif %}>
+                                    <a href="/account/modify">修改密码</a>
+                                </li>
                                 <li class="divider"></li>
-                                <li><a href="/account/logout">退出</a></li>
+                                <li>
+                                    <a href="/account/logout">退出</a>
+                                </li>
 
                             </ul>
                         </li>

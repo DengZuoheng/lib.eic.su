@@ -38,10 +38,10 @@ class Book(models.Model):
 
 
 
-    def __unicode__(self):
+    def dict(self):
         return {
             "id":self.id,
-            "isbn":self.bname,
+            "isbn":self.isbn,
             "author":self.author,
             "translator":self.translator,
             "byear":self.byear,
@@ -124,7 +124,7 @@ class Book(models.Model):
 """
 class AbstractUser(models.Model):
     account = models.CharField(max_length=10,unique=True,primary_key=True)
-    name = models.CharField(max_length=12)
+    name = models.CharField(max_length=32)
     lpnumber=models.CharField(max_length=12)
     spnumber=models.CharField(max_length=6,blank=True)
     class Meta:
@@ -141,7 +141,7 @@ class Borrower(AbstractUser):
     STATIC_CREDIT_LIMIT=4
     STATIC_BAD_BORROWER_INFO=unicode(u'无法创建借书人记录, 借书人信息有误:')
     STATIC_BAD_CREDIT_WANING=unicode(u'逾期归还, 损坏, 丢失次数过多, 已取消预约和借书资格')
-    def __unicode__(self):
+    def dict(self):
         return {
             "account":self.account,
             "name":self.name,
@@ -176,7 +176,7 @@ class Watcher(AbstractUser):
     STATIC_HAS_NO_WATCHER=unicode(u'当前没有值班干事')
 
     #TODO:这里的watchsum不知道什么自增
-    def __unicode__(self):
+    def dict(self):
         return {
             "account":self.account,
             "name":self.name,
@@ -276,7 +276,7 @@ class BorrowRecord(models.Model):
     STATIC_CANNOT_GET_STATUS=unicode(u'无法获得"状态":')
     STATIC_OUT_OF_BORROWABLE_RANGE=unicode(u'借书数超过借书者的限额')
 
-    def __unicode__(self):
+    def dict(self):
         return {
             "id":str(self.id),
             "book_id":str(self.book_id),
@@ -285,8 +285,7 @@ class BorrowRecord(models.Model):
             "rtime":str(self.rtime),
             "bsubc":str(self.bsubc),
             "rsubc":str(self.rsubc),
-            "boperator_id":str(self.boperator_id),
-            "roperator_id":str(self.roperator_id),
+            "hasreturn":str(self.hasreturn)
         }
     #借用时长
     def duration(self):
@@ -302,8 +301,6 @@ class BorrowRecord(models.Model):
             return True
         else :
             return False
-
-
 
     def warning(self):
         if(self.hasreturn==False and self.duration()>=30):
@@ -339,16 +336,18 @@ class BookingRecord(models.Model):
     STATIC_OUT_OF_BOOKINGABLE_RANGE=unicode(u'预约数量超过预约者的额度')
     STATIC_AVAILABLE_LESS_THAN_BOOKNUM=unicode(u'该书库存量小于预约数量')
     STATIC_BOOKINGRECORD_NOT_FIND=unicode(u'预约记录不存在:')
-    def __unicode__(self):
+    
+    def dict(self):
         return {
             "id":self.id,
             "book_id":self.book_id,
             "borrower_id":self.borrower_id,
             "bnum":self.bnum,
-            "btime":self.btime,
+            "btime":str(self.btime),
             "hasaccepted":self.hasaccepted,
             "hasborrowed":self.hasborrowed,
         }
+
     def btime_str(self):
         return self.btime.strftime("%y/%m/%d %H:%M")
 
