@@ -14,7 +14,7 @@
         {% load staticfiles %}
         {# <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}"> #}
         <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.2/css/bootstrap.min.css">
-        {% if upload %}
+        {% if upload or backups.restore%}
         <link rel="stylesheet" href="{% static "bootstrap-fileinput/css/fileinput.min.css" %}">
         {% endif %}
         <link rel="stylesheet" href="{% static "css/default.css" %}">
