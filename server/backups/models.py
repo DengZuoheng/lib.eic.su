@@ -10,7 +10,7 @@ class BackupRecord(models.Model):
     gtime = models.DateTimeField(auto_now=True)#备份生成时间
     operator = models.CharField(max_length=32)#操作人姓名
 
-    STATIC_BACKUP_NOTFOUND=unicode("备份丢失")
+    STATIC_BACKUP_NOTFOUND=unicode(u"备份丢失")
 
     def gtime_str(self):
         return self.gtime.strftime("%y/%m/%d %H:%M")
@@ -31,16 +31,16 @@ class RestoreRecord(models.Model):
     operator = models.CharField(max_length=32)#操作人姓名
     rtype = models.CharField(max_length=16)#还原类型,redo或overide
 
-    STATIC_RESTORE_FAILED=unicode("还原失败")
+    STATIC_RESTORE_FAILED=unicode(u"还原失败")
 
     def rtime_str(self):
         return self.rtime.strftime("%y/%m/%d %H:%M")
 
     def rtype_str(self):
         if(self.rtype=='redo'):
-            return unicode("增量还原")
+            return unicode(u"增量还原")
         elif(self.rtype=='overide'):
-            return unicode("覆盖")
+            return unicode(u"覆盖")
 
     def dict(self):
         return {

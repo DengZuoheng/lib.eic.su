@@ -87,13 +87,6 @@ def db_backups_storage(input_data, file_name=''):
         args=(now.year,now.month,now.day,now.hour,now.minute,now.second)
         file_name="lib.eic.su.backups.%s.%s.%s.%s.%s.%s.json"%args
     try:
-        url = '/static/'+file_name
-        file_name = './library/static/'+file_name
-        fp = open(file_name,'w')
-        fp.write(input_data)
-        fp.close()
-        return url
-        
         return storage(input_data,file_name,'backups')
     except Exception as e:
         return unicode(e)
@@ -101,7 +94,7 @@ def db_backups_storage(input_data, file_name=''):
 def get_backup_by_id(id):
     backup_record = BackupRecord.objects.get(id=id)
     import urllib2
-    return (backup_record.version,urllib2.urlopen('http://127.0.0.1:8000'+backup_record.url))
+    return (backup_record.version, urllib2.urlopen(backup_record.url))
 
 
 def db_backups():
@@ -110,7 +103,6 @@ def db_backups():
     watcher_list=[]
     borrowrecord_list=[]
     bookingrecord_list=[]
-    import json
     book_list=Book.objects.all()
     borrower_list=Borrower.objects.all()
     watcher_list=Watcher.objects.all()

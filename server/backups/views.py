@@ -33,11 +33,8 @@ def backup(request):
 def delete(request,backup_id):
     
     backup_record = BackupRecord.objects.get(id=backup_id)
-    try:
-        os.remove('./library/static/'+backup_record.version)
-    except:
-        pass
     backup_record.delete()
+    #sae storage里面的是不会被删掉的, 因为我不知道什么删...
     return HttpResponseRedirect('/backups/backup')
     
 

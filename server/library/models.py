@@ -252,8 +252,11 @@ class Watcher(AbstractUser):
         try:
             return Watcher.objects.get(iswatching=True)
         except:
-            lst=list(Watcher.objects.filter(iswatching=True))
-            return lst[0]
+            try:
+                lst=list(Watcher.objects.filter(iswatching=True))
+                return lst[0]
+            except:
+                return None
 
     @classmethod
     def class_get_session_name(cls,session):
