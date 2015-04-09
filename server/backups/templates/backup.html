@@ -1,0 +1,40 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container table-responsive">
+            <table class="table table-hover" id="backup-table">
+                <caption><center><strong>备份记录</strong></center></caption>
+                <thead>
+                    <tr>
+                        <th>版本</th>
+                        <th>生成时间</th>
+                        <th>创建者</th>
+                        <th>下载</th>
+                        <th>删除</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in backup_records %}
+                    <tr>
+                        <td>{{item.version}}</td>
+                        <td>{{item.gtime_str}}</td>
+                        <td>{{item.operator}}</td>
+                        <td><a href="{{item.url}}" class="btn btn-default btn-xs" download><span class="glyphicon glyphicon-download-alt"></span>&nbsp;下 载</a></td>
+                        <td><a href="{{item.delete_url}}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span>&nbsp;删 除</a></td>
+                    </tr>
+                    {% empty %}
+                        <td id="nobackupflag">目前没有任何备份</td>
+                    {% endfor %}
+                </tbody>
+                
+            </table>
+        </div>
+        <div class="container">
+             <button type="button" id="new-backup" class="btn btn-primary btn-block">新建备份</button>
+             <div class="lead"></div>
+        </div>
+        <div class="lead"></div>
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script src="{% static "js/backup.js" %}"></script>
+  </body>
+</html>

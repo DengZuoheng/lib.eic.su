@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'login',
     'captcha',
     'server',
+    'backups',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,7 +60,7 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-'''
+#'''
 LOCAL_MYSQL_DB = 'libeicsu'
 LOCAL_MYSQL_USER = 'root'
 LOCAL_MYSQL_PASS = '299792458'
@@ -93,13 +94,13 @@ DATABASES = {
         'PORT': MYSQL_PORT,
     }
 }
-
+'''
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC+8'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

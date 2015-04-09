@@ -68,4 +68,7 @@ urlpatterns = patterns('',
 
     #验证码
     url(r'^captcha/', include('captcha.urls')),
+
+    #备份还原
+    url(r'^backups/',include('backups.urls')),
 )
