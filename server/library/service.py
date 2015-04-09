@@ -4,6 +4,7 @@ import urllib2
 import json
 import unittest
 from library.models import * 
+from backups.models import *
 
 def download_book_info(isbn):
     return douban_book_api(isbn)
@@ -59,16 +60,15 @@ def search_by(key_word):
 def search_result_example():
     return list(Book.objects.all())
 
-def storage(input_file,file_name):
+def storage(input_data,file_name,domain_name):
     try:
   
         import sae.storage
-        domain_name="images"
 
         client = sae.storage.Client()
         if(client==None):
             raise Exception("null client")
-        obj = sae.storage.Object(input_file.read())
+        obj = sae.storage.Object(input_data)
         if(obj==None):
             raise Exception("null object")
         url = client.put(domain_name, file_name, obj) 
@@ -77,8 +77,10 @@ def storage(input_file,file_name):
     except Exception as e:
         return unicode(e)
 
-def db_backups_stroage(input_data, file_name=''):
+def img_upload_storage(input_file, file_name):
+    return storage(input_file.read(),file_name,'images')
 
+def db_backups_storage(input_data, file_name=''):
     if(''==file_name):
         import datetime
         now=datetime.datetime.now()
@@ -91,22 +93,18 @@ def db_backups_stroage(input_data, file_name=''):
         fp.write(input_data)
         fp.close()
         return url
-
-        import sae.storage
-        domain_name="backups"
-        client=sae.storage.Client()
-        if(client==None):
-            raise Exception("null client")
-        obj=sae.storage.Object(input_data)
-        if(obj==None):
-            raise Exception("null object")
-        url=client.put(domain_name,file_name,obj)
-        return url
+        
+        return storage(input_data,file_name,'backups')
     except Exception as e:
         return unicode(e)
 
+def get_backup_by_id(id):
+    backup_record = BackupRecord.objects.get(id=id)
+    import urllib2
+    return (backup_record.version,urllib2.urlopen('http://127.0.0.1:8000'+backup_record.url))
+
+
 def db_backups():
-    
     book_list=[]
     borrower_list=[]
     watcher_list=[]
@@ -137,46 +135,53 @@ def db_backups():
         var['bookingrecord'].append(item.dict())
     
     return var
-    
 
-def db_restore(backup):
-    try:
-        
-        for item in backup['book']:
-            restore_model(item,Book)
-        for item in backup['borrower']:
-            restore_model(item, Borrower)
-        for item in backup['watcher']:
-            restore_model(item,Watcher)
-        for item in backup['borrowrecord']:
-            restore_model(item,BorrowRecord)
-        for item in backup['bookingrecord']:
-            restore_model(item,BookingRecord)
-        return True
-    except:
-        return False
+def backup_redo(json_obj):
+    db_restore(json_obj)
+
+def backup_overide(json_obj):
+    Book.objects.all().delete()
+    Borrower.objects.all().delete()
+    Watcher.objects.all().delete()
+    BorrowRecord.objects.all().delete()
+    BookingRecord.objects.all().delete()
+    db_restore(json_obj)
+
+def db_restore(backup):  
+    for item in backup['book']:
+        restore_model(item, Book)
+    for item in backup['borrower']:
+        restore_model(item, Borrower)
+    for item in backup['watcher']:
+        restore_model(item, Watcher)
+    for item in backup['borrowrecord']:
+        restore_model(item, BorrowRecord)
+    for item in backup['bookingrecord']:
+        restore_model(item, BookingRecord)
+
+    return True
 
 def restore_model(data,cls):
+
     try:
-        if(hasattr(data,'id')):
-            item=cls.objects.get(id=data['id'])
-            del data['id']
-            for key,value in data:
-                setattr(item,key,value)
+
+        if(data.has_key('id')):
+            item=cls.objects.get(id=int(data['id']))
+            item.setattr(data)
             item.save()
         else:
             item=cls.objects.get(account=data['account'])
-            del data['account']
-            for key,value in data:
-                setattr(item,key,value)
+            item.setattr(data)
             item.save()
-    except:
-        if(hasattr(data,'id')):
-            del data['id']
-        item=cls(**item)
-        item.save()
-
-
+            
+    except Exception as e:
+        #TODO:这里datetime不行
+        data = cls.class_transdata(data)
+        item=cls(**data)
+        try:
+            item.save()
+        except Exception as e:
+            print(e)
 
 
 #单元测试

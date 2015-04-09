@@ -35,12 +35,10 @@ class Book(models.Model):
     STATIC_BOOK_NOT_FIND=unicode(u'无法找到该书籍:')
     STATIC_BOOKS_WITH_SAME_ISBN=unicode(u'不同的书有相同的isbn:')
 
-
-
-
     def dict(self):
         return {
             "id":self.id,
+            'bname':self.bname,
             "isbn":self.isbn,
             "author":self.author,
             "translator":self.translator,
@@ -52,6 +50,15 @@ class Book(models.Model):
             "totalnum":self.totalnum,
             "available":self.available,
         }
+
+    def setattr(self, data):
+        attr_list = [
+            'isbn','bname','author','translator','byear','bcover',
+            'publisher','pagination','totalnum', 'available','price',]
+        for attr in attr_list:
+            if(data.has_key(attr)):             
+                setattr(self, attr, data[attr])
+
     #如果在馆数少于5记为危险
     def danger(self):
         if(0<int(self.available)<5):
@@ -59,11 +66,12 @@ class Book(models.Model):
         else:
             return False;
 
-    def waring(self):
+    def warning(self):
         if(5<=int(self.available)<10):
             return True;
         else:
             return False;
+
     def info(self):
 
         if(int(self.available)>=10):
@@ -119,6 +127,10 @@ class Book(models.Model):
     def price_str(self):
         return '%.2f'%self.price
 
+    @classmethod
+    def class_transdata(cls,data):
+        return data
+
 """
 借书人和值班人员的基类模型
 """
@@ -127,6 +139,26 @@ class AbstractUser(models.Model):
     name = models.CharField(max_length=32)
     lpnumber=models.CharField(max_length=12)
     spnumber=models.CharField(max_length=6,blank=True)
+
+    def setattr(self, data):
+        attr_list = ['account','name','lpnumber','spnumber']
+        for attr in attr_list:
+            if(data.has_key(attr)):
+                setattr(self,attr,data[attr])
+
+    def dict(self):
+        ret =  {
+            'account':self.account,
+            'name':self.name,
+            'lpnumber':self.lpnumber,
+            'spnumber':self.spnumber,
+        }  
+        return ret   
+
+    @classmethod
+    def class_transdata(cls,data):
+        return data       
+
     class Meta:
         abstract = True
 
@@ -141,14 +173,21 @@ class Borrower(AbstractUser):
     STATIC_CREDIT_LIMIT=4
     STATIC_BAD_BORROWER_INFO=unicode(u'无法创建借书人记录, 借书人信息有误:')
     STATIC_BAD_CREDIT_WANING=unicode(u'逾期归还, 损坏, 丢失次数过多, 已取消预约和借书资格')
+    
+    def setattr(self, data):
+        super(Borrower,self).setattr(data)
+        attr_list=['credit']
+        for attr in attr_list:
+            if(data.has_key(attr)):
+                setattr(self,attr,data[attr])
+
     def dict(self):
-        return {
-            "account":self.account,
-            "name":self.name,
-            "lpnumber":self.lpnumber,
-            "spnumber":self.spnumber,
+        ret =  {
             "credit":self.credit,
         }
+        ret.update(super(Borrower, self).dict())
+        return ret
+
     def badcredit(self):
         if(self.credit>=Borrower.STATIC_CREDIT_LIMIT):
             return True
@@ -164,6 +203,11 @@ class Borrower(AbstractUser):
     def credit_lost(self):
         self.credit=self.credit+1
 
+    @classmethod
+    def class_transdata(cls,data):
+        data = AbstractUser.class_transdata(data)
+        return data
+
 """
 值班人员表
 """
@@ -176,16 +220,22 @@ class Watcher(AbstractUser):
     STATIC_HAS_NO_WATCHER=unicode(u'当前没有值班干事')
 
     #TODO:这里的watchsum不知道什么自增
+
+    def setattr(self, data):
+        super(Watcher,self).setattr(data)
+        attr_list=['password','watchsum','iswatching']
+        for attr in attr_list:
+            if(data.has_key(attr)):
+                setattr(self,attr,data[attr])
+
     def dict(self):
-        return {
-            "account":self.account,
-            "name":self.name,
-            "lpnumber":self.lpnumber,
-            "spnumber":self.spnumber,
-            "password":self.password,
-            "iswatching":self.iswatching,
-            "watchsum":self.watchsum,
+        ret = {
+            'password':self.password,
+            'iswatching':self.iswatching,
+            'watchsum':self.watchsum,
         }
+        ret.update(super(Watcher,self).dict())
+        return ret
 
     def iswatching_str(self):
         if(self.iswatching):
@@ -245,6 +295,11 @@ class Watcher(AbstractUser):
             watcher.save()
             return False
 
+    @classmethod
+    def class_transdata(cls,data):
+        data = AbstractUser.class_transdata(data)
+        return data
+
 """
 外借记录表
 """
@@ -275,17 +330,38 @@ class BorrowRecord(models.Model):
     STATIC_INCONSISTENT_ACCOUNT=unicode(u'输入学号与借书记录不一致')
     STATIC_CANNOT_GET_STATUS=unicode(u'无法获得"状态":')
     STATIC_OUT_OF_BORROWABLE_RANGE=unicode(u'借书数超过借书者的限额')
+    STATIC_DATETIME_FORMAT = r'%Y-%m-%d %H:%M:%S'
+    
+    def setattr(self, data):
+        if(hasattr(data,'book_id')):
+            self.book = Book.objects.get(data['book_id'])
+        if(hasattr(data,'borrower_id')):
+            self.borrower = Borrower.objects.get(data['borrower_id'])
+        if(hasattr(data,'btime')):
+            if(isinstance(data['btime'],datetime.datetime)):
+                self.btime = data['btime']
+            else:
+                self.btime = datetime.datetime.strptime(data['btime'],self.STATIC_DATETIME_FORMAT)
+        if(hasattr(data,'rtime')):
+            if(isinstance(data['rtime'],datetime.datetime)):
+                self.rtime = data['rtime']
+            else:
+                self.rtime = datetime.datetime.strptime(data['rtime'],self.STATIC_DATETIME_FORMAT)
+        attr_list = ['bsub','rsubc','hasreturn']
+        for attr in attr_list:
+            if(data.has_key(attr)):
+                setattr(self,attr,data[attr])
 
     def dict(self):
         return {
-            "id":str(self.id),
-            "book_id":str(self.book_id),
-            #"borrower_id":str(self.borrower_id),
-            "btime":str(self.btime),
-            "rtime":str(self.rtime),
-            "bsubc":str(self.bsubc),
-            "rsubc":str(self.rsubc),
-            "hasreturn":str(self.hasreturn)
+            "id":self.id,
+            "book_id":self.book_id,
+            "borrower_id":self.borrower_id,
+            "btime":self.btime.strftime(self.STATIC_DATETIME_FORMAT),
+            "rtime":self.rtime.strftime(self.STATIC_DATETIME_FORMAT),
+            "bsubc":self.bsubc,
+            "rsubc":self.rsubc,
+            "hasreturn":self.hasreturn,
         }
     #借用时长
     def duration(self):
@@ -320,6 +396,13 @@ class BorrowRecord(models.Model):
     def return_href(self):
         return "/return2/bid/"+str(self.book_id)+"/uid/"+str(self.borrower_id)+"/brrid/"+str(self.id)+"/err/0"
 
+    @classmethod
+    def class_transdata(cls,data):
+        if(not isinstance(data['btime'],datetime.datetime)):
+            data['btime']=datetime.datetime.strptime(data['btime'],cls.STATIC_DATETIME_FORMAT)
+        if(not isinstance(data['rtime'],datetime.datetime)):
+            data['rtime']=datetime.datetime.strptime(data['rtime'],cls.STATIC_DATETIME_FORMAT)
+        return data
 
 """
 预约记录表
@@ -336,14 +419,30 @@ class BookingRecord(models.Model):
     STATIC_OUT_OF_BOOKINGABLE_RANGE=unicode(u'预约数量超过预约者的额度')
     STATIC_AVAILABLE_LESS_THAN_BOOKNUM=unicode(u'该书库存量小于预约数量')
     STATIC_BOOKINGRECORD_NOT_FIND=unicode(u'预约记录不存在:')
-    
+    STATIC_DATETIME_FORMAT = r'%Y-%m-%d %H:%M:%S'
+
+    def setattr(self, data):
+        if(data.has_key('book_id')):
+            self.book = Book.objects.get(data['book_id'])
+        if(data.has_key('borrower_id')):
+            self.borrower = Borrower.objects.get(data['borrower_id'])
+        if(data.has_key('btime')):
+            if(isinstance(data['btime'],datetime.datetime)):
+                self.btime = data['btime']
+            else:
+                self.btime = datetime.datetime.strptime(data['btime'],self.STATIC_DATETIME_FORMAT)
+        attr_list = ['bnum','hasaccepted','hasborrowed']
+        for attr in attr_list:
+            if(data.has_key(attr)):
+                setattr(self,attr,data[attr])
+
     def dict(self):
         return {
             "id":self.id,
             "book_id":self.book_id,
             "borrower_id":self.borrower_id,
             "bnum":self.bnum,
-            "btime":str(self.btime),
+            "btime":self.btime.strftime(self.STATIC_DATETIME_FORMAT),
             "hasaccepted":self.hasaccepted,
             "hasborrowed":self.hasborrowed,
         }
@@ -377,6 +476,12 @@ class BookingRecord(models.Model):
             return False
     def selectable_range(self):
         return range(self.bnum)
+
+    @classmethod
+    def class_transdata(cls,data):
+        if(not isinstance(data['btime'],datetime.datetime)):
+            data['btime']=datetime.datetime.strptime(data['btime'],cls.STATIC_DATETIME_FORMAT)
+        return data
 
 """
 错误记录表

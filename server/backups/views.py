@@ -47,10 +47,12 @@ def restore(request):
         return HttpResponseRedirect('/account/login/')
     context = {}
     backup_records = list(BackupRecord.objects.all())
+    restore_records = list(RestoreRecord.objects.all())
     context = {
         'backups':{'restore':True},
         'session':session,
         "backup_records":backup_records,
+        "restore_records":restore_records,
     }
     return render_to_response(
         'restore.html',

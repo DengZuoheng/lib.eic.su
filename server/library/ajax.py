@@ -171,7 +171,7 @@ def on_upload_push(request):
         token=filename+str(datetime.datetime.now())
         new_file_name=hashlib.sha1(token).hexdigest()+'.'+extension
         
-        file_url=service.storage(input_file,new_file_name)
+        file_url=service.img_upload_storage(input_file,new_file_name)
     except Exception as e:
         return HttpResponse(json.dumps({'error':unicode(e),}))
     return HttpResponse(json.dumps({'flag_succeed':'true','filename':filename,'file_url':file_url,}))

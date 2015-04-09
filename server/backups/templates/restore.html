@@ -1,6 +1,33 @@
 {% include 'includes/header.html' %}
         <div class="lead"></div>
         <div class="container table-responsive">
+            <table class="table table-hover" id="restore-table">
+                <caption><center><strong>还原记录</strong></center></caption>
+                <thead>
+                    <tr>
+                        <th>还原时间</th>
+                        <th>版本</th>
+                        <th>操作者</th>
+                        <th>类型</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in restore_records %}
+                    <tr>
+                        <td>{{item.rtime_str}}</td>
+                        <td>{{item.version}}</td>
+                        <td>{{item.operator}}</td>
+                        <td>{{item.rtype_str}}</td>
+                        
+                    </tr>
+                    {% empty %}
+                        <td id="norestoreflag">没有还原记录</td>
+                    {% endfor %}
+                </tbody>
+                
+            </table>
+        </div>
+        <div class="container table-responsive">
             <table class="table table-hover" id="backup-table">
                 <caption><center><strong>可用备份</strong></center></caption>
                 <thead>
@@ -22,7 +49,7 @@
                         <td><a href="{{item.redo_url}}" class="btn btn-warning btn-xs redo">增量还原</a></td>
                     </tr>
                     {% empty %}
-                        <td id="nobackupflag">云端没有可用的备份</td>
+                        <td id="nobackupflag">没有可用的备份</td>
                     {% endfor %}
                 </tbody>
                 
@@ -35,13 +62,13 @@
                 <div class="lead"></div>
                 <input id="input-file-overide" type="file" multiple="true" class="file-loading" data-upload-url="#" data-max-file-count="10" name="input-file-overide">     
             </form>
-            <div class="lead"></div>      
+                 
         </div>
         <div class="lead"></div>
         
 {% include 'includes/footer.html' %}
 {% load staticfiles %}
-        <script src="{% static "bootstrap-fileinput/js/fileinput.js" %}"></script>
+        <script src="{% static "bootstrap-fileinput/js/fileinput.min.js" %}"></script>
 
         <script src="{% static "js/restore.js" %}"></script>
   </body>
