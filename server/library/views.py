@@ -20,6 +20,7 @@ def collection(request):
 
     book_list=list(Book.objects.all().exclude(totalnum=0))
     context['book_list']=book_list
+    context['total'] = len(book_list)
     return render_to_response('collection.html', context)
 
 def order(request,book_id='0',user_account='0',error_id='0',accept_status='null',borrow_status='null'):
