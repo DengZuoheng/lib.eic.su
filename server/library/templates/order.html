@@ -29,7 +29,7 @@
                         <td>{{ item.borrower.account }}</td>
                         <td>{{ item.borrower.lpnumber }}</td>
                         <td>{{ item.borrower.spnumber }}</td>
-                        <td>{{ item.bnum }}</td>
+                        <td class="text-right">{{ item.bnum }}</td>
                         <td><a class="btn btn-primary btn-xs" {% if item.hasaccepted %}disabled="disabled" {% endif %}href="{{ item.accept_href }}">受理</a>&nbsp;<a class="btn btn-danger btn-xs" {% if item.hasborrowed %}disabled="disabled" {% endif %}href="{{ item.cancel_href }}">取消</a></td>
                         <td><a class="btn btn-info btn-xs" {% if not item.hasaccepted or item.hasborrowed %}disabled="disabled" {% endif %}href="{{ item.borrow_href }}">外借</a></td>
                     </tr>

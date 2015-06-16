@@ -23,10 +23,10 @@
                         <td><a href="{{ item.subject }}">{{item.bname}}</a></td>
                         <td>{{item.author_str}}</td>
                         <td>{{item.publisher}}</td>
-                        <td>{{item.price_str}}元</td>
-                        <td>{{item.totalnum}}</td>
-                        <td>{{item.available}}</td>
-                        <td>{{item.bookable}}</td>
+                        <td class="text-right">{{item.price_str}}元</td>
+                        <td class="text-right">{{item.totalnum}}</td>
+                        <td class="text-right">{{item.available}}</td>
+                        <td class="text-right">{{item.bookable}}</td>
                         <td><a class="btn btn-success btn-xs" href="{{item.href}}" {% if not item.is_bookable %}disabled="disabled"{% endif %}>预约</a></td>
                     </tr>
                     {% endfor %}
