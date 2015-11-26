@@ -12,6 +12,16 @@ var afx_sorting_attr="isbn";//默认排序属性
 var afx_attr=new Array("isbn","bname","author","publisher","price","totalnum","available","bookable");
 var afx_attr_desc=new Array(afx_isbn_desc,afx_bname_desc,afx_author_desc,afx_publisher_desc,
                                 afx_price_desc,afx_totalnum_desc,afx_available_desc,afx_bookable_desc);
+var afx_attr_type = {
+    "isbn":"string",
+    "bname":"string",
+    "author":"string",
+    "publisher":"string",
+    "price":"float",
+    "totalnum":"int",
+    "available":"int",
+    "bookable":"int"
+};
 
 (function(){
     afx_all_result=new Array();
@@ -67,19 +77,19 @@ function order_by(str_attr,str_order){
 
 //降序排列
 function desc_cmp(obj1,obj2){
-    if(obj1[afx_sorting_attr]>obj2[afx_sorting_attr]){
-        return true;
-    }else{
-        return false;
-    }
+    return !asc_cmp(obj1,obj2);
 }
 
 //升序排列
 function asc_cmp(obj1,obj2){
-    if(obj1[afx_sorting_attr]<=obj2[afx_sorting_attr]){
-        return true;
+    console.log(afx_sorting_attr);
+    if (afx_attr_type[afx_sorting_attr]=="int"){
+        console.log("int");
+        return parseInt(obj1[afx_sorting_attr]) <= parseInt(obj2[afx_sorting_attr]);
+    }else if(afx_attr_type[afx_sorting_attr]=="float"){
+        return parseFloat(obj1[afx_sorting_attr]) <= parseFloat(obj2[afx_sorting_attr]);
     }else{
-        return false;
+        return obj1[afx_sorting_attr]<=obj2[afx_sorting_attr];
     }
 }
 
