@@ -7,7 +7,6 @@
                     <tr>
                         <th>版本</th>
                         <th>生成时间</th>
-                        <th>创建者</th>
                         <th>下载</th>
                         <th>删除</th>
                     </tr>
@@ -15,9 +14,8 @@
                 <tbody>
                     {% for item in backup_records %}
                     <tr>
-                        <td>{{item.version}}</td>
-                        <td>{{item.gtime_str}}</td>
-                        <td>{{item.operator}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.datetime}}</td>
                         <td><a href="{{item.url}}" class="btn btn-default btn-xs" download><span class="glyphicon glyphicon-download-alt"></span>&nbsp;下 载</a></td>
                         <td><a href="{{item.delete_url}}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span>&nbsp;删 除</a></td>
                     </tr>

@@ -36,7 +36,7 @@
                             <div class="pub">
                                 {{ item.author }} / 
                                 {% if item.translator %}[译]{{ item.translator }} / {% endif %}
-                                {% if item.publish %}{{ item.publish }} / {% endif %}
+                                {% if item.publisher %}{{ item.publisher }} / {% endif %}
                                 {{ item.byear }} / 
                                 {{ item.price }}元
                             </div>
@@ -53,7 +53,7 @@
                     </div>
                 </li>
                 {% empty %}
-                <h2> 什么也找不到 -_-|||</h2>
+                <h2> 什么也找不到 -_-||| <a href="/collection/">还是点这看全部书籍吧</a></h2>
                 {% endfor %}   
             </ul>
         </div>

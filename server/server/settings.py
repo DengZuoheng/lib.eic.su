@@ -18,17 +18,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'jtp4itdyr1*hr*zvye3b=lnpqk)qn*jlz^38zn6^j-%vk_5lo+'
-
+APP_URL = 'libeicsu.sinaapp.com'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+try:
+    import sae.const 
+    DEBUG = True
+    TEMPLATE_DEBUG = DEBUG 
+    ALLOWED_HOSTS = [APP_URL]
+except:
+    DEBUG = True
+    TEMPLATE_DEBUG = DEBUG 
+    ALLOWED_HOSTS = ['127.0.0.1']
 
-TEMPLATE_DEBUG = True
-
-ALLOWED_HOSTS = []
-
-
+SUPER_USER = 'root'
+SUPER_USER_PW = 'python'
+SUPER_USER_NAME = 'Administrator'
 # Application definition
-import library
 INSTALLED_APPS = (
     #'django.contrib.auth',
     #'django.contrib.contenttypes',
@@ -58,55 +63,48 @@ ROOT_URLCONF = 'server.urls'
 WSGI_APPLICATION = 'server.wsgi.application'
 
 
-# Database
+# Database setting 
+try:
+    import sae.const 
+    MYSQL_DB = sae.const.MYSQL_DB 
+    MYSQL_USER = sae.const.MYSQL_USER 
+    MYSQL_PASS = sae.const.MYSQL_PASS 
+    MYSQL_HOST_M = sae.const.MYSQL_HOST 
+    MYSQL_HOST_S = sae.const.MYSQL_HOST_S 
+    MYSQL_PORT = sae.const.MYSQL_PORT
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': MYSQL_DB,
+            'USER': MYSQL_USER,
+            'PASSWORD': MYSQL_PASS,
+            'HOST': MYSQL_HOST_M,
+            'PORT': MYSQL_PORT,
+        }
+    }
+except:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+    import sys
+    six_path = os.path.join( BASE_DIR,"site-packages","six")
+    sys.path.insert(0,(six_path))
+
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-'''
-LOCAL_MYSQL_DB = 'libeicsu'
-LOCAL_MYSQL_USER = 'root'
-LOCAL_MYSQL_PASS = '299792458'
-LOCAL_MYSQL_HOST = '127.0.0.1'
-LOCAL_MYSQL_PORT = '3306'
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     LOCAL_MYSQL_DB,
-        'USER':     LOCAL_MYSQL_USER,
-        'PASSWORD': LOCAL_MYSQL_PASS,
-        'HOST':     LOCAL_MYSQL_HOST,
-        'PORT':     LOCAL_MYSQL_PORT,
-    }
-}
-'''
-import sae.const 
-MYSQL_DB = sae.const.MYSQL_DB 
-MYSQL_USER = sae.const.MYSQL_USER 
-MYSQL_PASS = sae.const.MYSQL_PASS 
-MYSQL_HOST_M = sae.const.MYSQL_HOST 
-MYSQL_HOST_S = sae.const.MYSQL_HOST_S 
-MYSQL_PORT = sae.const.MYSQL_PORT
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': MYSQL_DB,
-        'USER': MYSQL_USER,
-        'PASSWORD': MYSQL_PASS,
-        'HOST': MYSQL_HOST_M,
-        'PORT': MYSQL_PORT,
-    }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Shanghai'
-
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+#USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

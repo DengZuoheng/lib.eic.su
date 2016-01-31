@@ -62,6 +62,7 @@ var afx_can_not_submit=false;
                     dataType:"json",
                     type:"POST",
                     success:function(result){
+                        console.log(result);
                         afx_person_result=result;
                         fill_table(afx_person_result);
                         afx_ajaxed=true;//如果已经ajax过了就不要重复ajax了
@@ -296,10 +297,11 @@ var afx_can_not_submit=false;
     
     //生成可选数量
     function fill_book_num(bindex,selectedval){
+        console.log(selectedval)
         $("#br-input-bnum").html("");
         var selectable_num=min(afx_book_result["books"][bindex]["binventory"], 
                 afx_max_booknum-afx_person_result["bookednum"]);
-                
+        console.log(selectable_num)      
         for(var i=0;i<selectable_num; ++i){
                 $("<option></option>")
                     .attr("value",i+1)

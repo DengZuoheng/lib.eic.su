@@ -119,6 +119,7 @@ var afx_attr=new Array("bcover","bname","author","translator",
             }
         }else if(attr=="pagination"||attr=="insertednum"){
             if(!isIntBetween(temp,-9999,9999)){
+                console.log(temp);
                 return illegal_feedback($(this),attr,"非法数字");
             }else if(temp.length!=0){
                 return legal_feedback($(this),attr,"");

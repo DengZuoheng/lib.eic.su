@@ -6,6 +6,7 @@ from library import views
 from library import ajax #专门处理ajax
 from library import actions # 专门处理表单
 from library import debug #拿来调试用的
+import search
 
 urlpatterns = patterns('',
     # Examples:
@@ -18,7 +19,6 @@ urlpatterns = patterns('',
     #通常响应
     url(r'^$',views.index),
     url(r'^index[/]$',views.index),
-    url(r'^search/start/(\d+)/keyword/(.+)',views.search),
     url(r'^collection/',views.collection),
     url(r'^order[/]$',views.order),
     url(r'^order/bid/(\d+)/uid/(\d+)/err/(\d+)/accept/(true|false|null)/borrow/(true|false|null)$',views.order),
@@ -37,6 +37,9 @@ urlpatterns = patterns('',
     url(r'^return2/bid/(\d+)/uid/(\d+)/brrid/(\d+)/err/(\d+)$',views.return2),
     url(r'^upload/$',views.upload),
     url(r'^help/$',views.help),
+
+    #搜索相关
+    url(r'^search/', include('search.urls')),
 
     #按钮响应
     url(r'^accept/bid/(\d+)/uid/(\d+)/brid/(\d+)$',views.accept_booking),
@@ -59,9 +62,6 @@ urlpatterns = patterns('',
     #处理前端的ajax发送过来的数据
     url(r'^PushAjaxAdmin/',ajax.on_admin_push),
     url(r'^PushAjaxUpload/',ajax.on_upload_push),
-
-    #调试用
-    url(r'^filldb/', debug.filldb),
 
     #登录
     url(r'^account/', include('login.urls')),

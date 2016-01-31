@@ -13,13 +13,16 @@ from models import BorrowRecord
 from models import Watcher
 import datetime
 import json
+import re
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+import check
+from server.fields import B
 
 def search_action(request):
     try:
         key_word=request.GET['search-key-word']
-        return HttpResponseRedirect(reverse('library.views.search', args=[1,key_word,]))
+        return HttpResponseRedirect(reverse('search.views._search', args=[1,key_word,]))
     except Exception as e:
         print(unicode(e))
         return HttpResponseRedirect(reverse('library.views.index'))     
@@ -30,37 +33,47 @@ def booking_action(request,book_id):
     inputed_spnumber=request.POST['br-input-usp']
     inputed_lpnumber=request.POST['br-input-ulp']
     inputed_bnum=int(request.POST['br-input-bnum'])
-
+    check_result = [
+        check.is_clean_input('account',inputed_account), 
+        check.is_clean_input('name',inputed_name),
+        check.is_clean_input('spnumber',inputed_spnumber),
+        check.is_clean_input('lpnumber',inputed_lpnumber),
+        check.is_clean_input('integer',inputed_bnum),
+    ]
+    
     try:
         borrower=Borrower.objects.get(account=inputed_account)
     except Borrower.DoesNotExist:
         borrower=Borrower(
-            account=inputed_account,
-            name=inputed_name,
-            lpnumber=inputed_lpnumber)
+            account=B(inputed_account),
+            name=B(inputed_name),
+            lpnumber=B(inputed_lpnumber))
     try:
+        if False in check_result:
+            raise Exception('unsafe input')
         #更新借书者信息
-        borrower.lpnumber=inputed_lpnumber
-        borrower.name=inputed_name
+        borrower.lpnumber=B(inputed_lpnumber)
+        borrower.name=B(inputed_name)
         if(inputed_spnumber!=''):
-            borrower.spnumber=inputed_spnumber
+            borrower.spnumber=B(inputed_spnumber)
 
         #先保存借书者信息, 然后在处理预约问题
         borrower.save()
 
         if(borrower.badcredit()):
             raise Exception(Borrower.STATIC_BAD_CREDIT_WANING)
-
+        if not Watcher.class_get_current_watcher():
+            raise Exception(Watcher.STATIC_HAS_NO_WATCHER)
         try:
             __bookednum = BookingRecord.objects.filter(
-                    borrower_id=borrower.account,
+                    borrower_id=borrower.id,
                     hasaccepted=True,
                     hasborrowed=False).count()
         except:
             __bookednum = 0
         try:
             __borrowednum=BorowerRecord.objects.filter(
-                borrower_id=borrower.account,
+                borrower_id=borrower.id,
                 hasreturn=False).count()
         except:
             __borrowednum = 0
@@ -99,11 +112,10 @@ def booking_action(request,book_id):
     #有错就返回表单页面
     except Exception as e:
        
-        error=Error(what=unicode(e))
+        error=Error(what=B(unicode(e)))
         error.save()
         return HttpResponseRedirect(reverse('library.views.booking', args=[book_id,inputed_account,error.id]))
         
-
 def borrow_action(request):
     try:
         inputed_account=request.POST['br-input-uid']
@@ -130,10 +142,10 @@ def borrow_action(request):
             borrower=Borrower.objects.get(account=inputed_account)
             #短号可能为空
             if(''!=inputed_spnumber):
-                borrower.spnumber=inputed_spnumber
+                borrower.spnumber=B(inputed_spnumber)
             
-            borrower.lpnumber=inputed_lpnumber
-            borrower.name=inputed_name
+            borrower.lpnumber=B(inputed_lpnumber)
+            borrower.name=B(inputed_name)
             #TODO:借书人信用度的问题还没考虑
             borrower.save()
 
@@ -141,10 +153,10 @@ def borrow_action(request):
             try:
                 #新建一个borrower
                 borrower=Borrower(
-                    account=inputed_account,
-                    name=inputed_name,
-                    lpnumber=inputed_lpnumber,
-                    spnumber=inputed_spnumber,
+                    account=B(inputed_account),
+                    name=B(inputed_name),
+                    lpnumber=B(inputed_lpnumber),
+                    spnumber=B(inputed_spnumber),
                     credit=12,)
                 borrower.save()
             except Exception as e:
@@ -167,7 +179,7 @@ def borrow_action(request):
         #检查是否超过额度
         try:
             __borrowednum=BorowerRecord.objects.filter(
-            borrower_id=borrower.account,
+            borrower_id=borrower.id,
             hasreturn=False).count()
         except:
             __borrowednum = 0
@@ -183,7 +195,7 @@ def borrow_action(request):
                 book=book,
                 borrower=borrower,
                 btime=datetime.datetime.now(),
-                bsubc=inputed_bsubc,
+                bsubc=B(inputed_bsubc),
                 #boperator=current_watcher,
                 #roperator=current_watcher,
                 #这里用当前值班人员做还书操作者只是权宜之计
@@ -211,7 +223,7 @@ def borrow_action(request):
             'what':unicode(e),
         }
 
-        error=Error(what=json.dumps(data))
+        error=Error(what=B(json.dumps(data)))
         error.save()
         args=[
                 inputed_book_id,
@@ -222,65 +234,63 @@ def borrow_action(request):
         print(unicode(args))
         return HttpResponseRedirect(reverse('library.views.borrowing', args=args))
 
-
-
 def insert_action(request):
+    #try:
+
+    inputed_isbn = request.POST['br-input-isbn']
+    inputed_bcover = request.POST['br-input-bcover']
+    inputed_bname = request.POST['br-input-bname']
+    inputed_author = request.POST['br-input-author']
+    inputed_translator = request.POST['br-input-translator']
+    inputed_publisher = request.POST['br-input-publisher']
+    inputed_byear = request.POST['br-input-byear']
+    inputed_pagination = request.POST['br-input-pagination']
+    inputed_price = request.POST['br-input-price']
+    inputed_insertednum = request.POST['br-input-insertednum']
+
     try:
+        book=Book.objects.get(isbn=inputed_isbn)
 
-        inputed_isbn = request.POST['br-input-isbn']
-        inputed_bcover = request.POST['br-input-bcover']
-        inputed_bname = request.POST['br-input-bname']
-        inputed_author = request.POST['br-input-author']
-        inputed_translator = request.POST['br-input-translator']
-        inputed_publisher = request.POST['br-input-publisher']
-        inputed_byear = request.POST['br-input-byear']
-        inputed_pagination = request.POST['br-input-pagination']
-        inputed_price = request.POST['br-input-price']
-        inputed_insertednum = request.POST['br-input-insertednum']
+        book.bname=B(inputed_bname)
+        book.author=B(inputed_author)
+        book.translator=B(inputed_translator)
+        book.byear=B(inputed_byear)
+        book.pagination=int(inputed_pagination)
+        book.price=float(inputed_price)
+        # TODO : 封面应该下载到本地储存或SAE storage
+        book.bcover=B(inputed_bcover)
+        book.publisher=B(inputed_publisher)
+        book.totalnum=book.totalnum+int(inputed_insertednum)
+        book.available=book.available+int(inputed_insertednum)
 
-        try:
-            book=Book.objects.get(isbn=inputed_isbn)
+        book.save()
 
-            book.bname=inputed_bname
-            book.author=inputed_author
-            book.translator=inputed_translator
-            book.byear=inputed_byear
-            book.pagination=int(inputed_pagination)
-            book.price=float(inputed_price)
+        return HttpResponseRedirect("/success/insert")
+
+    except Book.DoesNotExist:
+        book=Book(
+            isbn=B(inputed_isbn),
+            bname=B(inputed_bname),
+            author=B(inputed_author),
+            translator=B(inputed_translator),
+            byear=B(inputed_byear),
+            pagination = 0,
+            price=float(inputed_price),
             # TODO : 封面应该下载到本地储存或SAE storage
-            book.bcover=inputed_bcover
-            book.publisher=inputed_publisher
-            book.totalnum=book.totalnum+int(inputed_insertednum)
-            book.available=book.available+int(inputed_insertednum)
+            bcover=B(inputed_bcover),
+            publisher=B(inputed_publisher),
+            totalnum=int(inputed_insertednum),
+            available=int(inputed_insertednum),
+            )
+        if(inputed_pagination!=''):
+            book.pagination=int(inputed_pagination)
 
-            book.save()
-
-            return HttpResponseRedirect("/success/insert")
-
-        except Book.DoesNotExist:
-            book=Book(
-                isbn=inputed_isbn,
-                bname=inputed_bname,
-                author=inputed_author,
-                translator=inputed_translator,
-                byear=inputed_byear,
-                pagination = 0,
-                price=float(inputed_price),
-                # TODO : 封面应该下载到本地储存或SAE storage
-                bcover=inputed_bcover,
-                publisher=inputed_publisher,
-                totalnum=int(inputed_insertednum),
-                available=int(inputed_insertednum),
-                )
-            if(inputed_pagination!=''):
-                book.pagination=int(inputed_pagination)
-
-            book.save()
-            return HttpResponseRedirect("/success/insert")
-        except Book.MultipleObjectsReturned as e: #isbn不唯一
-            #TODO:其实这里新建一条记录可能比较好
-            raise Exception(Book.STATIC_BOOKS_WITH_SAME_ISBN+unicode(e))
-
+        book.save()
+        return HttpResponseRedirect("/success/insert")
+    except Book.MultipleObjectsReturned as e: #isbn不唯一
+        #TODO:其实这里新建一条记录可能比较好
+        raise Exception(Book.STATIC_BOOKS_WITH_SAME_ISBN+unicode(e))
+    """
     except Exception as err:
         error_item={
             "inputed_isbn":inputed_isbn,
@@ -298,7 +308,7 @@ def insert_action(request):
         error=Error(what=json.dumps(error_item))
         error.save()
         return HttpResponseRedirect(reverse('library.views.insert', args=[error.id]))
-    
+    """
 
 def return1_action(request):
     user_account=None
@@ -310,7 +320,7 @@ def return1_action(request):
             'inputed_uid':user_account,
             'what':unicode(e),
         }
-        error=Error(what=json.dumps(what))
+        error=Error(what=B(json.dumps(what)))
         error.save()
         return HttpResponseRedirect(reverse('library.views.return1', args=[error.id]))
 
@@ -336,7 +346,6 @@ def return2_action(request):
 
         #然后视情况改变借书者的信用情况和库存情况
         if(inputed_status=='overdue'):
-            
             borrow_record.borrower.credit_overdue()
 
         if(inputed_status=='damaged'):
@@ -348,10 +357,10 @@ def return2_action(request):
             borrow_record.borrower.credit_lost()
         else:
             borrow_record.book.available+=1
-            
+
         #保存借书记录信息
         borrow_record.rtime=datetime.datetime.now()
-        borrow_record.rsubc=inputed_status
+        borrow_record.rsubc=B(inputed_status)
         borrow_record.roperator=current_watcher
         borrow_record.hasreturn=True
         borrow_record.book.save()
@@ -366,7 +375,7 @@ def return2_action(request):
             'what':unicode(e),
         }
 
-        error=Error(what=json.dumps(data))
+        error=Error(what=B(json.dumps(data)))
         error.save()
         args=[
                 book_token,

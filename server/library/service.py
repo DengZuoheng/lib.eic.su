@@ -5,6 +5,7 @@ import json
 import unittest
 from library.models import * 
 from backups.models import *
+from server import log
 
 def download_book_info(isbn):
     return douban_book_api(isbn)
@@ -14,7 +15,7 @@ def douban_book_api(isbn):
     try:
         socket=urllib2.urlopen(url)
         json_str=socket.read()
-        ret=json.loads(json_str.decode('utf-8'))
+        ret=json.loads(json_str)
         ret_dict = {
             'flag':'true',
             'isbn':ret['isbn13'],
@@ -32,13 +33,18 @@ def douban_book_api(isbn):
         ret_dict['byear']=ret_dict['byear'].replace(u'-','.')
         ret_dict['byear']=ret_dict['byear'].replace(u'/','.')
         ret_dict['price']=ret_dict['price'].replace(u'元','')
+        ret_dict['price']=ret_dict['price'].replace(u'CNY','')
+        ret_dict['price']=ret_dict['price'].replace(u' ','')
         ret_dict['pagination']=ret_dict['pagination'].replace(u'页','')
         ret_dict['pagination']=ret_dict['pagination'].replace(u'p','')
         ret_dict['pagination']=ret_dict['pagination'].replace(u'P','')
+        log.debug('douban_book_api::douban returned json:',json_str.decode('utf-8'))
         print(ret_dict['price'])
+        print(ret_dict['bcover'])
         try:
             ret_dict['translator']=ret['translator']
             ret_dict['bcover']=ret['images']['large']
+            log.debug('douban_book_api::before return::ret_dict->',ret_dict)
             return ret_dict
         except:
             return ret_dict
@@ -75,105 +81,34 @@ def storage(input_data,file_name,domain_name):
         return url
 
     except Exception as e:
+        #使用本地storage
+        f = open(file_name,'w')
+        f.write(input_data)
+        f.close()
+        return file_name
         return unicode(e)
 
 def img_upload_storage(input_file, file_name):
     return storage(input_file.read(),file_name,'images')
 
-def db_backups_storage(input_data, file_name=''):
-    if(''==file_name):
-        import datetime
-        now=datetime.datetime.now()
-        args=(now.year,now.month,now.day,now.hour,now.minute,now.second)
-        file_name="lib.eic.su.backups.%s.%s.%s.%s.%s.%s.json"%args
-    try:
-        return storage(input_data,file_name,'backups')
-    except Exception as e:
-        return unicode(e)
-
-def get_backup_by_id(id):
-    backup_record = BackupRecord.objects.get(id=id)
-    import urllib2
-    return (backup_record.version, urllib2.urlopen(backup_record.url))
-
-
-def db_backups():
-    book_list=[]
-    borrower_list=[]
-    watcher_list=[]
-    borrowrecord_list=[]
-    bookingrecord_list=[]
-    book_list=Book.objects.all()
-    borrower_list=Borrower.objects.all()
-    watcher_list=Watcher.objects.all()
-    borrowrecord_list=BorrowRecord.objects.all()
-    bookingrecord_list=BookingRecord.objects.all()
-    var={
-        'book':[],
-        'borrower':[],
-        'watcher':[],
-        'borrowrecord':[],
-        'bookingrecord':[],
-    }
-    for item in book_list:
-        var['book'].append(item.dict())
-    for item in borrower_list:
-        var['borrower'].append(item.dict())
-    for item in watcher_list:
-        var['watcher'].append(item.dict())
-    for item in borrowrecord_list:
-        var['borrowrecord'].append(item.dict())
-    for item in bookingrecord_list:
-        var['bookingrecord'].append(item.dict())
-    
-    return var
-
-def backup_redo(json_obj):
-    db_restore(json_obj)
-
-def backup_overide(json_obj):
-    Book.objects.all().delete()
-    Borrower.objects.all().delete()
-    Watcher.objects.all().delete()
-    BorrowRecord.objects.all().delete()
-    BookingRecord.objects.all().delete()
-    db_restore(json_obj)
-
-def db_restore(backup):  
-    for item in backup['book']:
-        restore_model(item, Book)
-    for item in backup['borrower']:
-        restore_model(item, Borrower)
-    for item in backup['watcher']:
-        restore_model(item, Watcher)
-    for item in backup['borrowrecord']:
-        restore_model(item, BorrowRecord)
-    for item in backup['bookingrecord']:
-        restore_model(item, BookingRecord)
-
-    return True
-
-def restore_model(data,cls):
-
-    try:
-
-        if(data.has_key('id')):
-            item=cls.objects.get(id=int(data['id']))
-            item.setattr(data)
-            item.save()
-        else:
-            item=cls.objects.get(account=data['account'])
-            item.setattr(data)
-            item.save()
-            
-    except Exception as e:
-        #TODO:这里datetime不行
-        data = cls.class_transdata(data)
-        item=cls(**data)
-        try:
-            item.save()
-        except Exception as e:
-            print(e)
+def db_backup(request):
+    # 判断是否是线上
+    from os import environ
+    online = environ.get("APP_NAME", "") 
+    if online:
+        from sae.deferredjob import MySQLExport, DeferredJob
+        deferred_job = DeferredJob()
+        today = datetime.datetime.now().strftime(r'%Y.%m.%d.%H.%M.%S')
+        filename = '%s.backup.%s.zip' %(online,today) #用日期作为文件名，并.zip成压缩文件
+        job = MySQLExport('backups', filename,'') 
+        deferred_job.add(job)
+        var = {}
+        var['flag]']='true'
+        var['online']=online
+        var['filename']=filename
+        return var
+    else:
+        return {}
 
 
 #单元测试

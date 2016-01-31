@@ -146,6 +146,7 @@ var afx_flag_lpnumber_filled=false;
     });
     $("#br-input-usp").change(function(){
         var temp=$(this).val();
+        if(!temp){return true;}
         if(isSqlInjection(temp)||!isSpnumber(temp)){
             return illegal_feedback($(this),"usp","非法输入");
         }else{

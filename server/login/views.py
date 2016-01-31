@@ -11,6 +11,7 @@ import hashlib
 from django.core.urlresolvers import reverse
 
 from library.models import Watcher,Error
+from django.conf import settings
 
 class BaseForm(forms.Form):
     account = forms.CharField(label=u'学号:')
@@ -26,7 +27,7 @@ class LoginForm(BaseForm):
     captcha = CaptchaField(label=u'验证码:')
     def clean_account(self):
         account = self.cleaned_data['account']
-        if('root'==account):
+        if(settings.SUPER_USER==account):
             return account
         num_words = len(account)
         if (num_words==4 or num_words==10):
@@ -50,7 +51,7 @@ class SignupForm(BaseForm):
         except Watcher.DoesNotExist:
             return account
         except Exception as e:
-            error=Error(what='find account:"'+account+'"error:'+str(e))
+            error=Error(what=B('find account:"'+account+'"error:'+str(e)))
             error.save()
             raise forms.ValidationError(u'系统故障!')
         raise forms.ValidationError(u'该学号已注册!')
@@ -87,10 +88,10 @@ def signup(request):
             lpnumber = form.cleaned_data['lpnumber']
             spnumber = form.cleaned_data['spnumber']
             try:
-                u = Watcher(account=account, password=password, name=name, lpnumber=lpnumber, spnumber=spnumber)
+                u = Watcher(account=B(account), password=B(password), name=B(name), lpnumber=B(lpnumber), spnumber=B(spnumber))
                 u.save()
             except Exception as e:
-                error=Error(what='signup:"'+account+'"error:'+str(e))
+                error=Error(what=B('signup:"'+account+'"error:'+str(e)))
                 error.save()
             request.session['account'] = account
             return HttpResponseRedirect('/')#注册成功
@@ -110,7 +111,8 @@ def login(request):
                 password = hashlib.sha1(form.cleaned_data['password']).hexdigest()
                 try:
                     u = Watcher.objects.get(account=account)
-                    if(u.iswatching!=True and u.account!='root'):
+                    print u.account
+                    if(u.iswatching!=True and u.account!=settings.SUPER_USER):
                         raise Exception(unicode(u'不是当前值班干事!'))
                     if u.password == password:
                         request.session['account'] = account
@@ -123,7 +125,7 @@ def login(request):
                     raise Exception(unicode(e))
 
             except Exception as e:
-                error=Error(what='account: %s error: %s'%(account,unicode(e)))
+                error=Error(what=B('account: %s error: %s'%(account,unicode(e))))
                 error.save()
             
             return render_to_response('login.html',{'form':form,'error':error.what},context_instance = RequestContext(request))

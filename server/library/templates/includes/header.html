@@ -118,14 +118,19 @@
                                 <li {% if upload %}class="active"{% endif %}>
                                     <a href="/upload/">上传图片</a>
                                 </li>
+                                
                                 <li class="divider"></li>
                                 <li {%if backups.backup %}class="active"{% endif %}>
                                     <a href="/backups/backup/">备份数据</a>   
                                 </li>
+                                <li>
+                                    <a href="/search/rebuild/index/">重建索引</a>
+                                </li>
+                                <!--
                                 <li {%if backups.restore %}class="active"{% endif %}>
                                     <a href="/backups/restore/">还原数据</a>   
                                 </li>
-
+                                -->
                                 </li>
                                 
 

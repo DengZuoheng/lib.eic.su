@@ -31,6 +31,7 @@ var afx_result;
                 dataType:"json",
                 type:"POST",
                 success:function(result){
+                    console.log(result);
                     afx_result=result;
                     append_result(afx_result);
                 }
@@ -43,18 +44,6 @@ var afx_result;
         if(obj["flag"]=="false"){
             alert_danger(obj);
             return false;
-        }
-        tr = $("<tr></tr>").append($("<td></td>").html(obj["version"]))
-                .append($("<td></td>").html(obj["gtime"]))
-                .append($("<td></td>").html(obj["operator"]))
-                .append($("<td></td>").html(get_download_str(obj['url'])))
-                .append($("<td></td>").html(get_delete_str(obj['delete_url'])));
-
-        if($("#nobackupflag").length>0){
-            $("#backup-table tbody").html("");
-            tr.appendTo($("#backup-table tbody"));
-        }else{
-            tr.appendTo($("#backup-table tbody"));
         }
         
         alert_success(obj);
@@ -88,7 +77,7 @@ var afx_result;
     }
     function alert_success(obj){
         now=new Date();
-        str = now.toString()+" - 创建成功!";
+        str = now.toString()+" - 创建成功! 请稍后再刷新查看, 备份操作将在24小时内自动完成";
         $("#new-backup").parent().after(
             $("<div class='container'></div>").append(
                 $("<div class='alert alert-success' role='alert'></div>").html(str)

@@ -133,9 +133,13 @@ var afx_result;
                 for(var i=0;i<afx_result["watch_list"].length;++i)
                 {
                     if(id==afx_result["watch_list"][i]["account"]){
+                        console.log("ideq");
+                        console.log(afx_result["watch_list"][i]);
                         if(afx_result["watch_list"][i]["type"]=="normal"){
+                            console.log("noreq");
                             afx_result["watch_list"][i]["type"]="delete";
                         }else if(afx_result["watch_list"][i]["type"]=="new"){
+                            console.log("neweq");
                             afx_result["watch_list"].splice(i,1);
                         }
                         
@@ -307,7 +311,8 @@ var afx_result;
     function has_no_watching(){
         flag=0;
         for(var i=0;i<afx_result['watch_list'].length;i++){
-            if(afx_result['watch_list'][i]['iswatching']=="yes"){
+            if(afx_result['watch_list'][i]['iswatching']=="yes"&&
+                afx_result['watch_list'][i]['type']!='delete'){
                 flag++;
             }
         }

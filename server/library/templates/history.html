@@ -26,6 +26,8 @@
                         <td>{% if item.hasreturn %}是{% else %}否 &nbsp;<a class="btn btn-info btn-xs" href="{{ item.return_href }}">归还</a>{% endif %}</td>
                         <td class="text-right">{{ item.duration }}天</td>
                     </tr>
+                    {% empty %}
+                    * 没有相关记录
                     {% endfor %}  
                 </tbody>
             </table>

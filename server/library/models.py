@@ -6,25 +6,27 @@ dengzuoheng@gmail.com
 2015/1/30
 """
 from django.db import models
+from django.conf import settings
 import datetime
 import json
 import hashlib
-
+from server import fields
+from server.fields import B
 # Create your models here.
 #blank=True表示该属性可以为NULL
 """
 书籍表
 """
 class Book(models.Model):
-    isbn = models.CharField(max_length=13)
-    bname = models.CharField(max_length=30)
-    author = models.CharField(max_length=128,blank=True)
-    translator = models.CharField(max_length=128,blank=True)
-    byear = models.CharField(max_length=10,blank=True)
+    isbn = fields.CompressedTextField()
+    bname = fields.CompressedTextField()
+    author = fields.CompressedTextField(blank=True)
+    translator = fields.CompressedTextField(blank=True)
+    byear = fields.CompressedTextField(blank=True)
     pagination = models.IntegerField(blank=True)
     price = models.FloatField(blank=True)
-    bcover = models.URLField(blank=True)
-    publisher = models.CharField(max_length=30,blank=True)
+    bcover =fields.CompressedTextField(blank=True)
+    publisher = fields.CompressedTextField(blank=True)
     totalnum = models.IntegerField()#总册数
     available = models.IntegerField()#在馆数
 
@@ -127,6 +129,12 @@ class Book(models.Model):
     def price_str(self):
         return '%.2f'%self.price
 
+    def author_str(self):
+        if len(self.author) >11:
+            return '%s...'%self.author[0:11]
+        else:
+            return self.author
+
     @classmethod
     def class_transdata(cls,data):
         return data
@@ -135,10 +143,10 @@ class Book(models.Model):
 借书人和值班人员的基类模型
 """
 class AbstractUser(models.Model):
-    account = models.CharField(max_length=10,unique=True,primary_key=True)
-    name = models.CharField(max_length=32)
-    lpnumber=models.CharField(max_length=12)
-    spnumber=models.CharField(max_length=6,blank=True)
+    account = fields.CompressedTextField()
+    name = fields.CompressedTextField()
+    lpnumber= fields.CompressedTextField()
+    spnumber= fields.CompressedTextField(blank=True)
 
     def setattr(self, data):
         attr_list = ['account','name','lpnumber','spnumber']
@@ -212,13 +220,12 @@ class Borrower(AbstractUser):
 值班人员表
 """
 class Watcher(AbstractUser):
-    password = models.CharField(max_length=128)
+    password = fields.CompressedTextField()
     watchsum = models.IntegerField(default=0)
     iswatching = models.BooleanField(default=False)
     
     STATIC_INVILID_WATCHER_INFO=unicode(u'值班人员数据异常:')
-    STATIC_HAS_NO_WATCHER=unicode(u'当前没有值班干事')
-    STATIC_YOU_ARE_NOT_WATCHING=unicode(u'警告:您已经退出值班状态!')
+    STATIC_HAS_NO_WATCHER=unicode(u'非常抱歉, 今天图书馆没有值班人员, 无法完成预约')
 
     #TODO:这里的watchsum不知道什么自增
 
@@ -268,7 +275,7 @@ class Watcher(AbstractUser):
                 watcher=Watcher.objects.get(account=account)
                 #不是当前值班就不算
                 if(not watcher.iswatching):
-                    if(watcher.account=='root'):
+                    if(watcher.account==settings.SUPER_USER):
                         return {'name':watcher.name}
                     else:
                         return None
@@ -283,20 +290,24 @@ class Watcher(AbstractUser):
     @classmethod
     def class_checkout_root(cls):
         try:
-            watcher=Watcher.objects.get(account='root')
+            print 'trying to get the admin'
+            watcher=Watcher.objects.get(account=settings.SUPER_USER)
+            print 'after get the admin'
             return True
         except:
-            #默认密码是guido大神的名字
-            default_password=hashlib.md5('Guido_van_Rossum').hexdigest()
+            print 'failed to get the admin'
+            print 'tring to create the admin'
+            default_password=hashlib.md5(settings.SUPER_USER_PW).hexdigest()
             default_password=hashlib.sha1(default_password).hexdigest()
 
             watcher=Watcher(
-                account='root',
-                name='Administrator',
+                account=B(settings.SUPER_USER),
+                name=B(settings.SUPER_USER_NAME),
                 spnumber='',
-                password=default_password,
+                password=B(default_password),
                 )
             watcher.save()
+            print 'after created the'
             return False
 
     @classmethod
@@ -312,9 +323,9 @@ class BorrowRecord(models.Model):
     borrower = models.ForeignKey(Borrower,related_name='+')
     btime = models.DateTimeField(auto_now=True) #借书时间
     rtime = models.DateTimeField(blank=True,auto_now=True) #还书时间
-    bsubc = models.TextField(blank=True) #借书时书的状态, 用text描述
+    bsubc = fields.CompressedTextField(blank=True) #借书时书的状态, 用text描述
     #还书时的状态{正常:normal,预期:overdue,损坏:damaged,遗失:lost}
-    rsubc = models.CharField(max_length=12,blank=True) 
+    rsubc = fields.CompressedTextField(blank=True) 
     hasreturn = models.BooleanField(default=False)
     #boperator = models.ForeignKey(
     #        Watcher,
@@ -491,8 +502,8 @@ class BookingRecord(models.Model):
 错误记录表
 """
 class Error(models.Model):
-    what=models.TextField(blank=True)
-
+    what=fields.CompressedTextField(blank=True)
+    when=models.DateTimeField(blank=True,auto_now=True)
     def json(self):
         try:
             ret=json.loads(self.what)

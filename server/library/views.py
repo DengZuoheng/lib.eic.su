@@ -7,10 +7,12 @@ from library.models import *
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
+from django.http import  HttpResponseNotFound
 from django.core.urlresolvers import reverse
 import json
 import service
 from django.views.decorators.csrf import ensure_csrf_cookie
+from server.fields import B
 
 # Create your views here.
 def collection(request):
@@ -24,6 +26,17 @@ def collection(request):
     return render_to_response('collection.html', context)
 
 def order(request,book_id='0',user_account='0',error_id='0',accept_status='null',borrow_status='null'):
+    #检查输入
+    try:
+        int(book_id)
+        int(user_account)
+        int(error_id)
+        if accept_status not in ['null','false','true']:
+            raise Exception()
+        if borrow_status not in ['null','false','true']:
+            raise Exception()
+    except:
+         return HttpResponseNotFound()
     context={'order':True}
     filter_kwargs={}
     context['session']=Watcher.class_get_session_name(request.session)
@@ -75,6 +88,15 @@ def order(request,book_id='0',user_account='0',error_id='0',accept_status='null'
     return render_to_response('order.html',context)
 
 def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_id='0'):
+    #检查输入
+    try:
+        int(book_id)
+        int(user_account)
+        int(booking_record_id)
+        int(error_id)
+    except:
+        return HttpResponseNotFound()
+
     booklist=[]
     user_item=None
     inputed_bsubc=None
@@ -135,6 +157,14 @@ def borrowing(request,book_id='0',user_account='0',booking_record_id='0',error_i
             context_instance=RequestContext(request))
 
 def booking(request,book_id,user_account,error_id):
+    #检查输入
+    try:
+        int(book_id)
+        int(user_account)
+        int(error_id)
+    except:
+        return HttpResponseNotFound()
+
     booking_item=None
     user_item=None
     error_item=None
@@ -176,6 +206,11 @@ def booking(request,book_id,user_account,error_id):
 
 
 def subject(request,book_id):
+    #检查输入
+    try:
+        int(book_id)
+    except:
+        return HttpResponseNotFound()
     session=Watcher.class_get_session_name(request.session)
     if( session==None ):
         pass
@@ -187,6 +222,15 @@ def subject(request,book_id):
     return render_to_response('subject.html',context)
 
 def history(request,book_id='0',user_account='0',return_status='null'):
+    #检查输入:
+    try:
+        int(book_id)
+        int(user_account)
+        if return_status not in ['null','true','false']:
+            raise Exception()
+    except:
+        return HttpResponseNotFound()
+
     filter_kwargs={}
     history_list=None
     session=Watcher.class_get_session_name(request.session)
@@ -197,7 +241,11 @@ def history(request,book_id='0',user_account='0',return_status='null'):
         filter_kwargs['book_id']=book_id
 
     if('0'!=user_account):
-        filter_kwargs['borrower_id']=user_account
+        try:
+            borrower = Borrower.objects.get(account=user_account)
+            filter_kwargs['borrower_id']=borrower.id
+        except:
+            filter_kwargs['borrower_id']=0
 
     if('null'!=return_status):
         if('true'==return_status):
@@ -233,6 +281,10 @@ def index(request):
     return  render_to_response('index.html',context,context_instance=RequestContext(request))
 
 def insert(request,error_id='0'):
+    try:
+        int(error_id)
+    except:
+        return HttpResponseNotFound()
     context={'insert':True,}
     session=Watcher.class_get_session_name(request.session)
     if( session==None ):
@@ -251,6 +303,10 @@ def insert(request,error_id='0'):
     return  render_to_response('insert.html',context,context_instance=RequestContext(request))
 
 def success(request,type,extra_param='0'):
+    try:
+        int(extra_param)
+    except:
+        return HttpResponseNotFound()
     success_dict={
         'booking':False,
         'return':False,
@@ -304,6 +360,13 @@ def success(request,type,extra_param='0'):
     return render_to_response('success.html',context)
 
 def accept_booking(request,book_id='0',user_account='0',brid='0'):
+    #检查输入
+    try:
+        int(book_id)
+        int(user_account)
+        int(brid)
+    except:
+        return HttpResponseNotFound()
     try:
         booking_record=BookingRecord.objects.get(id=brid);
         booking_record.hasaccepted=True
@@ -311,18 +374,25 @@ def accept_booking(request,book_id='0',user_account='0',brid='0'):
         booking_record.save()
         return HttpResponseRedirect(reverse('library.views.order', args=[0,0,0,'null','false']))
     except Exception as e:
-        error=Error(what=unicode(e))
+        error=Error(what=B(unicode(e)))
         error.save()
         return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id,'null','false']))
 
 def cancel_booking(request,book_id='0',user_account='0',brid='0'):
+    try:
+        int(book_id)
+        int(user_account)
+        int(brid)
+    except:
+        return HttpResponseNotFound()
+
     try:
         booking_record=BookingRecord.objects.get(id=brid)
         
         booking_record.delete()
         return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,0,'null','null']))
     except Exception as e:
-        error=Error(what=unicode(e))
+        error=Error(what=B(unicode(e)))
         error.save()
         return HttpResponseRedirect(reverse('library.views.order', args=[book_id,user_account,error.id,'null','null']))
 
@@ -338,6 +408,10 @@ def admin(request):
 
 
 def return1(request,error_id='0'):
+    try:
+        int(error_id)
+    except:
+        return HttpResponseNotFound()
     session=Watcher.class_get_session_name(request.session)
     if( session==None ):
         return HttpResponseRedirect('/account/login/')
@@ -358,6 +432,13 @@ def return1(request,error_id='0'):
     return render_to_response('return.html',context,context_instance=RequestContext(request))
 
 def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='0'):
+    try:
+        int(book_id)
+        int(user_account)
+        int(borrow_record_id)
+        int(error_id)
+    except:
+        return HttpResponseNotFound()
     borrow_record=None
     error_item={}
     session=Watcher.class_get_session_name(request.session)
@@ -368,9 +449,9 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
             borrow_record=BorrowRecord.objects.get(id=borrow_record_id)
 
             if(int(book_id)!=int(borrow_record.book_id)):
-                
                 raise Exception(BorrowRecord.STATIC_INCONSISTENT_ID)
-            if(user_account!=borrow_record.borrower_id):
+            if(int(user_account)!=int(borrow_record.borrower_id)):
+                print 'ue'
                 raise Exception(BorrowRecord.STATIC_INCONSISTENT_ACCOUNT)
 
         except Exception as e:
@@ -402,82 +483,6 @@ def return2(request,book_id='0',user_account='0',borrow_record_id='0',error_id='
     except Exception as e:
         print(unicode(e))
 
-def search(request,start_idx,key_word):
-    start_idx=int(start_idx)
-    session=Watcher.class_get_session_name(request.session)
-    book_list=service.search_by(key_word)
-    result={}
-    MAX_NO_PAGING=24#如果结果不超过32个,这一页显示完所有结果
-    NORMAL_PAGING=12#如果结果超过32个, 这每页16个
-    book_list_len=len(book_list)
-    try:
-        if(0==book_list_len):
-            raise Exception('no result')
-        result['begin_idx']=start_idx
-        result['total']=book_list_len
-        if(start_idx==1):
-            if(book_list_len<=MAX_NO_PAGING):
-                result['end_idx']=book_list_len
-            else:
-                result['end_idx']=start_idx+NORMAL_PAGING-1 #1+16=17, 所以应减1
-        else:
-            if(book_list_len<=start_idx+NORMAL_PAGING):
-                result['end_idx']=book_list_len
-            else:
-                result['end_idx']=start_idx+NORMAL_PAGING-1
-
-        if(book_list_len>MAX_NO_PAGING):
-            result['pagination'] = True
-            if(start_idx==1):
-                url=u'/search/start/1/keyword/'+key_word
-                result['prev_page']=url
-                result['is_first_page']=True
-                url=u'/search/start/17/keyword/'+key_word
-                result['next_page']=url
-            else:
-                url=u'/search/start/'+unicode(start_idx-NORMAL_PAGING)+'/keyword/'+key_word
-                result['prev_page']=url
-                result['is_first_page']=False
-                url=u'/search/start/'+unicode(start_idx+NORMAL_PAGING)+'/keyword/'+key_word
-                result['next_page']=url
-            #page bar
-            result['page_href_list']=[]
-            begin_idx=1
-            while NORMAL_PAGING <=book_list_len:
-                url=u'/search/start/'+unicode(begin_idx)+'/keyword/'+key_word
-                result['page_href_list'].append(url)
-                if(begin_idx==start_idx):
-                    result['current_page']=int((begin_idx)/NORMAL_PAGING)+1
-                begin_idx=begin_idx+NORMAL_PAGING
-                book_list_len=book_list_len-NORMAL_PAGING
-
-            if(book_list_len>0):
-                url=u'/search/start/'+unicode(begin_idx)+'/keyword/'+key_word
-                result['page_href_list'].append(url)
-                if(begin_idx==start_idx):
-                    result['current_page']=int((begin_idx)/NORMAL_PAGING)+1
-                    result['is_last_page']=True
-                    result['next_page']=url
-
-            result['book_list']=book_list[(result['begin_idx']-1):(result['end_idx'])]
-        else:
-            result['book_list']=book_list 
-
-        context={
-            'result':result,
-            'session':session,
-        }
-    except:
-        context={
-            'result':{
-                'begin_idx':0,
-                'end_idx':0,
-                'total':0,
-            },
-            'session':session,
-        }
-
-    return render_to_response('search.html',context,context_instance=RequestContext(request))
 
 def upload(request):
     context={"upload":True}

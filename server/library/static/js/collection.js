@@ -77,19 +77,17 @@ function order_by(str_attr,str_order){
 
 //降序排列
 function desc_cmp(obj1,obj2){
-    return !asc_cmp(obj1,obj2);
+    return 0-asc_cmp(obj1,obj2);
 }
 
 //升序排列
 function asc_cmp(obj1,obj2){
-    console.log(afx_sorting_attr);
     if (afx_attr_type[afx_sorting_attr]=="int"){
-        console.log("int");
-        return parseInt(obj1[afx_sorting_attr]) <= parseInt(obj2[afx_sorting_attr]);
+        return parseInt(obj1[afx_sorting_attr]) - parseInt(obj2[afx_sorting_attr]);
     }else if(afx_attr_type[afx_sorting_attr]=="float"){
-        return parseFloat(obj1[afx_sorting_attr]) <= parseFloat(obj2[afx_sorting_attr]);
+        return parseFloat(obj1[afx_sorting_attr]) - parseFloat(obj2[afx_sorting_attr]);
     }else{
-        return obj1[afx_sorting_attr]<=obj2[afx_sorting_attr];
+        return obj1[afx_sorting_attr].localeCompare(obj2[afx_sorting_attr])
     }
 }
 
@@ -113,10 +111,10 @@ function render_result(){
             .append($("<td></td>").html(afx_all_result[i]["bname"]))
             .append($("<td></td>").html(afx_all_result[i]["author"]))
             .append($("<td></td>").html(afx_all_result[i]["publisher"]))
-            .append($("<td></td>").html(afx_all_result[i]["price"].toFixed(afx_float_default_prec)+"元"))
-            .append($("<td></td>").html(afx_all_result[i]["totalnum"]))
-            .append($("<td></td>").html(afx_all_result[i]["available"]))
-            .append($("<td></td>").html(afx_all_result[i]["bookable"]))
+            .append($("<td class='text-right'></td>").html(afx_all_result[i]["price"].toFixed(afx_float_default_prec)+"元"))
+            .append($("<td class='text-right'></td>").html(afx_all_result[i]["totalnum"]))
+            .append($("<td class='text-right'></td>").html(afx_all_result[i]["available"]))
+            .append($("<td class='text-right'></td>").html(afx_all_result[i]["bookable"]))
             .append($("<td></td>").html(afx_all_result[i]["bookinglink"]))
             .appendTo(tbody);
     }

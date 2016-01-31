@@ -1,0 +1,63 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+
+        <div class="container">
+            <h3>正在重建索引...</h3>
+            <div class="progress">
+              <div id="progress-bar" class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                00%
+              </div>
+            </div>
+            <p>如果没有到90%以上, 请刷新重试, 如果进度条长时间不动, 请尽快联系开发人员, 否则搜索功能将无法工作.</p>
+        </div>
+        <div class="lead"></div>
+        <div class="container" id="image_url"></div> 
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script>
+            var books = [{% for item in books %} {{item.id}},{%endfor%}];
+            var afx_count = 0;
+            var afx_total = books.length;
+            function update_progress_bar(){
+                var aria_valuenow = afx_count/afx_total;
+                //console.log(aria_valuenow);
+                $('#progress-bar').attr({
+                    'aria-valuenow':aria_valuenow*10,
+                    'style':'width: '+aria_valuenow*100+'%',
+                }).text(parseInt(aria_valuenow*100)+'%');
+                if (afx_count==afx_total){
+                    $('#progress-bar').removeClass('progress-bar-info').addClass('progress-bar-success');
+                }
+            }
+            function ajax_rebuild(bid){
+                $.ajax({
+                    url:getBaseURL()+"/search/RequestAjaxReindexingBook/",
+                    data:{"id":bid},
+                    dataType:"json",
+                    type:"GET",
+                    success:function(result){
+                        //console.log(result);
+                        if(result['flag']){
+                            afx_count++;
+                            //console.log(afx_count);
+                            //console.log(afx_total);
+                        }else{
+                            console.log(result);
+                            console.log('retry '+result['id'] +' err: '+result['err_str']);
+                            ajax_rebuild(result['id']);
+                        }
+                        update_progress_bar();
+                    },
+                    failure: function(result){
+                        
+                        console.log('failure');
+                    }
+                });
+            }
+            for(var i=0;i<books.length;++i){
+                ajax_rebuild(books[i]);
+            }
+
+        </script>
+  </body>
+</html>

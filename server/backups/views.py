@@ -10,6 +10,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 import json
+from datetime import datetime
 import os
 from django.views.decorators.csrf import ensure_csrf_cookie
 
@@ -19,7 +20,22 @@ def backup(request):
     if( session==None ):
         return HttpResponseRedirect('/account/login/')
     context = {}
-    backup_records = list(BackupRecord.objects.all())
+    domain = 'backups'
+    try:
+        import sae.storage
+        client = sae.storage.Client()
+        backup_items = client.list(domain)
+        backup_records = []
+        tf = r'%Y-%m-%d %H:%M:%S'
+        for item in backup_items:
+            backup_records.append({
+                'name':item['name'],
+                'datetime':datetime.fromtimestamp(item['datetime']).strftime(tf),
+                'url':client.url(domain,item['name']),
+                'delete_url':'/backups/delete/%s'%item['name']
+                })
+    except:
+        backup_records = []
     context = {
         'backups':{'backup':True},
         'session':session,
@@ -31,35 +47,12 @@ def backup(request):
         context_instance=RequestContext(request))
 
 def delete(request,backup_id):
-    
-    backup_record = BackupRecord.objects.get(id=backup_id)
-    backup_record.delete()
-    #sae storage里面的是不会被删掉的, 因为我不知道什么删...
+    domain = 'backups'
+    try:
+        import sae.storage
+        client = sae.storage.Client()
+        client.delete(domain,backup_id)
+    except:
+        pass
     return HttpResponseRedirect('/backups/backup')
     
-
-def restore(request):
-    session=Watcher.class_get_session_name(request.session)
-    if( session==None ):
-        return HttpResponseRedirect('/account/login/')
-    context = {}
-    backup_records = list(BackupRecord.objects.all())
-    restore_records = list(RestoreRecord.objects.all())
-    context = {
-        'backups':{'restore':True},
-        'session':session,
-        "backup_records":backup_records,
-        "restore_records":restore_records,
-    }
-    return render_to_response(
-        'restore.html',
-        context,
-        context_instance=RequestContext(request))
-    pass
-
-def backup_action(request):
-    pass
-
-def restore_action(request):
-    pass
-

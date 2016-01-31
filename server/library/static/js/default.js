@@ -4,6 +4,18 @@ var afx_max_booknum=8;//最大借书和预约数量
 var afx_float_default_prec=2;//默认浮点数精度
 var afx_min_passw_length=6;//最小密码长度
 var afx_max_passw_length=64;//最大密码长度
+var afx_log_level = 1;//日志级别
+log_level_map = {
+        "debug":1,
+        "log":2,
+        "error":3,
+}
+
+function logging(log, log_level){
+    if(log_level_map[log_level]>=log_level_map[afx_log_level]){
+        console.log(log);
+    }
+}
 
 //检查SQL注入特征, 含有SQL语句这返回真
 function isSqlInjection(str){
@@ -111,17 +123,14 @@ function max(i1,i2){
 //检查是不是一定范围内的整数
 function isIntBetween(str,min,max){
     try{
-        pattern=/^[0-9]{0,99}$/;
-        if(!pattern.test(str)){
-            return false;
-        }
-        var ret=parseInt(str);
-        if(ret>=min&&ret<max){
+        val = parseInt(str);
+        min_val = parseInt(min);
+        max_val = parseInt(max);
+        if (val>=min_val && val <=max){
             return true;
         }
         return false;
-    }catch(err){
-        console.log(err);
+    }catch(e){
         return false;
     }
 }
@@ -147,7 +156,7 @@ function isFloatBetween(str,min,max){
 //检查是不是URI
 function isURI(str){
     try{
-        pattern=/^http:\/\/[A-Za-z0-9\.-]{3,}\.[A-Za-z]{3}/;
+        pattern=/^https?:\/\/[A-Za-z0-9\.-]{3,}\.[A-Za-z]{3}/;
         if(pattern.test(str)){
             return true;
         }else{
