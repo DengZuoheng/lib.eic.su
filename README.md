@@ -15,6 +15,7 @@
 - django 1.5+
 - [six](https://pypi.python.org/pypi/six)
 - [django-simple-captcha](https://github.com/mbi/django-simple-captcha)(仓库里包含了主要代码)
+- pillow
 - [jieba](https://github.com/fxsjy/jieba)
 - [PIL](http://www.pythonware.com/products/pil/)
 - [bootstrap-fileinput](https://github.com/kartik-v/bootstrap-fileinput)(仓库里包含了主要代码)

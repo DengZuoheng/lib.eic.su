@@ -32,7 +32,7 @@ def save_index(text,book):
     if not book:
         return
     try:
-        i,c = Index.objects.get_or_create(index=text.encode('utf-8'))
+        i, _ = Index.objects.get_or_create(index=text.encode('utf-8'))
         i.books.add(book)
         i.save()
     except Exception as e:
